@@ -6,10 +6,14 @@ use App\Models\Student;
 use App\Models\Course;
 use App\Models\IEP;
 use App\Models\Assessment;
+use App\Models\Invitation;
+use App\Models\AdaptiveContent;
 use App\Policies\StudentPolicy;
 use App\Policies\CoursePolicy;
 use App\Policies\IEPPolicy;
 use App\Policies\AssessmentPolicy;
+use App\Policies\InvitationPolicy;
+use App\Policies\AdaptiveContentPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
 
@@ -25,6 +29,8 @@ class AuthServiceProvider extends ServiceProvider
         Course::class => CoursePolicy::class,
         IEP::class => IEPPolicy::class,
         Assessment::class => AssessmentPolicy::class,
+        Invitation::class => InvitationPolicy::class,
+        AdaptiveContent::class => AdaptiveContentPolicy::class,
     ];
 
     /**

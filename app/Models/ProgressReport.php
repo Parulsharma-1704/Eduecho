@@ -34,4 +34,29 @@ class ProgressReport extends Model
     {
         return $this->belongsTo(User::class, 'generated_by_id');
     }
+
+    public function getAverageProgress()
+    {
+        $scores = [];
+        if ($this->academic_progress) $scores[] = (int)$this->academic_progress;
+        if ($this->behavioral_progress) $scores[] = (int)$this->behavioral_progress;
+        if ($this->therapy_progress) $scores[] = (int)$this->therapy_progress;
+        
+        return count($scores) > 0 ? round(array_sum($scores) / count($scores)) : 0;
+    }
+
+    public function getOverallStatus()
+    {
+        $avg = $this->getAverageProgress();
+        
+        if ($avg >= 80) {
+            return ['label' => 'Excellent Progress', 'color' => 'emerald'];
+        } elseif ($avg >= 60) {
+            return ['label' => 'Good Progress', 'color' => 'blue'];
+        } elseif ($avg >= 40) {
+            return ['label' => 'Moderate Progress', 'color' => 'amber'];
+        } else {
+            return ['label' => 'Needs Support', 'color' => 'red'];
+        }
+    }
 }

@@ -9,6 +9,7 @@ use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Http\Controllers\Auth\InvitationController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
@@ -16,6 +17,13 @@ Route::middleware('guest')->group(function () {
         ->name('register');
 
     Route::post('register', [RegisteredUserController::class, 'store']);
+
+    // Invitation-based registration for non-student roles
+    Route::get('invitation/{token}', [InvitationController::class, 'show'])
+        ->name('invitation.show');
+
+    Route::post('invitation/{token}', [InvitationController::class, 'store'])
+        ->name('invitation.store');
 
     Route::get('login', [AuthenticatedSessionController::class, 'create'])
         ->name('login');

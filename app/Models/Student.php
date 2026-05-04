@@ -80,4 +80,9 @@ class Student extends Model
     {
         return $this->belongsToMany(CareGiver::class, 'caregiver_student');
     }
+
+    public function contentPreferences()
+    {
+        return $this->hasMany(StudentContentPreference::class);
+    }
 }
