@@ -14,15 +14,19 @@
                 @csrf
 
                 <!-- Student Selection -->
-                <div>
+                <div @if(Auth::user()->hasRole('student')) class="hidden" @endif>
                     <label for="student_id" class="block text-sm font-semibold text-slate-900 dark:text-white mb-3">Student *</label>
                     <select name="student_id" id="student_id" required class="w-full px-4 py-3 border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600">
-                        <option value="">Select a student</option>
-                        @foreach(\App\Models\Student::with('user')->get() as $student)
-                            <option value="{{ $student->id }}" {{ old('student_id') == $student->id ? 'selected' : '' }}>
-                                {{ $student->user->name }} ({{ $student->user->email }})
-                            </option>
-                        @endforeach
+                        @if(Auth::user()->hasRole('student'))
+                            <option value="{{ Auth::user()->student?->id }}" selected>{{ Auth::user()->name }}</option>
+                        @else
+                            <option value="">Select a student</option>
+                            @foreach(\App\Models\Student::with('user')->get() as $student)
+                                <option value="{{ $student->id }}" {{ old('student_id') == $student->id ? 'selected' : '' }}>
+                                    {{ $student->user->name }} ({{ $student->user->email }})
+                                </option>
+                            @endforeach
+                        @endif
                     </select>
                     @error('student_id')
                         <p class="text-red-600 dark:text-red-400 text-sm mt-2">{{ $message }}</p>
@@ -34,7 +38,7 @@
                     <label for="therapist_id" class="block text-sm font-semibold text-slate-900 dark:text-white mb-3">Therapist *</label>
                     <select name="therapist_id" id="therapist_id" required class="w-full px-4 py-3 border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600">
                         <option value="">Select a therapist</option>
-                        @foreach(\App\Models\User::where('role', 'therapist')->orWhere('role', 'admin')->get() as $therapist)
+                        @foreach(\App\Models\User::role(['therapist', 'admin'])->get() as $therapist)
                             <option value="{{ $therapist->id }}" {{ old('therapist_id') == $therapist->id ? 'selected' : '' }}>
                                 {{ $therapist->name }}
                             </option>

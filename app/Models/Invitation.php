@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Invitation extends Model
 {
-    protected $fillable = ['email', 'role', 'token', 'invited_by', 'expires_at'];
+    protected $fillable = ['email', 'role', 'token', 'invited_by', 'expires_at', 'used_at'];
 
     protected $casts = [
         'expires_at' => 'datetime',
@@ -33,9 +33,9 @@ class Invitation extends Model
     /**
      * Mark invitation as used
      */
-    public function markAsUsed(): void
+    public function markAsUsed(): bool
     {
-        $this->update(['used_at' => now()]);
+        return (bool) $this->update(['used_at' => now()]);
     }
 
     /**

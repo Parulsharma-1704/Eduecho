@@ -20,18 +20,53 @@
                 theme: {
                     extend: {
                         colors: {
-                            slate: { 950: '#020617' }
+                            slate: {
+                                950: '#020617',
+                            },
+                            mustard: {
+                                50: '#fefce8',
+                                100: '#fef9c3',
+                                200: '#fef08a',
+                                300: '#fde047',
+                                400: '#facc15',
+                                500: '#eab308',
+                                600: '#ca8a04',
+                                700: '#a16207',
+                                800: '#854d0e',
+                                900: '#713f12',
+                                950: '#422006',
+                            },
+                            accent: {
+                                100: '#e0f2fe',
+                                500: '#0ea5e9',
+                            },
+                            cheerful: {
+                                pink: '#f472b6',
+                                purple: '#8b5cf6',
+                                teal: '#2dd4bf',
+                                orange: '#fb923c'
+                            }
                         }
                     }
                 }
             }
         </script>
+        <style>
+            .cheerful-blob {
+                animation: float 20s infinite alternate;
+            }
+            @keyframes float {
+                0% { transform: translateY(0px) translateX(0px) rotate(0deg); }
+                100% { transform: translateY(-30px) translateX(30px) rotate(5deg); }
+            }
+        </style>
     </head>
-    <body class="font-sans antialiased bg-slate-50 dark:bg-slate-900">
+    <body class="font-sans antialiased bg-white dark:bg-slate-900 border-t-8 border-sky-400">
         <!-- Decoration blobs -->
-        <div class="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none -z-10">
-            <div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-400/5 rounded-full blur-3xl"></div>
-            <div class="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-indigo-400/5 rounded-full blur-3xl"></div>
+        <div class="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none -z-10 bg-[#fafafa]">
+            <div class="absolute top-[-5%] left-[-5%] w-[30%] h-[30%] bg-mustard-200/10 rounded-full blur-[100px] cheerful-blob"></div>
+            <div class="absolute bottom-[10%] right-[-10%] w-[25%] h-[25%] bg-accent-100/20 rounded-full blur-[100px] cheerful-blob" style="animation-delay: -5s;"></div>
+            <div class="absolute top-[30%] right-[10%] w-[15%] h-[15%] bg-cheerful-pink/5 rounded-full blur-[80px] cheerful-blob"></div>
         </div>
 
         <div class="min-h-screen">

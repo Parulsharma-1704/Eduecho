@@ -32,7 +32,6 @@ class RolePermissionSeeder extends Seeder
             'view_ieps',
             'view_therapy_sessions',
             'view_assessments',
-            'create_assessments', // Can take assessments
             'view_behavioral_notes',
             'view_progress_reports',
             'view_accessibility_profiles',

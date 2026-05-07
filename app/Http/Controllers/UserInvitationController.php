@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Invitation;
+use App\Mail\UserInvitationMail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class UserInvitationController extends Controller
 {
@@ -78,8 +80,18 @@ class UserInvitationController extends Controller
         // Generate invitation link
         $invitationLink = route('invitation.show', ['token' => $invitation->token]);
 
+        // Send the invitation email
+        try {
+            Mail::to($invitation->email)->send(new UserInvitationMail($invitation));
+        } catch (\Exception $e) {
+            // Log error but continue so we can still show the link
+            \Log::error("Failed to send invitation email: " . $e->getMessage());
+            return redirect()->route('invitations.index')
+                ->with('warning', "Invitation created, but email failed to send. Link: {$invitationLink}");
+        }
+
         return redirect()->route('invitations.index')
-            ->with('success', "Invitation created successfully. Share this link: {$invitationLink}");
+            ->with('success', "Invitation sent successfully to {$invitation->email}!");
     }
 
     /**
