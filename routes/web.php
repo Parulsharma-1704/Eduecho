@@ -12,10 +12,14 @@ use App\Http\Controllers\UserInvitationController;
 use App\Http\Controllers\AccessibilitySettingController;
 use App\Http\Controllers\AdaptiveContentController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 
 // Public routes
 Route::get('/', function () {
-    return view('welcome');
+    if (Auth::check()) {
+        return redirect()->route('dashboard');
+    }
+    return redirect()->route('login');
 });
 
 // Authenticated routes

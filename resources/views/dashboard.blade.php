@@ -1,797 +1,509 @@
-<x-app-layout>
-    <x-slot name="header">Dashboard</x-slot>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduEcho — Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+    <style>
+        :root {
+            --teal: #0D9488; --teal-b: #10B981; --teal-l: #CCFBF1; --teal-ll: #F0FDFA; --teal-d: #0F766E; --teal-dd: #134E4A;
+            --violet: #6D28D9; --violet-b: #7C3AED; --violet-l: #EDE9FE; --violet-ll: #F5F3FF; --violet-d: #4C1D95; --violet-m: #C4B5FD;
+            --navy: #1E1B4B; --white: #ffffff; --gray: #6B7280; --gray-l: #F9FAFB; --gray-b: #E5E7EB; --page: #F0FDFA;
+            --amber: #D97706; --al: #FEF3C7; --ad: #92400E;
+            --rose: #BE185D; --rl: #FCE7F3; --rd: #9D174D;
+            --green: #16A34A; --gl: #DCFCE7; --gd: #166534;
+            --blue: #2563EB; --bl: #EFF6FF; --bd: #1E40AF;
+            --font-head: 'Plus Jakarta Sans', sans-serif; --font-body: 'DM Sans', sans-serif;
+            --r-sm: 8px; --r-md: 12px; --r-lg: 16px; --r-xl: 20px; --r-2xl: 24px;
+            --sidebar-w: 224px;
+        }
+        *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+        html,body{height:100%;overflow:hidden}
+        body{font-family:var(--font-body);background:var(--page);color:var(--navy);font-size:14px}
+        button{cursor:pointer;font-family:var(--font-body)}
+        a{text-decoration:none;color:inherit}
+        
+        @keyframes floatY{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+        @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+        @keyframes countIn{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:scale(1)}}
+        @keyframes progFill{from{width:0}to{width:var(--w)}}
+        @keyframes pulseDot{0%,100%{box-shadow:0 0 0 0 rgba(190,24,93,.4)}70%{box-shadow:0 0 0 6px rgba(190,24,93,0)}}
+        @keyframes panelIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+        
+        .app{display:flex;height:100vh;overflow:hidden}
+        
+        /* SIDEBAR */
+        .sidebar{width:var(--sidebar-w);flex-shrink:0;background:var(--navy);display:flex;flex-direction:column;overflow-y:auto;overflow-x:hidden}
+        .sidebar::-webkit-scrollbar{width:3px}
+        .sidebar::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:3px}
+        .sb-logo{display:flex;align-items:center;gap:10px;padding:20px 16px 16px;border-bottom:1px solid rgba(255,255,255,.06)}
+        .sb-logo-icon{width:36px;height:36px;border-radius:10px;background:var(--teal);display:flex;align-items:center;justify-content:center;flex-shrink:0;animation:floatY 3s ease-in-out infinite}
+        .sb-logo-icon i{font-size:18px;color:#fff}
+        .sb-logo-name{font-family:var(--font-head);font-size:16px;font-weight:800;color:#fff}
+        .sb-logo-name em{color:var(--teal-b);font-style:normal}
+        .sb-nav{padding:8px 8px;flex:1}
+        .sb-group{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.25);padding:12px 10px 5px}
+        .sb-item{display:flex;align-items:center;gap:10px;padding:9px 12px;margin:1px 0;border-radius:var(--r-md);color:rgba(255,255,255,.5);font-size:13px;font-weight:600;border:none;background:none;width:100%;text-align:left;transition:all .18s}
+        .sb-item i{font-size:17px;flex-shrink:0}
+        .sb-item:hover{background:rgba(255,255,255,.07);color:#fff}
+        .sb-item.active{background:var(--teal);color:#fff}
+        .sb-badge{margin-left:auto;background:var(--rose);color:#fff;font-size:10px;font-weight:800;padding:2px 7px;border-radius:10px}
+        .sb-user{margin-top:auto;border-top:1px solid rgba(255,255,255,.06);padding:12px;display:flex;align-items:center;gap:9px;cursor:pointer}
+        .sb-user-av{width:32px;height:32px;border-radius:50%;background:var(--teal);color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+        .sb-user-name{font-size:12px;font-weight:700;color:#fff;display:block}
+        .sb-user-role{font-size:10px;color:rgba(255,255,255,.35)}
+        
+        /* MAIN */
+        .main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+        
+        /* TOPBAR */
+        .topbar{background:var(--white);border-bottom:1.5px solid var(--teal-l);padding:0 22px;height:56px;display:flex;align-items:center;gap:12px;flex-shrink:0;z-index:10}
+        .tb-title{font-family:var(--font-head);font-size:15px;font-weight:800;color:var(--navy)}
+        .tb-search{display:flex;align-items:center;gap:8px;background:var(--teal-ll);border:1.5px solid var(--teal-l);border-radius:var(--r-md);padding:7px 13px;flex:1;max-width:280px}
+        .tb-search i{font-size:15px;color:var(--teal)}
+        .tb-search input{border:none;background:none;outline:none;font-size:12px;color:var(--navy);width:100%;font-family:var(--font-body)}
+        .tb-search input::placeholder{color:var(--teal-d);opacity:.6}
+        .tb-right{margin-left:auto;display:flex;align-items:center;gap:8px}
+        .tb-icon-btn{width:36px;height:36px;border-radius:var(--r-md);background:var(--teal-ll);border:none;display:flex;align-items:center;justify-content:center;transition:background .18s;position:relative}
+        .tb-icon-btn:hover{background:var(--teal-l)}
+        .tb-icon-btn i{font-size:18px;color:var(--teal)}
+        .notif-dot{position:absolute;top:6px;right:6px;width:7px;height:7px;border-radius:50%;background:var(--rose);animation:pulseDot 2s ease-in-out infinite}
+        .tb-user{display:flex;align-items:center;gap:8px;padding:6px 12px;border-radius:var(--r-md);background:var(--teal-ll);border:1.5px solid var(--teal-l);transition:background .18s;cursor:pointer}
+        .tb-user:hover{background:var(--teal-l)}
+        .tb-user-av{width:26px;height:26px;border-radius:50%;background:var(--teal);color:#fff;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center}
+        .tb-user span{font-size:12px;font-weight:700;color:var(--teal-d)}
+        
+        /* CONTENT */
+        .content{flex:1;overflow-y:auto;padding:20px}
+        .content::-webkit-scrollbar{width:5px}
+        .content::-webkit-scrollbar-thumb{background:var(--teal-l);border-radius:5px}
+        
+        .panel{display:none;animation:panelIn .3s ease both}
+        .panel.show{display:block}
+        
+        /* ANNOUNCE */
+        .announce{background:var(--teal-ll);border:1.5px solid var(--teal-l);border-radius:var(--r-lg);padding:12px 16px;display:flex;align-items:flex-start;gap:12px;margin-bottom:16px;animation:fadeUp .4s ease both}
+        .announce>i{font-size:19px;color:var(--teal);flex-shrink:0;margin-top:1px}
+        .ann-body strong{font-size:12px;font-weight:800;color:var(--teal-dd);display:block;margin-bottom:2px}
+        .ann-body span{font-size:11px;color:var(--teal-d)}
+        .ann-close{margin-left:auto;flex-shrink:0;background:none;border:none;font-size:15px;color:var(--teal);padding:2px;line-height:1;cursor:pointer}
+        
+        /* WELCOME */
+        .welcome{background:var(--navy);border-radius:var(--r-xl);padding:26px 30px;display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;position:relative;overflow:hidden;animation:fadeUp .5s ease .05s both}
+        .welcome::before{content:'';position:absolute;width:280px;height:280px;border-radius:50%;background:rgba(13,148,136,.18);top:-100px;right:60px}
+        .wb-left{position:relative;z-index:2}
+        .wb-eyebrow{font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--teal-b);margin-bottom:6px}
+        .wb-left h1{font-family:var(--font-head);font-size:26px;font-weight:900;color:#fff;margin-bottom:6px}
+        .wb-left p{font-size:13px;color:rgba(255,255,255,.55)}
+        .wb-status{position:relative;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.14);border-radius:var(--r-lg);padding:13px 18px;display:flex;align-items:center;gap:13px;z-index:2}
+        .wb-stat-icon{width:42px;height:42px;border-radius:10px;background:var(--teal);display:flex;align-items:center;justify-content:center;animation:floatY 3s ease-in-out infinite;flex-shrink:0}
+        .wb-stat-icon i{font-size:20px;color:#fff}
+        .wb-stat-label{font-size:9px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.38);margin-bottom:4px}
+        .wb-stat-val{display:flex;align-items:center;gap:7px}
+        .wb-green{width:7px;height:7px;border-radius:50%;background:#22c55e}
+        .wb-stat-val span{font-size:13px;font-weight:800;color:#fff}
+        
+        /* STAT CARDS */
+        .stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+        .sc{background:var(--white);border-radius:var(--r-lg);padding:16px;border:1.5px solid var(--teal-l);text-align:center;transition:all .22s;cursor:pointer;animation:countIn .45s ease both}
+        .sc:hover{transform:translateY(-4px);border-color:var(--teal);box-shadow:0 8px 24px rgba(13,148,136,.1)}
+        .sc-ico{width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px}
+        .sc-ico i{font-size:20px}
+        .sc-label{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--gray);margin-bottom:4px}
+        .sc-val{font-family:var(--font-head);font-size:28px;font-weight:900}
+        .sc-trend{font-size:11px;font-weight:600;margin-top:4px;display:flex;align-items:center;justify-content:center;gap:3px}
+        
+        /* GRID */
+        .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+        .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:14px}
+        .flex-col{display:flex;flex-direction:column;gap:12px}
+        
+        /* CARD */
+        .card{background:var(--white);border-radius:var(--r-lg);border:1.5px solid var(--teal-l);padding:18px}
+        .card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+        .card-title-wrap{display:flex;align-items:center;gap:10px}
+        .card-ico{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+        .card-ico i{font-size:17px}
+        .card-title{font-family:var(--font-head);font-size:13px;font-weight:800;color:var(--navy)}
+        .card-sub{font-size:11px;color:var(--gray);margin-top:1px}
+        .card-action{font-size:11px;font-weight:700;color:var(--teal);background:none;border:none;display:flex;align-items:center;gap:3px;transition:color .18s;cursor:pointer}
+        .card-action:hover{color:var(--teal-d)}
+        
+        /* STUDENT ROW */
+        .stu{display:flex;align-items:center;gap:10px;padding:9px 6px;border-radius:var(--r-md);cursor:pointer;transition:background .16s;border-bottom:1px solid var(--teal-l)}
+        .stu:last-child{border:none;padding-bottom:0}
+        .stu:hover{background:var(--teal-ll)}
+        .stu-av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0}
+        .stu-name{font-size:12px;font-weight:700;color:var(--navy)}
+        .stu-meta{font-size:10px;color:var(--gray);margin-top:1px}
+        
+        /* PILL */
+        .pill{padding:3px 9px;border-radius:10px;font-size:10px;font-weight:700;white-space:nowrap;border:none;cursor:pointer}
+        
+        /* PROGRESS */
+        .prog{margin-bottom:12px}
+        .prog:last-child{margin-bottom:0}
+        .prog-top{display:flex;justify-content:space-between;font-size:11px;font-weight:700;color:var(--navy);margin-bottom:5px}
+        .prog-track{height:8px;background:var(--teal-l);border-radius:8px;overflow:hidden}
+        .prog-bar{height:100%;border-radius:8px;animation:progFill .9s ease both}
+        
+        /* SESSION */
+        .sess{display:flex;align-items:center;gap:10px;padding:9px 6px;border-radius:var(--r-md);cursor:pointer;transition:background .16s;border-bottom:1px solid var(--teal-l)}
+        .sess:last-child{border:none;padding-bottom:0}
+        .sess:hover{background:var(--teal-ll)}
+        .sess-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+        .sess-ico{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+        .sess-ico i{font-size:13px}
+        .sess-name{font-size:12px;font-weight:700;color:var(--navy);display:block}
+        .sess-who{font-size:10px;color:var(--gray)}
+        .sess-time{font-size:10px;font-weight:700;margin-left:auto;text-align:right}
+        
+        /* COMPLIANCE */
+        .comp{display:flex;align-items:center;justify-content:space-between;padding:8px 6px;border-bottom:1px solid var(--teal-l);font-size:12px}
+        .comp:last-child{border:none;padding-bottom:0}
+        .comp-s{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:700}
+        .cdot{width:7px;height:7px;border-radius:50%}
+        
+        /* SCHEDULE */
+        .sched{display:flex;align-items:flex-start;gap:10px;padding:8px 6px;border-bottom:1px solid var(--teal-l)}
+        .sched:last-child{border:none;padding-bottom:0}
+        .sched-t{font-size:10px;font-weight:700;color:var(--gray);min-width:36px;padding-top:2px}
+        .sched-line{width:2px;border-radius:2px;min-height:34px;flex-shrink:0;margin-top:3px}
+        .sched-name{font-size:12px;font-weight:700;color:var(--navy);display:block}
+        .sched-loc{font-size:10px;color:var(--gray)}
+        
+        /* BUTTONS */
+        .btn-teal{padding:10px 22px;border-radius:24px;background:var(--teal);color:#fff;font-size:13px;font-weight:700;border:none;display:inline-flex;align-items:center;gap:7px;transition:all .18s;cursor:pointer}
+        .btn-teal:hover{background:var(--teal-d);transform:translateY(-1px)}
+        
+        .eyebrow{font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--teal);margin-bottom:8px}
+        
+        /* USER DROPDOWN */
+        .user-dropdown{position:relative;}
+        .user-menu{display:none;position:absolute;top:100%;right:0;background:#fff;border:1.5px solid var(--teal-l);border-radius:var(--r-md);width:150px;z-index:1000;box-shadow:0 4px 16px rgba(0,0,0,.1)}
+        .user-menu.show{display:block}
+        .user-menu a{display:flex;align-items:center;gap:10px;padding:12px 16px;border:none;background:none;color:var(--navy);font-size:13px;font-weight:600;text-decoration:none;cursor:pointer;border-bottom:1px solid var(--teal-l);width:100%;text-align:left;transition:background .2s}
+        .user-menu a:last-child{border-bottom:none}
+        .user-menu a:hover{background:var(--teal-ll)}
+        .user-menu a i{font-size:15px;color:var(--teal)}
+        .user-menu a.logout{color:var(--rose)}
+        .user-menu a.logout i{color:var(--rose)}
+        
+        /* QA GRID */
+        .qa-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+        .qa{background:var(--white);border:1.5px solid var(--teal-l);border-radius:var(--r-lg);padding:14px 10px;display:flex;flex-direction:column;align-items:center;gap:7px;cursor:pointer;transition:all .2s;text-align:center}
+        .qa:hover{border-color:var(--teal);background:var(--teal-ll);transform:translateY(-3px)}
+        .qa-ico{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center}
+        .qa-ico i{font-size:19px}
+        .qa strong{font-size:11px;font-weight:800;color:var(--navy)}
+        .qa span{font-size:10px;color:var(--gray)}
+        
+        @media(max-width:768px){
+            .stat-row{grid-template-columns:repeat(2,1fr)}
+            .grid-2{grid-template-columns:1fr}
+            .grid-3{grid-template-columns:repeat(2,1fr)}
+            .qa-grid{grid-template-columns:repeat(2,1fr)}
+            .sidebar{position:absolute;left:0;top:0;height:100%;z-index:100;transform:translateX(-100%);transition:transform .3s}
+            .sidebar.open{transform:translateX(0)}
+        }
+    </style>
+</head>
+<body>
 
-    <!-- Welcome Section -->
-    <div class="mb-12">
-        @if(Auth::user()->hasRole('admin'))
-            <div class="bg-slate-900 rounded-[3rem] text-white shadow-2xl relative overflow-hidden group min-h-[300px] flex items-center">
-                <!-- Background Image with Overlay -->
-                <div class="absolute inset-0 z-0">
-                    <img src="https://images.unsplash.com/photo-1497215728101-856f4ea42174?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" 
-                         alt="Admin Background" 
-                         class="w-full h-full object-cover opacity-40 scale-105 group-hover:scale-100 transition-transform duration-1000">
-                    <div class="absolute inset-0 bg-gradient-to-r from-slate-900 via-slate-900/80 to-transparent"></div>
-                    <div class="absolute inset-0 bg-gradient-to-t from-mustard-400/20 to-transparent"></div>
-                </div>
+<div class="app">
 
-                <div class="relative z-10 p-10 w-full">
-                    <div class="flex flex-col md:flex-row items-center justify-between">
-                        <div class="text-center md:text-left mb-6 md:mb-0">
-                            <div class="inline-flex items-center space-x-2 bg-mustard-400 px-4 py-2 rounded-2xl mb-6 shadow-lg rotate-[-2deg]">
-                                <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
-                                </svg>
-                                <span class="text-sm font-black uppercase tracking-widest text-white">Administrator Portal</span>
-                            </div>
-                            <h2 class="text-6xl font-black mb-4 tracking-tighter">Welcome, {{ Auth::user()->name }}</h2>
-                            <p class="text-slate-300 text-xl font-medium max-w-xl leading-relaxed">
-                                Access high-level analytics and management tools for the 
-                                <span class="text-mustard-400 font-black">EduEcosystem</span>.
-                            </p>
-                        </div>
-                        
-                        <div class="hidden lg:block">
-                            <div class="bg-white/10 backdrop-blur-xl p-8 rounded-[2.5rem] border border-white/20 shadow-2xl scale-90 hover:scale-100 transition-transform duration-500">
-                                <div class="flex items-center space-x-4">
-                                    <div class="w-16 h-16 rounded-2xl bg-mustard-400 flex items-center justify-center shadow-lg">
-                                        <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m0 0a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                                        </svg>
-                                    </div>
-                                    <div>
-                                        <p class="text-white/60 text-xs font-black uppercase tracking-[0.2em]">System Status</p>
-                                        <p class="text-2xl font-black">Fully Operational</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        @elseif(Auth::user()->hasRole('special_educator') || Auth::user()->hasRole('therapist'))
-            <div class="rounded-[2.5rem] text-white shadow-2xl relative overflow-hidden group min-h-[160px] flex items-center">
-                <!-- Background Image with Overlay -->
-                <div class="absolute inset-0 z-0">
-                    <img src="https://images.unsplash.com/photo-1544717297-fa154daaf762?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" 
-                         alt="Educator Background" 
-                         class="w-full h-full object-cover opacity-80 scale-105 group-hover:scale-100 transition-transform duration-1000">
-                </div>
-
-                <div class="relative z-10 p-8 w-full">
-                    <div class="flex flex-col md:flex-row items-center justify-between">
-                        <div class="text-center md:text-left">
-                            <div class="inline-flex items-center space-x-2 bg-cheerful-purple px-3 py-1 rounded-xl mb-3 shadow-lg rotate-[1deg]">
-                                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-                                </svg>
-                                <span class="text-xs font-black uppercase tracking-widest text-white">
-                                    {{ Auth::user()->hasRole('special_educator') ? 'Educator Dashboard' : 'Therapist Dashboard' }}
-                                </span>
-                            </div>
-                            <h2 class="text-4xl font-black tracking-tighter text-white">Welcome back, {{ explode(' ', Auth::user()->name)[0] }}!</h2>
-                        </div>
-                        
-                        <div class="hidden lg:block text-right">
-                           <div class="bg-white/5 backdrop-blur-md px-4 py-2 rounded-xl border border-white/10">
-                                <p class="text-indigo-300 text-xs font-bold italic">Focus on progress</p>
-                           </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        @elseif(Auth::user()->hasRole('support_staff'))
-            <div class="rounded-[2.5rem] text-white shadow-2xl relative overflow-hidden group min-h-[160px] flex items-center">
-                <!-- Background Image with Overlay -->
-                <div class="absolute inset-0 z-0">
-                    <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" 
-                         alt="Support Staff Background" 
-                         class="w-full h-full object-cover opacity-80 scale-105 group-hover:scale-100 transition-transform duration-1000">
-                </div>
-
-                <div class="relative z-10 p-8 w-full">
-                    <div class="flex flex-col md:flex-row items-center justify-between">
-                        <div class="text-center md:text-left">
-                            <div class="inline-flex items-center space-x-2 bg-teal-500 px-3 py-1 rounded-xl mb-3 shadow-lg rotate-[1deg]">
-                                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                                </svg>
-                                <span class="text-xs font-black uppercase tracking-widest text-white">Support Staff Dashboard</span>
-                            </div>
-                            <h2 class="text-4xl font-black tracking-tighter text-white">Welcome back, {{ explode(' ', Auth::user()->name)[0] }}!</h2>
-                        </div>
-                        
-                        <div class="hidden lg:block text-right">
-                           <div class="bg-white/5 backdrop-blur-md px-4 py-2 rounded-xl border border-white/10">
-                                <p class="text-emerald-300 text-xs font-bold italic">Supporting excellence</p>
-                           </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        @elseif(Auth::user()->hasRole('care_giver'))
-            <div class="bg-amber-950 rounded-[2.5rem] text-white shadow-2xl relative overflow-hidden group min-h-[160px] flex items-center">
-                <!-- Background Image with Overlay -->
-                <div class="absolute inset-0 z-0">
-                    <img src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" 
-                         alt="Care Giver Background" 
-                         class="w-full h-full object-cover opacity-30 scale-105 group-hover:scale-100 transition-transform duration-1000">
-                    <div class="absolute inset-0 bg-gradient-to-r from-amber-950 via-amber-950/80 to-transparent"></div>
-                </div>
-
-                <div class="relative z-10 p-8 w-full">
-                    <div class="flex flex-col md:flex-row items-center justify-between">
-                        <div class="text-center md:text-left">
-                            <div class="inline-flex items-center space-x-2 bg-orange-500 px-3 py-1 rounded-xl mb-3 shadow-lg rotate-[1deg]">
-                                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
-                                </svg>
-                                <span class="text-xs font-black uppercase tracking-widest text-white">Care Giver Dashboard</span>
-                            </div>
-                            <h2 class="text-4xl font-black tracking-tighter text-white">Welcome back, {{ explode(' ', Auth::user()->name)[0] }}!</h2>
-                        </div>
-                        
-                        <div class="hidden lg:block text-right">
-                           <div class="bg-white/5 backdrop-blur-md px-4 py-2 rounded-xl border border-white/10">
-                                <p class="text-amber-300 text-xs font-bold italic">Care with compassion</p>
-                           </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        @elseif(Auth::user()->hasRole('student'))
-            <div class="bg-mustard-50 dark:bg-slate-900/50 rounded-[3rem] p-10 relative overflow-hidden group border-2 border-mustard-100 dark:border-slate-800">
-                <div class="relative z-10 flex flex-col md:flex-row md:items-end justify-between">
-                    <div>
-                        <p class="text-mustard-500 font-black uppercase tracking-[0.2em] text-sm mb-4">My Student Dashboard</p>
-                        <h2 class="text-6xl font-black text-slate-800 dark:text-white tracking-tighter">Welcome back, {{ explode(' ', Auth::user()->name)[0] }}!</h2>
-                        <p class="mt-4 text-slate-500 font-medium text-lg">Ready to continue your <span class="text-slate-900 dark:text-white font-bold underline decoration-mustard-400 decoration-4">learning journey</span> today?</p>
-                    </div>
-                    <div class="hidden lg:block">
-                        <div class="w-32 h-32 bg-mustard-400 rounded-full flex items-center justify-center animate-bounce shadow-2xl">
-                             <svg class="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-                             </svg>
-                        </div>
-                    </div>
-                </div>
-                <!-- Decorative Circle -->
-                <div class="absolute -right-16 -bottom-16 w-64 h-64 bg-mustard-400/10 rounded-full blur-3xl group-hover:bg-mustard-400/20 transition-colors duration-500"></div>
-            </div>
-        @endif
+<!-- SIDEBAR -->
+<aside class="sidebar">
+    <div class="sb-logo">
+        <div class="sb-logo-icon"><i class="ti ti-book-2"></i></div>
+        <span class="sb-logo-name">Edu<em>Echo</em></span>
     </div>
 
-    <!-- Statistics Grid -->
-    @if($stats && count($stats) > 0)
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
-            @foreach($stats as $key => $value)
-                <div class="bg-white dark:bg-slate-800 rounded-[2.5rem] p-10 shadow-[0_20px_50px_rgba(0,0,0,0.05)] hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 border border-slate-50 dark:border-slate-700 group">
-                    <div class="flex flex-col items-center text-center">
-                        <div class="w-16 h-16 rounded-2xl bg-slate-50 dark:bg-slate-700 flex items-center justify-center mb-6 group-hover:bg-mustard-400 group-hover:text-white transition-all duration-300 rotate-3 group-hover:rotate-0 shadow-lg shadow-slate-100">
-                            @switch($key)
-                                @case('total_students')
-                                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
-                                    </svg>
-                                @break
-                                @case('total_courses')
-                                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-                                    </svg>
-                                @break
-                                @case('total_ieps')
-                                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                                    </svg>
-                                @break
-                                @case('total_assessments')
-                                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                    </svg>
-                                @break
-                                @case('therapy_sessions')
-                                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
-                                    </svg>
-                                @break
-                                @default
-                                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m0 0a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                                    </svg>
-                            @endswitch
-                        </div>
-                        <div>
-                            <p class="text-slate-400 dark:text-slate-500 text-xs font-black uppercase tracking-widest mb-2">{{ str_replace('_', ' ', $key) }}</p>
-                            <div class="text-5xl font-black text-slate-800 dark:text-white tracking-tighter">{{ $value }}</div>
-                        </div>
-                    </div>
-                </div>
-            @endforeach
-        </div>
-    @else
-        <div class="bg-white dark:bg-slate-800 rounded-[2.5rem] p-12 text-center shadow-lg border border-slate-50 dark:border-slate-700 mb-16">
-            <p class="text-slate-400 font-bold">No active statistics to display yet</p>
-        </div>
-    @endif
+    <div class="sb-nav">
+        <div class="sb-group">Main</div>
+        <button class="sb-item active" onclick="showPanel('overview',this)">
+            <i class="ti ti-layout-dashboard"></i> Dashboard
+        </button>
+        <button class="sb-item" onclick="showPanel('students',this)">
+            <i class="ti ti-users"></i> Students
+        </button>
+        <button class="sb-item" onclick="showPanel('courses',this)">
+            <i class="ti ti-books"></i> Courses
+        </button>
+        <button class="sb-item" onclick="showPanel('ieps',this)">
+            <i class="ti ti-clipboard-list"></i> IEPs
+            <span class="sb-badge">3</span>
+        </button>
 
-    @if(Auth::user()->hasRole('student'))
-        <!-- Student Therapy & Booking Section -->
-        <div class="mt-12 bg-white dark:bg-slate-800 rounded-[2.5rem] p-10 shadow-xl border border-slate-50 dark:border-slate-700">
-            <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 space-y-4 md:space-y-0">
-                <div class="flex items-center space-x-4">
-                    <div class="w-12 h-12 rounded-2xl bg-rose-100 flex items-center justify-center text-rose-500">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
-                        </svg>
-                    </div>
-                    <div>
-                        <h3 class="text-2xl font-black text-slate-800 dark:text-white">Therapy & Wellness</h3>
-                        <p class="text-sm text-slate-500">Manage your sessions and appointments</p>
-                    </div>
+        <div class="sb-group">Support</div>
+        <button class="sb-item" onclick="showPanel('therapy',this)">
+            <i class="ti ti-heart"></i> Therapy
+        </button>
+        <button class="sb-item" onclick="showPanel('reports',this)">
+            <i class="ti ti-chart-bar"></i> Reports
+        </button>
+        <button class="sb-item" onclick="showPanel('invites',this)">
+            <i class="ti ti-mail"></i> Invites
+        </button>
+
+        <div class="sb-group">System</div>
+        <button class="sb-item" onclick="showPanel('accessibility',this)">
+            <i class="ti ti-accessible"></i> Accessibility
+        </button>
+        <button class="sb-item" onclick="showPanel('settings',this)">
+            <i class="ti ti-settings"></i> Settings
+        </button>
+    </div>
+
+    <div class="sb-user" onclick="window.location.href='{{ route('profile.edit') }}'">
+        <div class="sb-user-av">{{ substr(Auth::user()->name, 0, 1) }}</div>
+        <div>
+            <span class="sb-user-name">{{ explode(' ', Auth::user()->name)[0] }}</span>
+            <span class="sb-user-role">{{ Auth::user()->getRoleNames()->first() ?? 'User' }}</span>
+        </div>
+    </div>
+</aside>
+
+<!-- MAIN CONTENT -->
+<div class="main">
+
+    <!-- TOPBAR -->
+    <div class="topbar">
+        <span class="tb-title" id="pageTitle">Dashboard</span>
+        <div class="tb-search">
+            <i class="ti ti-search"></i>
+            <input type="text" placeholder="Search students, courses, IEPs...">
+        </div>
+        <div class="tb-right">
+            <button class="tb-icon-btn" title="Notifications">
+                <i class="ti ti-bell"></i>
+                <div class="notif-dot"></div>
+            </button>
+            <button class="tb-icon-btn" title="Messages">
+                <i class="ti ti-message-circle"></i>
+            </button>
+            <div class="user-dropdown">
+                <div class="tb-user" onclick="toggleUserMenu()">
+                    <div class="tb-user-av">{{ substr(Auth::user()->name, 0, 1) }}</div>
+                    <span>{{ explode(' ', Auth::user()->name)[0] }}</span>
                 </div>
-                <a href="{{ route('therapy-sessions.create') }}" class="inline-flex items-center justify-center px-8 py-4 bg-rose-500 text-white font-black rounded-[1.5rem] shadow-lg shadow-rose-200 hover:scale-105 transition-all text-sm uppercase tracking-wider">
-                    Book New Session
-                </a>
+                <div class="user-menu" id="userMenu">
+                    <a href="{{ route('profile.edit') }}">
+                        <i class="ti ti-user"></i> Profile
+                    </a>
+                    <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="logout">
+                        <i class="ti ti-logout"></i> Logout
+                    </a>
+                </div>
+            </div>
+            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display:none;">
+                @csrf
+            </form>
+        </div>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="content">
+
+        <!-- OVERVIEW PANEL -->
+        <div class="panel show" id="panel-overview">
+            <div class="welcome">
+                <div class="wb-left">
+                    <div class="wb-eyebrow">Administrator Portal</div>
+                    <h1>Welcome back, {{ explode(' ', Auth::user()->name)[0] }}!</h1>
+                    <p>System operational and running smoothly.</p>
+                </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                @forelse($upcomingSessions as $session)
-                    <div class="p-6 rounded-[2rem] bg-slate-50 dark:bg-slate-900/50 border-2 border-transparent hover:border-rose-100 transition-all">
-                        <div class="flex items-center space-x-4 mb-4">
-                            <div class="w-10 h-10 rounded-xl bg-white dark:bg-slate-800 flex items-center justify-center shadow-sm">
-                                <span class="text-rose-500 font-bold">{{ \Carbon\Carbon::parse($session->session_date)->format('d') }}</span>
-                            </div>
-                            <div>
-                                <p class="text-xs text-slate-400 font-bold uppercase">{{ \Carbon\Carbon::parse($session->session_date)->format('M Y') }}</p>
-                                <p class="text-sm font-black text-slate-700 dark:text-white">{{ \Carbon\Carbon::parse($session->session_date)->format('h:i A') }}</p>
-                            </div>
-                        </div>
-                        <h4 class="font-bold text-slate-800 dark:text-white mb-2 line-clamp-1">{{ $session->notes ?? 'Therapy Session' }}</h4>
-                        <div class="flex items-center space-x-2 text-xs text-slate-500">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
-                            <span>{{ $session->therapist->name ?? 'Assigned Therapist' }}</span>
-                        </div>
+            <!-- STAT CARDS -->
+            <div class="stat-row">
+                <div class="sc" onclick="showPanel('students',null)">
+                    <div class="sc-ico" style="background:var(--teal-ll)"><i class="ti ti-users" style="color:var(--teal)"></i></div>
+                    <div class="sc-label">Total Students</div>
+                    <div class="sc-val" style="color:var(--teal)">{{ $stats['total_students'] ?? 0 }}</div>
+                </div>
+                <div class="sc" onclick="showPanel('courses',null)">
+                    <div class="sc-ico" style="background:var(--violet-l)"><i class="ti ti-books" style="color:var(--violet)"></i></div>
+                    <div class="sc-label">Total Courses</div>
+                    <div class="sc-val" style="color:var(--violet)">{{ $stats['total_courses'] ?? 0 }}</div>
+                </div>
+                <div class="sc" onclick="showPanel('ieps',null)">
+                    <div class="sc-ico" style="background:var(--teal-ll)"><i class="ti ti-clipboard-list" style="color:var(--teal)"></i></div>
+                    <div class="sc-label">Total IEPs</div>
+                    <div class="sc-val" style="color:var(--teal)">{{ $stats['total_ieps'] ?? 0 }}</div>
+                </div>
+                <div class="sc">
+                    <div class="sc-ico" style="background:var(--al)"><i class="ti ti-writing" style="color:var(--ad)"></i></div>
+                    <div class="sc-label">Assessments</div>
+                    <div class="sc-val" style="color:var(--ad)">{{ $stats['total_assessments'] ?? 0 }}</div>
+                </div>
+            </div>
+
+            <!-- QUICK ACTIONS -->
+            <div class="eyebrow" style="margin-top:16px">Quick Actions</div>
+            <div class="qa-grid">
+                <div class="qa" onclick="showPanel('students',null)">
+                    <div class="qa-ico" style="background:var(--teal-ll)"><i class="ti ti-user-plus" style="color:var(--teal)"></i></div>
+                    <strong>Add Student</strong>
+                </div>
+                <div class="qa" onclick="showPanel('ieps',null)">
+                    <div class="qa-ico" style="background:var(--violet-l)"><i class="ti ti-clipboard-plus" style="color:var(--violet)"></i></div>
+                    <strong>Create IEP</strong>
+                </div>
+                <div class="qa" onclick="showPanel('therapy',null)">
+                    <div class="qa-ico" style="background:var(--rl)"><i class="ti ti-calendar-plus" style="color:var(--rd)"></i></div>
+                    <strong>Book Therapy</strong>
+                </div>
+                <div class="qa" onclick="showPanel('reports',null)">
+                    <div class="qa-ico" style="background:var(--al)"><i class="ti ti-file-analytics" style="color:var(--ad)"></i></div>
+                    <strong>Generate Report</strong>
+                </div>
+            </div>
+        </div><!-- /overview -->
+
+        <!-- STUDENTS PANEL -->
+        <div class="panel" id="panel-students">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+                <div>
+                    <div class="eyebrow">Management</div>
+                    <div style="font-family:var(--font-head);font-size:18px;font-weight:900;color:var(--navy)">All Students</div>
+                </div>
+                <button class="btn-teal"><i class="ti ti-user-plus"></i> Add Student</button>
+            </div>
+            <div class="card">
+                @forelse($allStudents ?? [] as $student)
+                    <div class="stu" style="padding:11px 8px">
+                        <div class="stu-av" style="background:var(--teal-ll);color:var(--teal-d);width:36px;height:36px;font-size:13px">{{ substr($student->user->name, 0, 1) }}</div>
+                        <div style="flex:1"><div class="stu-name">{{ $student->user->name }}</div><div class="stu-meta">{{ $student->user->email }}</div></div>
+                        <span class="pill" style="background:var(--teal-ll);color:var(--teal-d)">Active</span>
                     </div>
                 @empty
-                    <div class="col-span-3 text-center py-10">
-                        <div class="w-16 h-16 bg-slate-50 dark:bg-slate-900/50 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <svg class="w-8 h-8 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 00-2 2z"></path></svg>
-                        </div>
-                        <p class="text-slate-400 font-medium">No upcoming therapy sessions scheduled.</p>
-                    </div>
+                    <p style="text-align:center;color:var(--gray);padding:20px">No students found</p>
                 @endforelse
             </div>
         </div>
 
-        <!-- Student Active Tasks -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 mt-12 pb-12">
-            <!-- Take Class Section -->
-            <div class="bg-white dark:bg-slate-800 rounded-[2.5rem] p-10 shadow-xl border border-slate-50 dark:border-slate-700">
-                <div class="flex items-center justify-between mb-8">
-                    <div class="flex items-center space-x-4">
-                        <div class="w-12 h-12 rounded-2xl bg-mustard-100 flex items-center justify-center text-mustard-500">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-                            </svg>
-                        </div>
-                        <h3 class="text-2xl font-black text-slate-800 dark:text-white">Active Classes</h3>
-                    </div>
-                </div>
-
-                <div class="space-y-4">
-                    @forelse($enrolledCourses as $course)
-                        <div class="group flex items-center justify-between p-5 rounded-[2rem] bg-slate-50 dark:bg-slate-900/50 hover:bg-mustard-50 transition-colors border-2 border-transparent hover:border-mustard-200">
-                            <div class="flex items-center space-x-4">
-                                <div class="w-2 h-12 bg-mustard-400 rounded-full"></div>
-                                <div>
-                                    <h4 class="font-bold text-slate-900 dark:text-white">{{ $course->name }}</h4>
-                                    <p class="text-sm text-slate-500 italic">By {{ $course->creator->name }}</p>
-                                </div>
-                            </div>
-                            <a href="{{ route('courses.show', $course) }}" class="px-6 py-3 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-black rounded-2xl shadow-sm hover:bg-mustard-400 hover:text-white transition-all">
-                                Enter Class
-                            </a>
-                        </div>
-                    @empty
-                        <p class="text-slate-400 font-medium text-center py-6">You are not enrolled in any classes yet.</p>
-                    @endforelse
-                </div>
-            </div>
-
-            <!-- Take Assessment Section -->
-            <div class="bg-white dark:bg-slate-800 rounded-[2.5rem] p-10 shadow-xl border border-slate-50 dark:border-slate-700">
-                <div class="flex items-center justify-between mb-8">
-                    <div class="flex items-center space-x-4">
-                        <div class="w-12 h-12 rounded-2xl bg-cheerful-purple/10 flex items-center justify-center text-cheerful-purple">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                        </div>
-                        <h3 class="text-2xl font-black text-slate-800 dark:text-white">Pending Tests</h3>
-                    </div>
-                </div>
-
-                <div class="space-y-4">
-                    @forelse($pendingAssessments as $assessment)
-                        <div class="group flex items-center justify-between p-5 rounded-[2rem] bg-slate-50 dark:bg-slate-900/50 hover:bg-purple-50 transition-colors border-2 border-transparent hover:border-purple-200">
-                            <div class="flex items-center space-x-4">
-                                <div class="w-2 h-12 bg-cheerful-purple rounded-full"></div>
-                                <div>
-                                    <h4 class="font-bold text-slate-900 dark:text-white">{{ $assessment->title }}</h4>
-                                    <p class="text-sm text-slate-500">{{ $assessment->course->name }}</p>
-                                </div>
-                            </div>
-                            <a href="{{ route('assessments.take', [$assessment, Auth::user()->student]) }}" class="px-6 py-3 bg-cheerful-purple text-white font-black rounded-2xl shadow-lg shadow-purple-100 hover:scale-105 transition-all">
-                                Start Test
-                            </a>
-                        </div>
-                    @empty
-                        <p class="text-slate-400 font-medium text-center py-6">No pending assessments at this time.</p>
-                    @endforelse
-                </div>
-            </div>
-        </div>
-
-        <!-- Student Disability Profile & Support Section -->
-        @isset($disabilityProfile)
-            <div class="mt-12 bg-gradient-to-br from-purple-50 dark:from-purple-900/20 to-pink-50 dark:to-pink-900/20 rounded-[2.5rem] p-10 shadow-xl border border-purple-100 dark:border-purple-700">
-                <div class="flex items-center space-x-4 mb-8">
-                    <div class="w-12 h-12 rounded-2xl bg-purple-500 flex items-center justify-center text-white">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5a4 4 0 100-8 4 4 0 000 8z"></path>
-                        </svg>
-                    </div>
-                    <div>
-                        <h3 class="text-2xl font-black text-slate-800 dark:text-white">Your Disability Support Profile</h3>
-                        <p class="text-sm text-slate-500">Personalized accommodations and resources</p>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- Disability Type & Severity -->
-                    <div class="bg-white dark:bg-slate-800 rounded-[2rem] p-8 shadow-lg border border-slate-50 dark:border-slate-700">
-                        <div class="flex items-center space-x-3 mb-6">
-                            <div class="w-10 h-10 rounded-xl bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
-                                <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                </svg>
-                            </div>
-                            <h4 class="text-lg font-black text-slate-800 dark:text-white">Disability Type</h4>
-                        </div>
-                        <div class="space-y-4">
-                            <div>
-                                <p class="text-xs text-slate-500 font-bold uppercase mb-2">Type</p>
-                                <span class="inline-block px-4 py-2 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 font-bold rounded-full text-sm capitalize">
-                                    {{ str_replace('_', ' ', $disabilityProfile->disability_type) }}
-                                </span>
-                            </div>
-                            <div>
-                                <p class="text-xs text-slate-500 font-bold uppercase mb-2">Severity Level</p>
-                                <span class="inline-block px-4 py-2 
-                                    @if($disabilityProfile->severity === 'mild') bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300
-                                    @elseif($disabilityProfile->severity === 'moderate') bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300
-                                    @else bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300
-                                    @endif
-                                    font-bold rounded-full text-sm capitalize">
-                                    {{ $disabilityProfile->severity }}
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Support Devices & Accommodations -->
-                    <div class="bg-white dark:bg-slate-800 rounded-[2rem] p-8 shadow-lg border border-slate-50 dark:border-slate-700">
-                        <div class="flex items-center space-x-3 mb-6">
-                            <div class="w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
-                                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path>
-                                </svg>
-                            </div>
-                            <h4 class="text-lg font-black text-slate-800 dark:text-white">Support Devices</h4>
-                        </div>
-                        <div>
-                            <p class="text-xs text-slate-500 font-bold uppercase mb-3">Assigned Devices</p>
-                            @if($disabilityProfile->support_devices)
-                                <div class="space-y-2">
-                                    @foreach(json_decode($disabilityProfile->support_devices, true) ?? [] as $device)
-                                        <div class="flex items-center space-x-2 p-3 bg-slate-50 dark:bg-slate-900/50 rounded-lg">
-                                            <svg class="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                                            </svg>
-                                            <span class="text-sm font-medium text-slate-700 dark:text-slate-300">{{ $device }}</span>
-                                        </div>
-                                    @endforeach
-                                </div>
-                            @else
-                                <p class="text-slate-400 text-sm">No specific devices registered</p>
-                            @endif
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Description & Medical Info -->
-                @if($disabilityProfile->description)
-                    <div class="mt-6 bg-white dark:bg-slate-800 rounded-[2rem] p-8 shadow-lg border border-slate-50 dark:border-slate-700">
-                        <h4 class="text-lg font-black text-slate-800 dark:text-white mb-4">Profile Details</h4>
-                        <p class="text-slate-600 dark:text-slate-300 leading-relaxed">{{ $disabilityProfile->description }}</p>
-                    </div>
-                @endif
-
-                <!-- Recommended Resources -->
-                @if($disabilityResources->count() > 0)
-                    <div class="mt-6 bg-white dark:bg-slate-800 rounded-[2rem] p-8 shadow-lg border border-slate-50 dark:border-slate-700">
-                        <h4 class="text-lg font-black text-slate-800 dark:text-white mb-6">Recommended Resources</h4>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            @foreach($disabilityResources as $resource)
-                                <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 hover:border-purple-300 transition-colors">
-                                    <h5 class="font-bold text-slate-800 dark:text-white mb-2">{{ $resource->name }}</h5>
-                                    <p class="text-xs text-slate-500 mb-4 line-clamp-2">{{ $resource->description }}</p>
-                                    <a href="{{ route('courses.show', $resource) }}" class="text-purple-600 dark:text-purple-400 font-bold text-sm hover:underline">
-                                        Access Resource →
-                                    </a>
-                                </div>
-                            @endforeach
-                        </div>
-                    </div>
-                @endif
-            </div>
-        @endisset
-
-    @if(Auth::user()->hasRole('support_staff'))
-        <!-- Support Staff Tools Section -->
-        <div class="mt-12 bg-gradient-to-br from-emerald-50 dark:from-emerald-900/20 to-teal-50 dark:to-teal-900/20 rounded-[2.5rem] p-10 shadow-xl border border-emerald-100 dark:border-emerald-700">
-            <div class="flex items-center space-x-4 mb-8">
-                <div class="w-12 h-12 rounded-2xl bg-teal-500 flex items-center justify-center text-white">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                    </svg>
-                </div>
+        <!-- IEP PANEL -->
+        <div class="panel" id="panel-ieps">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
                 <div>
-                    <h3 class="text-2xl font-black text-slate-800 dark:text-white">Support Staff Tools</h3>
-                    <p class="text-sm text-slate-500">Manage records and assist educators</p>
+                    <div class="eyebrow">Education Plans</div>
+                    <div style="font-family:var(--font-head);font-size:18px;font-weight:900;color:var(--navy)">IEP Management</div>
                 </div>
+                <button class="btn-teal"><i class="ti ti-clipboard-plus"></i> Create IEP</button>
             </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <!-- View Students Card -->
-                <a href="{{ route('students.index') }}" class="group bg-white dark:bg-slate-800 rounded-[1.5rem] p-6 shadow-lg hover:shadow-xl transition-all border border-slate-50 dark:border-slate-700 hover:border-teal-200 dark:hover:border-teal-600">
-                    <div class="flex flex-col items-center text-center">
-                        <div class="w-12 h-12 rounded-xl bg-teal-100 dark:bg-teal-900/20 flex items-center justify-center text-teal-600 mb-3 group-hover:scale-110 group-hover:bg-teal-500 group-hover:text-white transition-all">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
-                            </svg>
-                        </div>
-                        <h4 class="font-bold text-slate-800 dark:text-white mb-1">View Students</h4>
-                        <p class="text-xs text-slate-500">Manage all student records</p>
+            <div class="grid-3">
+                <div class="card">
+                    <span class="pill" style="background:var(--teal-ll);color:var(--teal-d)">Active</span>
+                    <div style="font-size:14px;font-weight:700;color:var(--navy);margin:10px 0 2px 0">Sample IEP</div>
+                    <div style="font-size:11px;color:var(--gray);margin-bottom:12px">Grade 4</div>
+                    <div class="prog">
+                        <div class="prog-top"><span>Goals met</span><span style="color:var(--teal)">6/8</span></div>
+                        <div class="prog-track"><div class="prog-bar" style="--w:75%;background:var(--teal)"></div></div>
                     </div>
-                </a>
-
-                <!-- Create IEP Card -->
-                <a href="{{ route('ieps.create') }}" class="group bg-white dark:bg-slate-800 rounded-[1.5rem] p-6 shadow-lg hover:shadow-xl transition-all border border-slate-50 dark:border-slate-700 hover:border-emerald-200 dark:hover:border-emerald-600">
-                    <div class="flex flex-col items-center text-center">
-                        <div class="w-12 h-12 rounded-xl bg-emerald-100 dark:bg-emerald-900/20 flex items-center justify-center text-emerald-600 mb-3 group-hover:scale-110 group-hover:bg-emerald-500 group-hover:text-white transition-all">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                            </svg>
-                        </div>
-                        <h4 class="font-bold text-slate-800 dark:text-white mb-1">Create IEP</h4>
-                        <p class="text-xs text-slate-500">New educational plan</p>
-                    </div>
-                </a>
-
-                <!-- Manage Accommodations Card -->
-                <a href="#" class="group bg-white dark:bg-slate-800 rounded-[1.5rem] p-6 shadow-lg hover:shadow-xl transition-all border border-slate-50 dark:border-slate-700 hover:border-blue-200 dark:hover:border-blue-600">
-                    <div class="flex flex-col items-center text-center">
-                        <div class="w-12 h-12 rounded-xl bg-blue-100 dark:bg-blue-900/20 flex items-center justify-center text-blue-600 mb-3 group-hover:scale-110 group-hover:bg-blue-500 group-hover:text-white transition-all">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                        </div>
-                        <h4 class="font-bold text-slate-800 dark:text-white mb-1">Accommodations</h4>
-                        <p class="text-xs text-slate-500">Manage support needs</p>
-                    </div>
-                </a>
-
-                <!-- Compliance Logs Card -->
-                <a href="#" class="group bg-white dark:bg-slate-800 rounded-[1.5rem] p-6 shadow-lg hover:shadow-xl transition-all border border-slate-50 dark:border-slate-700 hover:border-orange-200 dark:hover:border-orange-600">
-                    <div class="flex flex-col items-center text-center">
-                        <div class="w-12 h-12 rounded-xl bg-orange-100 dark:bg-orange-900/20 flex items-center justify-center text-orange-600 mb-3 group-hover:scale-110 group-hover:bg-orange-500 group-hover:text-white transition-all">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
-                            </svg>
-                        </div>
-                        <h4 class="font-bold text-slate-800 dark:text-white mb-1">Compliance</h4>
-                        <p class="text-xs text-slate-500">Log compliance events</p>
-                    </div>
-                </a>
+                </div>
             </div>
         </div>
 
-        <!-- Recent Activity Section -->
-        <div class="mt-12 bg-white dark:bg-slate-800 rounded-[2.5rem] p-10 shadow-xl border border-slate-50 dark:border-slate-700">
-            <h3 class="text-2xl font-black text-slate-800 dark:text-white mb-8">Recent Records Activity</h3>
-            <div class="space-y-4">
-                <div class="flex items-center justify-between p-5 rounded-[1.5rem] bg-slate-50 dark:bg-slate-900/50 border-l-4 border-emerald-500">
-                    <div class="flex items-center space-x-4">
-                        <div class="w-10 h-10 rounded-lg bg-emerald-100 dark:bg-emerald-900/20 flex items-center justify-center text-emerald-600">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                            </svg>
-                        </div>
-                        <div>
-                            <p class="font-bold text-slate-800 dark:text-white">New Student Records Created</p>
-                            <p class="text-xs text-slate-500">Last updated today</p>
-                        </div>
-                    </div>
-                    <span class="px-3 py-1 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 rounded-full text-xs font-bold">Active</span>
-                </div>
-
-                <div class="flex items-center justify-between p-5 rounded-[1.5rem] bg-slate-50 dark:bg-slate-900/50 border-l-4 border-teal-500">
-                    <div class="flex items-center space-x-4">
-                        <div class="w-10 h-10 rounded-lg bg-teal-100 dark:bg-teal-900/20 flex items-center justify-center text-teal-600">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                        </div>
-                        <div>
-                            <p class="font-bold text-slate-800 dark:text-white">Accommodations Updated</p>
-                            <p class="text-xs text-slate-500">Support modifications completed</p>
-                        </div>
-                    </div>
-                    <span class="px-3 py-1 bg-teal-100 dark:bg-teal-900/30 text-teal-700 dark:text-teal-300 rounded-full text-xs font-bold">Updated</span>
-                </div>
-
-                <div class="flex items-center justify-between p-5 rounded-[1.5rem] bg-slate-50 dark:bg-slate-900/50 border-l-4 border-blue-500">
-                    <div class="flex items-center space-x-4">
-                        <div class="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-900/20 flex items-center justify-center text-blue-600">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
-                            </svg>
-                        </div>
-                        <div>
-                            <p class="font-bold text-slate-800 dark:text-white">Compliance Logged</p>
-                            <p class="text-xs text-slate-500">Documentation requirements met</p>
-                        </div>
-                    </div>
-                    <span class="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full text-xs font-bold">Complete</span>
-                </div>
-            </div>
-        </div>
-    @endif
-
-    <!-- Educator Specialized Disabilities Section -->
-    @isset($studentsWithSpecializedDisabilities)
-        @if(Auth::user()->hasRole('special_educator') && $studentsWithSpecializedDisabilities->count() > 0)
-        <div class="mt-12 bg-gradient-to-br from-indigo-50 dark:from-indigo-900/20 to-blue-50 dark:to-blue-900/20 rounded-[2.5rem] p-10 shadow-xl border border-indigo-100 dark:border-indigo-700">
-            <div class="flex items-center space-x-4 mb-8">
-                <div class="w-12 h-12 rounded-2xl bg-indigo-500 flex items-center justify-center text-white">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
-                    </svg>
-                </div>
+        <!-- THERAPY PANEL -->
+        <div class="panel" id="panel-therapy">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
                 <div>
-                    <h3 class="text-2xl font-black text-slate-800 dark:text-white">Students with Your Specializations</h3>
-                    <p class="text-sm text-slate-500">Students matching your disability expertise</p>
+                    <div class="eyebrow" style="color:var(--rd)">Wellness</div>
+                    <div style="font-family:var(--font-head);font-size:18px;font-weight:900;color:var(--navy)">Therapy & Wellness</div>
                 </div>
+                <button class="btn-teal" style="background:var(--rose)"><i class="ti ti-calendar-plus"></i> Book New Session</button>
             </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                @foreach($studentsWithSpecializedDisabilities as $student)
-                    <div class="bg-white dark:bg-slate-800 rounded-[2rem] p-6 shadow-lg border border-slate-50 dark:border-slate-700 hover:shadow-xl transition-shadow">
-                        <div class="flex items-center space-x-3 mb-4">
-                            <div class="w-10 h-10 rounded-full bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center">
-                                <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                                </svg>
-                            </div>
-                            <div class="flex-1">
-                                <h4 class="font-bold text-slate-800 dark:text-white">{{ $student->user->name }}</h4>
-                                <p class="text-xs text-slate-500">Student ID: #{{ $student->id }}</p>
-                            </div>
-                        </div>
-
-                        <div class="space-y-3">
-                            <div class="p-3 rounded-lg bg-slate-50 dark:bg-slate-900/50">
-                                <p class="text-xs text-slate-500 font-bold uppercase mb-1">Disability Type</p>
-                                <span class="inline-block px-3 py-1 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 font-bold rounded-full text-xs capitalize">
-                                    {{ str_replace('_', ' ', $student->disabilityProfile->disability_type) }}
-                                </span>
-                            </div>
-
-                            <div class="flex items-center space-x-3">
-                                <div class="flex-1">
-                                    <p class="text-xs text-slate-500 font-bold uppercase">Severity</p>
-                                    <span class="inline-block px-2 py-1 
-                                        @if($student->disabilityProfile->severity === 'mild') bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300
-                                        @elseif($student->disabilityProfile->severity === 'moderate') bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300
-                                        @else bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300
-                                        @endif
-                                        font-bold rounded text-xs capitalize">
-                                        {{ $student->disabilityProfile->severity }}
-                                    </span>
-                                </div>
-                            </div>
-
-                            <a href="{{ route('students.show', $student) }}" class="block w-full text-center px-4 py-3 bg-indigo-500 hover:bg-indigo-600 text-white font-bold rounded-xl transition-colors">
-                                View Student Profile
-                            </a>
-                        </div>
-                    </div>
-                @endforeach
+            <div class="stat-row">
+                <div class="sc"><div class="sc-ico" style="background:var(--teal-ll)"><i class="ti ti-calendar-check" style="color:var(--teal)"></i></div><div class="sc-label">Today</div><div class="sc-val" style="color:var(--teal)">4</div></div>
+                <div class="sc"><div class="sc-ico" style="background:var(--violet-l)"><i class="ti ti-calendar-week" style="color:var(--violet)"></i></div><div class="sc-label">This Week</div><div class="sc-val" style="color:var(--violet)">12</div></div>
+                <div class="sc"><div class="sc-ico" style="background:var(--al)"><i class="ti ti-clock" style="color:var(--ad)"></i></div><div class="sc-label">Pending</div><div class="sc-val" style="color:var(--ad)">3</div></div>
+                <div class="sc"><div class="sc-ico" style="background:var(--gl)"><i class="ti ti-check" style="color:var(--gd)"></i></div><div class="sc-label">Completed</div><div class="sc-val" style="color:var(--gd)">47</div></div>
             </div>
         </div>
-        @endif
-    @endisset
-    @if(Auth::user()->hasRole('care_giver'))
-        <div class="mt-12 bg-white dark:bg-slate-800 rounded-[2.5rem] p-10 shadow-xl border border-slate-50 dark:border-slate-700">
-            <div class="flex items-center space-x-4 mb-8">
-                <div class="w-12 h-12 rounded-2xl bg-orange-100 flex items-center justify-center text-orange-500">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"></path>
-                    </svg>
-                </div>
-                <div>
-                    <h3 class="text-2xl font-black text-slate-800 dark:text-white">Care Giver Tools</h3>
-                    <p class="text-sm text-slate-500">Monitor and support student progress</p>
-                </div>
-            </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <a href="{{ route('progress-reports.index') }}" class="group bg-gradient-to-br from-orange-50 to-amber-50 dark:from-orange-900/20 dark:to-amber-900/20 rounded-[2rem] p-6 shadow-lg hover:shadow-xl transition-all border border-orange-100 dark:border-orange-700">
-                    <div class="flex items-center space-x-4 mb-4">
-                        <div class="w-12 h-12 rounded-xl bg-orange-500 flex items-center justify-center text-white">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                            </svg>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-slate-800 dark:text-white">Progress Updates</h4>
-                            <p class="text-xs text-slate-500">View latest achievements</p>
-                        </div>
-                    </div>
-                </a>
-
-                <a href="{{ route('therapy-sessions.index') }}" class="group bg-gradient-to-br from-amber-50 to-yellow-50 dark:from-amber-900/20 dark:to-yellow-900/20 rounded-[2rem] p-6 shadow-lg hover:shadow-xl transition-all border border-amber-100 dark:border-amber-700">
-                    <div class="flex items-center space-x-4 mb-4">
-                        <div class="w-12 h-12 rounded-xl bg-amber-500 flex items-center justify-center text-white">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path>
-                            </svg>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-slate-800 dark:text-white">Appointments</h4>
-                            <p class="text-xs text-slate-500">Schedule & manage sessions</p>
-                        </div>
-                    </div>
-                </a>
-
-                <a href="{{ route('progress-reports.index') }}" class="group bg-gradient-to-br from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 rounded-[2rem] p-6 shadow-lg hover:shadow-xl transition-all border border-yellow-100 dark:border-yellow-700">
-                    <div class="flex items-center space-x-4 mb-4">
-                        <div class="w-12 h-12 rounded-xl bg-yellow-500 flex items-center justify-center text-white">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m0 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                            </svg>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-slate-800 dark:text-white">Reports</h4>
-                            <p class="text-xs text-slate-500">View performance reports</p>
-                        </div>
-                    </div>
-                </a>
+        <!-- OTHER PANELS -->
+        <div class="panel" id="panel-courses">
+            <div style="text-align:center;padding:52px 20px">
+                <i class="ti ti-books" style="font-size:48px;color:var(--teal);display:block;margin-bottom:14px"></i>
+                <h2 style="font-family:var(--font-head);font-size:17px;font-weight:800;color:var(--navy);margin-bottom:6px">Course Catalogue</h2>
+                <p style="font-size:12px;color:var(--gray)">12 active courses available</p>
             </div>
         </div>
-    @endif
-
-    <!-- Quick Actions -->
-    @if(!Auth::user()->hasRole('student') && !Auth::user()->hasRole('support_staff') && !Auth::user()->hasRole('care_giver'))
-    <div>
-        <div class="flex items-center space-x-4 mb-10">
-            <div class="h-10 w-3 bg-mustard-400 rounded-full"></div>
-            <h3 class="text-3xl font-black text-slate-800 dark:text-white tracking-tight">Quick Actions</h3>
+        <div class="panel" id="panel-reports">
+            <div style="text-align:center;padding:52px 20px">
+                <i class="ti ti-chart-bar" style="font-size:48px;color:var(--amber);display:block;margin-bottom:14px"></i>
+                <h2 style="font-family:var(--font-head);font-size:17px;font-weight:800;color:var(--navy);margin-bottom:6px">Reports & Compliance</h2>
+                <p style="font-size:12px;color:var(--gray)">All regulatory reports in one place</p>
+            </div>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            @can('create', App\Models\Student::class)
-                <a href="{{ route('students.create') }}" class="group relative bg-white dark:bg-slate-800 rounded-[2rem] p-8 shadow-lg hover:shadow-2xl transition-all border border-slate-50 dark:border-slate-700 overflow-hidden">
-                    <div class="absolute inset-0 bg-mustard-400 opacity-0 group-hover:opacity-[0.03] transition-opacity"></div>
-                    <div class="relative flex items-center space-x-5">
-                        <div class="w-16 h-16 rounded-2xl bg-mustard-50 dark:bg-mustard-900/10 flex items-center justify-center text-mustard-500 group-hover:bg-mustard-400 group-hover:text-white group-hover:scale-110 group-hover:-rotate-6 transition-all shadow-sm">
-                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
-                            </svg>
-                        </div>
-                        <div>
-                            <h4 class="font-black text-slate-800 dark:text-white group-hover:text-mustard-500 transition-colors text-lg">Add Student</h4>
-                            <p class="text-sm text-slate-500 font-medium">Create new student profile</p>
-                        </div>
-                    </div>
-                </a>
-            @endcan
-
-            @can('create', App\Models\Course::class)
-                <a href="{{ route('courses.create') }}" class="group relative bg-white dark:bg-slate-800 rounded-[2rem] p-8 shadow-lg hover:shadow-2xl transition-all border border-slate-50 dark:border-slate-700 overflow-hidden">
-                    <div class="absolute inset-0 bg-accent-500 opacity-0 group-hover:opacity-[0.03] transition-opacity"></div>
-                    <div class="relative flex items-center space-x-5">
-                        <div class="w-16 h-16 rounded-2xl bg-accent-100/50 dark:bg-accent-900/10 flex items-center justify-center text-accent-500 group-hover:bg-accent-500 group-hover:text-white group-hover:scale-110 group-hover:-rotate-6 transition-all shadow-sm">
-                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-                            </svg>
-                        </div>
-                        <div>
-                            <h4 class="font-black text-slate-800 dark:text-white group-hover:text-accent-500 transition-colors text-lg">Create Course</h4>
-                            <p class="text-sm text-slate-500 font-medium">Add new course curriculum</p>
-                        </div>
-                    </div>
-                </a>
-            @endcan
-
-            @can('create', App\Models\IEP::class)
-                <a href="{{ route('ieps.create') }}" class="group relative bg-white dark:bg-slate-800 rounded-[2rem] p-8 shadow-lg hover:shadow-2xl transition-all border border-slate-50 dark:border-slate-700 overflow-hidden">
-                    <div class="absolute inset-0 bg-cheerful-pink opacity-0 group-hover:opacity-[0.03] transition-opacity"></div>
-                    <div class="relative flex items-center space-x-5">
-                        <div class="w-16 h-16 rounded-2xl bg-cheerful-pink/10 flex items-center justify-center text-cheerful-pink group-hover:bg-cheerful-pink group-hover:text-white group-hover:scale-110 group-hover:-rotate-6 transition-all shadow-sm">
-                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                            </svg>
-                        </div>
-                        <div>
-                            <h4 class="font-black text-slate-800 dark:text-white group-hover:text-cheerful-pink transition-colors text-lg">Create IEP</h4>
-                            <p class="text-sm text-slate-500 font-medium">Draft new IEP document</p>
-                        </div>
-                    </div>
-                </a>
-            @endcan
-
-            @can('create', App\Models\Assessment::class)
-                <a href="{{ route('assessments.create') }}" class="group relative bg-white dark:bg-slate-800 rounded-[2rem] p-8 shadow-lg hover:shadow-2xl transition-all border border-slate-50 dark:border-slate-700 overflow-hidden">
-                    <div class="absolute inset-0 bg-cheerful-purple opacity-0 group-hover:opacity-[0.03] transition-opacity"></div>
-                    <div class="relative flex items-center space-x-5">
-                        <div class="w-16 h-16 rounded-2xl bg-cheerful-purple/10 flex items-center justify-center text-cheerful-purple group-hover:bg-cheerful-purple group-hover:text-white group-hover:scale-110 group-hover:-rotate-6 transition-all shadow-sm">
-                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
-                            </svg>
-                        </div>
-                        <div>
-                            <h4 class="font-black text-slate-800 dark:text-white group-hover:text-cheerful-purple transition-colors text-lg">Create Assessment</h4>
-                            <p class="text-sm text-slate-500 font-medium">Conduct evaluation test</p>
-                        </div>
-                    </div>
-                </a>
-            @endcan
-
-            @can('create', App\Models\TherapySession::class)
-                <a href="{{ route('therapy-sessions.create') }}" class="group relative bg-white dark:bg-slate-800 rounded-[2rem] p-8 shadow-lg hover:shadow-2xl transition-all border border-slate-50 dark:border-slate-700 overflow-hidden">
-                    <div class="absolute inset-0 bg-rose-500 opacity-0 group-hover:opacity-[0.03] transition-opacity"></div>
-                    <div class="relative flex items-center space-x-5">
-                        <div class="w-16 h-16 rounded-2xl bg-rose-100/50 dark:bg-rose-900/10 flex items-center justify-center text-rose-500 group-hover:bg-rose-500 group-hover:text-white group-hover:scale-110 group-hover:-rotate-6 transition-all shadow-sm">
-                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
-                            </svg>
-                        </div>
-                        <div>
-                            <h4 class="font-black text-slate-800 dark:text-white group-hover:text-rose-500 transition-colors text-lg">Schedule Therapy</h4>
-                            <p class="text-sm text-slate-500 font-medium">Book therapy session</p>
-                        </div>
-                    </div>
-                </a>
-            @endcan
-
-            @can('viewAny', App\Models\ProgressReport::class)
-                <a href="{{ route('progress-reports.index') }}" class="group relative bg-white dark:bg-slate-800 rounded-[2rem] p-8 shadow-lg hover:shadow-2xl transition-all border border-slate-50 dark:border-slate-700 overflow-hidden">
-                    <div class="absolute inset-0 bg-violet-600 opacity-0 group-hover:opacity-[0.03] transition-opacity"></div>
-                    <div class="relative flex items-center space-x-5">
-                        <div class="w-16 h-16 rounded-2xl bg-violet-100 dark:bg-violet-900/30 flex items-center justify-center text-violet-600 group-hover:bg-violet-600 group-hover:text-white group-hover:scale-110 group-hover:-rotate-6 transition-all shadow-sm">
-                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                            </svg>
-                        </div>
-                        <div>
-                            <h4 class="font-black text-slate-800 dark:text-white group-hover:text-violet-600 transition-colors text-lg">View Reports</h4>
-                            <p class="text-sm text-slate-500 font-medium">Check progress reports</p>
-                        </div>
-                    </div>
-                </a>
-            @endcan
+        <div class="panel" id="panel-invites">
+            <div style="text-align:center;padding:52px 20px">
+                <i class="ti ti-mail" style="font-size:48px;color:var(--violet);display:block;margin-bottom:14px"></i>
+                <h2 style="font-family:var(--font-head);font-size:17px;font-weight:800;color:var(--navy);margin-bottom:6px">Invites & Onboarding</h2>
+                <p style="font-size:12px;color:var(--gray)">Send invites to team members</p>
+            </div>
         </div>
-    </div>
-    @endif
-</x-app-layout>
+        <div class="panel" id="panel-accessibility">
+            <div style="text-align:center;padding:52px 20px">
+                <i class="ti ti-accessible" style="font-size:48px;color:var(--teal);display:block;margin-bottom:14px"></i>
+                <h2 style="font-family:var(--font-head);font-size:17px;font-weight:800;color:var(--navy);margin-bottom:6px">Accessibility Settings</h2>
+                <p style="font-size:12px;color:var(--gray)">Configure accessibility features</p>
+            </div>
+        </div>
+        <div class="panel" id="panel-settings">
+            <div style="text-align:center;padding:52px 20px">
+                <i class="ti ti-settings" style="font-size:48px;color:var(--gray);display:block;margin-bottom:14px"></i>
+                <h2 style="font-family:var(--font-head);font-size:17px;font-weight:800;color:var(--navy);margin-bottom:6px">Platform Settings</h2>
+                <p style="font-size:12px;color:var(--gray)">Manage your profile and preferences</p>
+            </div>
+        </div>
+
+    </div><!-- /content -->
+</div><!-- /main -->
+</div><!-- /app -->
+
+<script>
+const panels = ['overview','students','courses','ieps','therapy','reports','invites','accessibility','settings'];
+const titles = {overview:'Dashboard',students:'Students',courses:'Courses',ieps:'IEP Plans',therapy:'Therapy & Wellness',reports:'Reports',invites:'Invites',accessibility:'Accessibility',settings:'Settings'};
+
+function showPanel(id, clickedEl) {
+    panels.forEach(p => {
+        const el = document.getElementById('panel-' + p);
+        if (el) el.className = 'panel' + (p === id ? ' show' : '');
+    });
+    document.querySelectorAll('.sb-item').forEach(i => i.classList.remove('active'));
+    if (clickedEl) clickedEl.classList.add('active');
+    const t = document.getElementById('pageTitle');
+    if (t) t.textContent = titles[id] || id;
+}
+
+function toggleLogout() {
+    if (confirm('Are you sure you want to logout?')) {
+        window.location.href = '{{ route('logout') }}';
+    }
+}
+
+function toggleUserMenu() {
+    const menu = document.getElementById('userMenu');
+    if (menu) {
+        menu.classList.toggle('show');
+    }
+}
+
+// Close dropdown when clicking outside
+document.addEventListener('click', function(event) {
+    const userDropdown = document.querySelector('.user-dropdown');
+    const userMenu = document.getElementById('userMenu');
+    if (userDropdown && !userDropdown.contains(event.target)) {
+        if (userMenu) userMenu.classList.remove('show');
+    }
+});
+</script>
+
+</body>
+</html>

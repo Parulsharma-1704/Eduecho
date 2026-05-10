@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('token')->unique(); // Secure token for invitation link
             $table->foreignId('invited_by')->constrained('users')->cascadeOnDelete(); // Admin who created invitation
             $table->timestamp('used_at')->nullable(); // When the invitation was used
-            $table->timestamp('expires_at'); // When invitation expires
+            $table->timestamp('expires_at')->nullable(); // When invitation expires
             $table->timestamps();
         });
     }

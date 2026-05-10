@@ -29,6 +29,34 @@ class DashboardController extends Controller
                 'total_ieps' => IEP::count(),
                 'total_assessments' => Assessment::count(),
             ];
+
+            // Get recent students and all students for admin dashboard
+            $recentStudents = Student::latest('created_at')
+                ->select('id', 'user_id')
+                ->with('user:id,name,email')
+                ->take(5)
+                ->get();
+
+            $allStudents = Student::select('id', 'user_id')
+                ->with('user:id,name,email')
+                ->take(20)
+                ->get();
+
+            // Get upcoming therapy sessions
+            $upcomingSessions = TherapySession::where('session_date', '>=', now())
+                ->select('id', 'therapist_id', 'session_date', 'status', 'notes')
+                ->with('therapist:id,name')
+                ->orderBy('session_date', 'asc')
+                ->take(5)
+                ->get();
+
+            return view('dashboard', [
+                'user' => $user,
+                'stats' => $stats,
+                'recentStudents' => $recentStudents,
+                'allStudents' => $allStudents,
+                'upcomingSessions' => $upcomingSessions,
+            ]);
         } elseif ($user->hasRole('student')) {
             $student = $user->student;
             $stats = [];
@@ -107,10 +135,24 @@ class DashboardController extends Controller
                 ->first();
             
             $stats = [
-                'students_assigned' => DB::table('students')->where('assigned_educator_id', $user->id)->count(),
-                'courses_created' => DB::table('courses')->where('created_by_id', $user->id)->count(),
-                'ieps_created' => DB::table('i_e_p_s')->where('created_by_id', $user->id)->count(),
+                'total_students' => DB::table('students')->where('assigned_educator_id', $user->id)->count(),
+                'total_courses' => DB::table('courses')->where('created_by_id', $user->id)->count(),
+                'total_ieps' => DB::table('i_e_p_s')->where('created_by_id', $user->id)->count(),
+                'total_assessments' => 0,
             ];
+
+            // Get students assigned to this educator
+            $recentStudents = Student::where('assigned_educator_id', $user->id)
+                ->select('id', 'user_id')
+                ->with('user:id,name,email')
+                ->take(5)
+                ->get();
+
+            $allStudents = Student::where('assigned_educator_id', $user->id)
+                ->select('id', 'user_id')
+                ->with('user:id,name,email')
+                ->take(20)
+                ->get();
 
             // Get students with disabilities matching educator's specializations
             $studentsWithSpecializedDisabilities = collect();
@@ -128,34 +170,54 @@ class DashboardController extends Controller
                     ->get();
             }
 
-            return view('dashboard', [
-                'user' => $user,
-                'stats' => $stats,
-                'educator' => $educator,
-                'studentsWithSpecializedDisabilities' => $studentsWithSpecializedDisabilities,
-            ]);
-        } elseif ($user->hasRole('therapist')) {
-            $stats = [
-                'sessions_completed' => DB::table('therapy_sessions')
-                    ->where('therapist_id', $user->id)
-                    ->where('status', 'COMPLETED')
-                    ->count(),
-                'sessions_pending' => DB::table('therapy_sessions')
-                    ->where('therapist_id', $user->id)
-                    ->where('status', 'SCHEDULED')
-                    ->count(),
-            ];
+            // Get upcoming therapy sessions for students
+            $upcomingSessions = TherapySession::whereIn('student_id', function($q) use ($user) {
+                $q->select('id')->from('students')->where('assigned_educator_id', $user->id);
+            })
+                ->where('session_date', '>=', now())
+                ->select('id', 'therapist_id', 'session_date', 'status', 'notes')
+                ->with('therapist:id,name')
+                ->orderBy('session_date', 'asc')
+                ->take(5)
+                ->get();
 
             return view('dashboard', [
                 'user' => $user,
                 'stats' => $stats,
+                'educator' => $educator,
+                'recentStudents' => $recentStudents,
+                'allStudents' => $allStudents,
+                'upcomingSessions' => $upcomingSessions,
+                'studentsWithSpecializedDisabilities' => $studentsWithSpecializedDisabilities,
+            ]);
+        } elseif ($user->hasRole('therapist')) {
+            $stats = [
+                'total_students' => DB::table('therapy_sessions')->where('therapist_id', $user->id)->distinct('student_id')->count('student_id'),
+                'total_courses' => 0,
+                'total_ieps' => 0,
+                'total_assessments' => 0,
+            ];
+
+            // Get upcoming sessions for this therapist
+            $upcomingSessions = TherapySession::where('therapist_id', $user->id)
+                ->where('session_date', '>=', now())
+                ->select('id', 'student_id', 'session_date', 'status', 'notes')
+                ->with('student:id,user_id', 'student.user:id,name')
+                ->orderBy('session_date', 'asc')
+                ->take(5)
+                ->get();
+
+            return view('dashboard', [
+                'user' => $user,
+                'stats' => $stats,
+                'upcomingSessions' => $upcomingSessions,
             ]);
         } elseif ($user->hasRole('support_staff')) {
             $stats = [
-                'students_supported' => DB::table('students')->count(),
-                'active_courses' => DB::table('courses')->where('is_active', true)->count(),
-                'records_managed' => DB::table('i_e_p_s')->count(),
-                'pending_tasks' => DB::table('assessments')->count(),
+                'total_students' => DB::table('students')->count(),
+                'total_courses' => DB::table('courses')->where('is_active', true)->count(),
+                'total_ieps' => DB::table('i_e_p_s')->count(),
+                'total_assessments' => DB::table('assessments')->count(),
             ];
 
             return view('dashboard', [
@@ -163,11 +225,11 @@ class DashboardController extends Controller
                 'stats' => $stats,
             ]);
         } elseif ($user->hasRole('care_giver')) {
-            $student = Student::first(); // Care givers view their assigned students
             $stats = [
-                'students_monitored' => 1, // This could be expanded to show assigned students
-                'active_courses' => $student ? DB::table('course_enrollments')->where('student_id', $student->id)->count() : 0,
-                'progress_updates' => $student ? DB::table('i_e_p_s')->where('student_id', $student->id)->count() : 0,
+                'total_students' => 1,
+                'total_courses' => 0,
+                'total_ieps' => 0,
+                'total_assessments' => 0,
             ];
 
             return view('dashboard', [

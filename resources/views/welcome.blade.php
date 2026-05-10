@@ -1,339 +1,401 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>EduEcosystem - Education for Specially-Abled Students</title>
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700&display=swap" rel="stylesheet" />
-        @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
-            @vite(['resources/css/app.css', 'resources/js/app.js'])
-        @endif
-        <script src="https://cdn.tailwindcss.com"></script>
-        <script>
-            tailwind.config = {
-                darkMode: 'class',
-                theme: {
-                    extend: {
-                        colors: {
-                            slate: {
-                                950: '#020617',
-                            },
-                            mustard: {
-                                50: '#fefce8',
-                                100: '#fef9c3',
-                                200: '#fef08a',
-                                300: '#fde047',
-                                400: '#facc15',
-                                500: '#eab308',
-                                600: '#ca8a04',
-                                700: '#a16207',
-                                800: '#854d0e',
-                                900: '#713f12',
-                                950: '#422006',
-                            },
-                            accent: {
-                                100: '#e0f2fe',
-                                500: '#0ea5e9',
-                            },
-                            cheerful: {
-                                pink: '#f472b6',
-                                purple: '#8b5cf6',
-                                teal: '#2dd4bf',
-                                orange: '#fb923c'
-                            }
-                        }
-                    }
-                }
-            }
-        </script>
-        <style>
-            * { margin: 0; padding: 0; box-sizing: border-box; }
-            html { scroll-behavior: smooth; }
-            body { font-family: 'Figtree', sans-serif; line-height: 1.6; }
-            .cheerful-blob {
-                animation: float 20s infinite alternate;
-            }
-            @keyframes float {
-                0% { transform: translateY(0px) translateX(0px) rotate(0deg); }
-                100% { transform: translateY(-50px) translateX(50px) rotate(10deg); }
-            }
-        </style>
-    </head>
-    <body class="antialiased bg-white dark:bg-slate-900 border-t-8 border-sky-400">
-        <!-- Decoration blobs for that cheerful look -->
-        <div class="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none -z-10 bg-[#fafafa]">
-            <div class="absolute top-[-5%] left-[-5%] w-[30%] h-[30%] bg-mustard-200/20 rounded-full blur-[80px] cheerful-blob"></div>
-            <div class="absolute bottom-[20%] right-[-10%] w-[25%] h-[25%] bg-accent-100/30 rounded-full blur-[80px] cheerful-blob" style="animation-delay: -5s;"></div>
-            <div class="absolute top-[40%] right-[10%] w-[15%] h-[15%] bg-cheerful-pink/5 rounded-full blur-[60px] cheerful-blob"></div>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>EduEcho - Inclusive Learning Platform</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
+        @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @endif
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3, h4, h5, h6 { font-family: 'Poppins', sans-serif; font-weight: 800; }
+        .gradient-lavender {
+            background: linear-gradient(135deg, #F3EEFF 0%, #E5D9FF 100%);
+        }
+        .gradient-indigo {
+            background: linear-gradient(135deg, #312E81 0%, #2C2669 100%);
+        }
+        .glassmorphism {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+        .float-animation {
+            animation: float 6s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+    </style>
+</head>
+<body class="bg-slate-50">
+    <!-- Warm background blobs -->
+    <div class="fixed inset-0 -z-10 overflow-hidden">
+        <div class="absolute top-0 left-0 w-96 h-96 bg-lavender-50/50 rounded-full blur-3xl"></div>
+        <div class="absolute top-1/3 right-0 w-80 h-80 bg-indigo-50/30 rounded-full blur-3xl"></div>
+        <div class="absolute bottom-0 left-1/3 w-96 h-96 bg-teal-300/10 rounded-full blur-3xl"></div>
+    </div>
+
+    <!-- Sticky Navigation -->
+    <nav class="fixed w-full top-0 z-50 bg-white/60 backdrop-blur-2xl border-b border-lavender-100">
+        <div class="max-w-7xl mx-auto px-6 py-5 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-2xl bg-gradient-indigo flex items-center justify-center text-white font-black text-xl">
+                    E
+                </div>
+                <span class="text-2xl font-black text-indigo-700">EduEcho</span>
+            </div>
+            <div class="hidden md:flex items-center gap-8">
+                <a href="#why" class="text-slate-700 font-semibold hover:text-indigo-700 transition">Why Us</a>
+                <a href="#features" class="text-slate-700 font-semibold hover:text-indigo-700 transition">Features</a>
+                <a href="#everyone" class="text-slate-700 font-semibold hover:text-indigo-700 transition">For Everyone</a>
+                @auth
+                    <a href="{{ url('/dashboard') }}" class="px-6 py-3 rounded-2xl bg-indigo-700 text-white font-bold hover:shadow-warm transition">Dashboard</a>
+                @else
+                    <a href="{{ route('login') }}" class="text-slate-700 font-bold hover:text-indigo-700">Login</a>
+                    <a href="{{ route('register') }}" class="px-6 py-3 rounded-2xl bg-teal-500 text-white font-bold hover:shadow-warm transition">Get Started</a>
+                @endauth
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="pt-32 pb-16 px-6">
+        <div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
+            <div class="animate-fade-in">
+                <div class="inline-block px-4 py-2 rounded-2xl bg-teal-100 text-teal-700 font-bold text-sm mb-6">
+                    ♿ Accessibility First Platform
+                </div>
+                <h1 class="text-6xl lg:text-7xl font-black text-indigo-700 leading-tight mb-6">
+                    Learning Without <span class="text-teal-500">Barriers</span>
+                </h1>
+                <p class="text-xl text-slate-600 mb-10 leading-relaxed max-w-lg">
+                    Comprehensive support for students with special needs. Personalized learning, therapy tracking, and holistic development in one inclusive platform.
+                </p>
+                <div class="flex flex-wrap gap-4">
+                    @auth
+                        <a href="{{ url('/dashboard') }}" class="px-8 py-4 rounded-3xl bg-indigo-700 text-white font-bold hover:shadow-warm-lg transition-all transform hover:-translate-y-1">
+                            Go to Dashboard
+                        </a>
+                    @else
+                        <a href="{{ route('register') }}" class="px-8 py-4 rounded-3xl bg-teal-500 text-white font-bold hover:shadow-warm-lg transition-all transform hover:-translate-y-1">
+                            Start Free Trial
+                        </a>
+                        <a href="#features" class="px-8 py-4 rounded-3xl bg-white border-2 border-lavender-200 text-indigo-700 font-bold hover:bg-lavender-50 transition">
+                            Explore Platform
+                        </a>
+                    @endauth
+                </div>
+            </div>
+            <div class="relative">
+                <div class="relative z-10 rounded-3xl overflow-hidden shadow-warm-lg">
+                    <!-- Hero Image -->
+                    <img src="{{ asset('Untitled design.png') }}" alt="EduEcho Platform Illustration" class="w-full h-auto object-cover rounded-3xl">
+                </div>
+                <!-- Decorative elements -->
+                <div class="absolute -top-8 -right-8 w-32 h-32 bg-coral-300/30 rounded-full blur-2xl"></div>
+                <div class="absolute -bottom-8 -left-8 w-40 h-40 bg-teal-300/20 rounded-full blur-2xl"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why Us Section -->
+    <section id="why" class="py-24 px-6 relative">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16">
+                <span class="text-indigo-700 font-bold text-sm uppercase tracking-wider">Why Choose EduEcho</span>
+                <h2 class="text-5xl font-black text-slate-900 mt-4 mb-4">
+                    Built for <span class="text-teal-500">Inclusive Excellence</span>
+                </h2>
+                <p class="text-xl text-slate-600 max-w-2xl mx-auto">We combine compassion with cutting-edge technology to support every learner's unique journey.</p>
+            </div>
             
-            <!-- Floating shapes like in the image -->
-            <svg class="absolute top-20 left-10 text-mustard-400/20 w-12 h-12" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l2.4 7.2h7.6l-6.2 4.5 2.4 7.3-6.2-4.5-6.2 4.5 2.4-7.3-6.2-4.5h7.6z"/></svg>
-            <svg class="absolute bottom-40 left-1/4 text-accent-500/10 w-8 h-8 rotate-12" fill="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg>
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Card 1: Accessibility -->
+                <div class="group p-8 rounded-3xl glassmorphism hover:shadow-warm-lg transition-all transform hover:-translate-y-2">
+                    <div class="w-16 h-16 rounded-2xl bg-teal-100 flex items-center justify-center text-3xl mb-6 group-hover:bg-teal-500 group-hover:text-white transition">♿</div>
+                    <h3 class="text-2xl font-black text-slate-900 mb-3">Accessibility</h3>
+                    <p class="text-slate-600">WCAG 2.1 AA compliant. Designed for all abilities with multiple input methods and display options.</p>
+                </div>
+
+                <!-- Card 2: Personalized -->
+                <div class="group p-8 rounded-3xl glassmorphism hover:shadow-warm-lg transition-all transform hover:-translate-y-2">
+                    <div class="w-16 h-16 rounded-2xl bg-indigo-100 flex items-center justify-center text-3xl mb-6 group-hover:bg-indigo-700 group-hover:text-white transition">🧠</div>
+                    <h3 class="text-2xl font-black text-slate-900 mb-3">AI-Powered</h3>
+                    <p class="text-slate-600">Adaptive learning content that adjusts to each student's pace, learning style, and needs.</p>
+                </div>
+
+                <!-- Card 3: Therapy -->
+                <div class="group p-8 rounded-3xl glassmorphism hover:shadow-warm-lg transition-all transform hover:-translate-y-2">
+                    <div class="w-16 h-16 rounded-2xl bg-coral-300/30 flex items-center justify-center text-3xl mb-6 group-hover:bg-coral-500 group-hover:text-white transition">🩺</div>
+                    <h3 class="text-2xl font-black text-slate-900 mb-3">Therapy Tracking</h3>
+                    <p class="text-slate-600">Integrated therapy session management with progress tracking and multi-discipline collaboration.</p>
+                </div>
+
+                <!-- Card 4: Compliance -->
+                <div class="group p-8 rounded-3xl glassmorphism hover:shadow-warm-lg transition-all transform hover:-translate-y-2">
+                    <div class="w-16 h-16 rounded-2xl bg-mint-300/40 flex items-center justify-center text-3xl mb-6 group-hover:bg-mint-500 group-hover:text-white transition">📋</div>
+                    <h3 class="text-2xl font-black text-slate-900 mb-3">Compliance</h3>
+                    <p class="text-slate-600">IEP management, FERPA-compliant data handling, and comprehensive compliance tracking.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- For Everyone Section -->
+    <section id="everyone" class="py-24 px-6 relative">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-5xl font-black text-slate-900 mb-4">
+                    Built for <span class="text-indigo-700">Everyone</span>
+                </h2>
+                <p class="text-xl text-slate-600 max-w-2xl mx-auto">Different roles, different needs. One powerful platform.</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Students -->
+                <div class="p-10 rounded-3xl bg-gradient-lavender border-2 border-lavender-100 hover:shadow-warm-lg transition">
+                    <div class="text-5xl mb-6">👨‍🎓</div>
+                    <h3 class="text-3xl font-black text-indigo-700 mb-4">Students</h3>
+                    <ul class="space-y-3 text-slate-700">
+                        <li class="flex gap-3"><span class="text-teal-500 font-black">✓</span> Personalized learning paths</li>
+                        <li class="flex gap-3"><span class="text-teal-500 font-black">✓</span> Adaptive content</li>
+                        <li class="flex gap-3"><span class="text-teal-500 font-black">✓</span> Progress tracking</li>
+                        <li class="flex gap-3"><span class="text-teal-500 font-black">✓</span> Accessibility tools</li>
+                    </ul>
+                </div>
+
+                <!-- Parents -->
+                <div class="p-10 rounded-3xl bg-indigo-50 border-2 border-indigo-100 hover:shadow-warm-lg transition">
+                    <div class="text-5xl mb-6">👨‍👩‍👧</div>
+                    <h3 class="text-3xl font-black text-indigo-700 mb-4">Parents</h3>
+                    <ul class="space-y-3 text-slate-700">
+                        <li class="flex gap-3"><span class="text-coral-500 font-black">✓</span> Real-time progress updates</li>
+                        <li class="flex gap-3"><span class="text-coral-500 font-black">✓</span> Therapist communication</li>
+                        <li class="flex gap-3"><span class="text-coral-500 font-black">✓</span> Appointment scheduling</li>
+                        <li class="flex gap-3"><span class="text-coral-500 font-black">✓</span> Growth insights</li>
+                    </ul>
+                </div>
+
+                <!-- Educators -->
+                <div class="p-10 rounded-3xl bg-slate-100 border-2 border-slate-200 hover:shadow-warm-lg transition">
+                    <div class="text-5xl mb-6">👨‍🏫</div>
+                    <h3 class="text-3xl font-black text-indigo-700 mb-4">Educators</h3>
+                    <ul class="space-y-3 text-slate-700">
+                        <li class="flex gap-3"><span class="text-mint-500 font-black">✓</span> IEP management</li>
+                        <li class="flex gap-3"><span class="text-mint-500 font-black">✓</span> Student analytics</li>
+                        <li class="flex gap-3"><span class="text-mint-500 font-black">✓</span> Resource library</li>
+                        <li class="flex gap-3"><span class="text-mint-500 font-black">✓</span> Team collaboration</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Grid -->
+    <section id="features" class="py-24 px-6 bg-white/50">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-5xl font-black text-slate-900 mb-4">
+                    Powerful <span class="text-teal-500">Features</span>
+                </h2>
+                <p class="text-xl text-slate-600">Everything you need to support inclusive education.</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Feature cards -->
+                <div class="p-8 rounded-3xl bg-white border-2 border-lavender-100 hover:border-teal-300 hover:shadow-warm transition group">
+                    <div class="w-14 h-14 rounded-2xl bg-lavender-50 flex items-center justify-center text-2xl mb-6 group-hover:bg-teal-500 group-hover:text-white transition">📚</div>
+                    <h4 class="text-xl font-black text-slate-900 mb-3">Learning Hub</h4>
+                    <p class="text-slate-600">Structured courses with adaptive difficulty, multimedia content, and progress tracking.</p>
+                </div>
+
+                <div class="p-8 rounded-3xl bg-white border-2 border-indigo-100 hover:border-indigo-300 hover:shadow-warm transition group">
+                    <div class="w-14 h-14 rounded-2xl bg-indigo-50 flex items-center justify-center text-2xl mb-6 group-hover:bg-indigo-700 group-hover:text-white transition">🧠</div>
+                    <h4 class="text-xl font-black text-slate-900 mb-3">AI Assistant</h4>
+                    <p class="text-slate-600">Smart recommendations, adaptive difficulty, and personalized learning suggestions.</p>
+                </div>
+
+                <div class="p-8 rounded-3xl bg-white border-2 border-coral-200 hover:border-coral-400 hover:shadow-warm transition group">
+                    <div class="w-14 h-14 rounded-2xl bg-coral-100 flex items-center justify-center text-2xl mb-6 group-hover:bg-coral-500 group-hover:text-white transition">📊</div>
+                    <h4 class="text-xl font-black text-slate-900 mb-3">Analytics</h4>
+                    <p class="text-slate-600">Comprehensive progress reports, learning analytics, and growth insights.</p>
+                </div>
+
+                <div class="p-8 rounded-3xl bg-white border-2 border-mint-200 hover:border-mint-400 hover:shadow-warm transition group">
+                    <div class="w-14 h-14 rounded-2xl bg-mint-100 flex items-center justify-center text-2xl mb-6 group-hover:bg-mint-500 group-hover:text-white transition">🩺</div>
+                    <h4 class="text-xl font-black text-slate-900 mb-3">Therapy Tracker</h4>
+                    <p class="text-slate-600">Session scheduling, progress tracking, multi-discipline collaboration tools.</p>
+                </div>
+
+                <div class="p-8 rounded-3xl bg-white border-2 border-teal-200 hover:border-teal-400 hover:shadow-warm transition group">
+                    <div class="w-14 h-14 rounded-2xl bg-teal-100 flex items-center justify-center text-2xl mb-6 group-hover:bg-teal-500 group-hover:text-white transition">♿</div>
+                    <h4 class="text-xl font-black text-slate-900 mb-3">Accessibility</h4>
+                    <p class="text-slate-600">Text-to-speech, dyslexia fonts, dark mode, keyboard navigation, high contrast.</p>
+                </div>
+
+                <div class="p-8 rounded-3xl bg-white border-2 border-peach-200 hover:border-peach-400 hover:shadow-warm transition group">
+                    <div class="w-14 h-14 rounded-2xl bg-peach-100 flex items-center justify-center text-2xl mb-6 group-hover:bg-peach-500 group-hover:text-white transition">📋</div>
+                    <h4 class="text-xl font-black text-slate-900 mb-3">Compliance</h4>
+                    <p class="text-slate-600">IEP management, compliance tracking, audit logs, FERPA-compliant data.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-24 px-6 gradient-indigo relative overflow-hidden">
+        <!-- Decorative elements -->
+        <div class="absolute inset-0 opacity-10">
+            <div class="absolute top-10 right-10 w-40 h-40 bg-white rounded-full blur-3xl"></div>
+            <div class="absolute bottom-10 left-10 w-50 h-50 bg-white rounded-full blur-3xl"></div>
         </div>
 
-        <!-- Navigation -->
-        <nav class="fixed w-full bg-white/80 backdrop-blur-md border-b border-slate-100 dark:border-slate-800 z-50">
-            <div class="max-w-7xl mx-auto px-6">
-                <div class="flex justify-between items-center h-20">
-                    <div class="flex items-center space-x-3">
-                        <div class="w-11 h-11 rounded-2xl bg-mustard-400 flex items-center justify-center shadow-lg shadow-mustard-200 rotate-3 group-hover:rotate-0 transition-transform">
-                            <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path d="M12 14l9-5-9-5-9 5 9 5z"></path>
-                                <path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                            </svg>
-                        </div>
-                        <span class="text-2xl font-black text-slate-800 tracking-tight">Edu<span class="text-mustard-500">Ecosystem</span></span>
+        <div class="max-w-4xl mx-auto text-center relative z-10">
+            <h2 class="text-5xl font-black text-white mb-6">
+                Transform Inclusive Education Today
+            </h2>
+            <p class="text-xl text-indigo-100 mb-10 leading-relaxed">
+                Join educators, therapists, and families revolutionizing special education support. Start free today.
+            </p>
+            <div class="flex flex-wrap justify-center gap-6">
+                @auth
+                    <a href="{{ url('/dashboard') }}" class="px-10 py-5 rounded-3xl bg-white text-indigo-700 font-black text-lg hover:shadow-warm-lg transition-all transform hover:-translate-y-1">
+                        Go to Dashboard
+                    </a>
+                @else
+                    <a href="{{ route('register') }}" class="px-10 py-5 rounded-3xl bg-teal-500 text-white font-black text-lg hover:bg-teal-600 shadow-lg transition-all transform hover:-translate-y-1">
+                        Start Free Trial
+                    </a>
+                    <a href="{{ route('login') }}" class="px-10 py-5 rounded-3xl bg-white/20 text-white font-black text-lg border-2 border-white hover:bg-white/30 transition-all transform hover:-translate-y-1">
+                        Sign In
+                    </a>
+                @endauth
+            </div>
+        </div>
+    </section>
+
+    <!-- Accessibility Panel -->
+    <div id="accessibility-panel" class="fixed bottom-8 right-8 z-40">
+        <button id="accessibility-toggle" class="w-16 h-16 rounded-full bg-teal-500 text-white font-black text-2xl shadow-lg hover:shadow-warm-lg hover:-translate-y-1 transition-all flex items-center justify-center">
+            ♿
+        </button>
+        
+        <!-- Accessibility Options (hidden by default) -->
+        <div id="accessibility-options" class="hidden absolute bottom-20 right-0 w-64 rounded-3xl glassmorphism p-6 shadow-warm-lg">
+            <h3 class="font-black text-slate-900 mb-4">Accessibility Options</h3>
+            <div class="space-y-3">
+                <label class="flex items-center gap-3 cursor-pointer hover:bg-lavender-50 p-2 rounded-lg">
+                    <input type="checkbox" id="large-font" class="w-5 h-5 rounded text-teal-500">
+                    <span class="text-slate-700 font-semibold">🔤 Large Font</span>
+                </label>
+                <label class="flex items-center gap-3 cursor-pointer hover:bg-lavender-50 p-2 rounded-lg">
+                    <input type="checkbox" id="dyslexia-font" class="w-5 h-5 rounded text-teal-500">
+                    <span class="text-slate-700 font-semibold">📖 Dyslexia Font</span>
+                </label>
+                <label class="flex items-center gap-3 cursor-pointer hover:bg-lavender-50 p-2 rounded-lg">
+                    <input type="checkbox" id="dark-mode" class="w-5 h-5 rounded text-teal-500">
+                    <span class="text-slate-700 font-semibold">🌙 Dark Mode</span>
+                </label>
+                <label class="flex items-center gap-3 cursor-pointer hover:bg-lavender-50 p-2 rounded-lg">
+                    <input type="checkbox" id="text-speech" class="w-5 h-5 rounded text-teal-500">
+                    <span class="text-slate-700 font-semibold">🔊 Text-to-Speech</span>
+                </label>
+                <label class="flex items-center gap-3 cursor-pointer hover:bg-lavender-50 p-2 rounded-lg">
+                    <input type="checkbox" id="high-contrast" class="w-5 h-5 rounded text-teal-500">
+                    <span class="text-slate-700 font-semibold">⚪ High Contrast</span>
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-white/50 border-t border-lavender-100 py-12 px-6">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid md:grid-cols-4 gap-12 mb-12">
+                <div>
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="w-10 h-10 rounded-2xl bg-gradient-indigo flex items-center justify-center text-white font-black">E</div>
+                        <span class="text-xl font-black text-indigo-700">EduEcho</span>
                     </div>
-                    <div class="hidden md:flex items-center space-x-8">
-                        <a href="#features" class="text-slate-600 font-semibold hover:text-mustard-500 transition">Features</a>
-                        <a href="#everyone" class="text-slate-600 font-semibold hover:text-mustard-500 transition">For Everyone</a>
-                        @auth
-                            <a href="{{ url('/dashboard') }}" class="px-6 py-3 rounded-2xl bg-slate-900 text-white font-bold hover:shadow-xl transition">Dashboard</a>
-                        @else
-                            <a href="{{ route('login') }}" class="text-slate-700 font-bold hover:text-mustard-500 transition">Login</a>
-                            <a href="{{ route('register') }}" class="px-7 py-3 rounded-2xl bg-mustard-400 text-white font-bold hover:bg-mustard-500 shadow-lg shadow-mustard-100 transition">Register</a>
-                        @endauth
-                    </div>
+                    <p class="text-slate-600">Inclusive education for every learner.</p>
+                </div>
+                <div>
+                    <h4 class="font-black text-slate-900 mb-4">Product</h4>
+                    <ul class="space-y-2 text-slate-600">
+                        <li><a href="#features" class="hover:text-teal-500 transition">Features</a></li>
+                        <li><a href="#" class="hover:text-teal-500 transition">Pricing</a></li>
+                        <li><a href="#" class="hover:text-teal-500 transition">Security</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-black text-slate-900 mb-4">Company</h4>
+                    <ul class="space-y-2 text-slate-600">
+                        <li><a href="#" class="hover:text-teal-500 transition">About</a></li>
+                        <li><a href="#" class="hover:text-teal-500 transition">Blog</a></li>
+                        <li><a href="#" class="hover:text-teal-500 transition">Careers</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-black text-slate-900 mb-4">Legal</h4>
+                    <ul class="space-y-2 text-slate-600">
+                        <li><a href="#" class="hover:text-teal-500 transition">Privacy</a></li>
+                        <li><a href="#" class="hover:text-teal-500 transition">Terms</a></li>
+                        <li><a href="#" class="hover:text-teal-500 transition">Contact</a></li>
+                    </ul>
                 </div>
             </div>
-        </nav>
-
-        <!-- Hero Section -->
-        <section class="relative pt-40 pb-20 px-6 lg:px-8 overflow-hidden">
-            <div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
-                <div class="relative z-10 text-left">
-                    <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-mustard-100 text-mustard-700 font-bold text-sm mb-8 animate-bounce">
-                        <span>✨ Start Learning Today</span>
-                    </div>
-                    <h2 class="text-6xl lg:text-7xl font-black text-slate-900 leading-[1.1] mb-8">
-                        The Best Platform for <span class="text-mustard-500">Inclusive</span> Education
-                    </h2>
-                    <p class="text-xl text-slate-600 mb-10 leading-relaxed max-w-lg">
-                        Our mission is to empower specially-abled students with specialized tools, adaptive content, and holistic tracking.
-                    </p>
-                    <div class="flex flex-wrap gap-4">
-                        @auth
-                            <a href="{{ url('/dashboard') }}" class="px-10 py-5 rounded-3xl bg-slate-900 text-white font-black text-lg hover:shadow-2xl transition-all transform hover:-translate-y-1">
-                                Go to Dashboard
-                            </a>
-                        @else
-                            <a href="{{ route('register') }}" class="px-10 py-5 rounded-3xl bg-mustard-400 text-white font-black text-lg hover:bg-mustard-500 shadow-xl shadow-mustard-100 transition-all transform hover:-translate-y-1">
-                                Enroll Now
-                            </a>
-                            <a href="#features" class="px-10 py-5 rounded-3xl bg-white border-2 border-slate-100 text-slate-900 font-black text-lg hover:bg-slate-50 transition-all transform hover:-translate-y-1">
-                                Explore Features
-                            </a>
-                        @endauth
-                    </div>
-                </div>
-                
-                <div class="relative">
-                    <!-- Image container with background elements like the picture -->
-                    <div class="relative z-10 w-full aspect-square rounded-[3rem] overflow-hidden shadow-2xl rotate-2">
-                        <img src="{{ asset('hero.png') }}" alt="Inclusive Education" class="w-full h-full object-cover">
-                        <!-- LIGHTER BLACK OVERLAY -->
-                        <div class="absolute inset-0 bg-black/10 backdrop-blur-[0.5px]"></div>
-                        <!-- Gradient to make text on top (if added later) readable but keeping img visible -->
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
-                    </div>
-                    <!-- Decoration elements around the image -->
-                    <div class="absolute -top-10 -right-10 w-40 h-40 bg-accent-100 rounded-full -z-10 blur-2xl"></div>
-                    <div class="absolute -bottom-10 -left-10 w-40 h-40 bg-mustard-200 rounded-full -z-10 blur-2xl"></div>
-                    <!-- Cheerful icons -->
-                    <div class="absolute top-1/4 -right-8 p-4 bg-white rounded-2xl shadow-xl animate-pulse">
-                        <svg class="w-8 h-8 text-cheerful-teal" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>
-                    </div>
-                </div>
+            <div class="border-t border-lavender-100 pt-8">
+                <p class="text-center text-slate-600">© 2026 EduEcho. All rights reserved. Designed with compassion for inclusive education.</p>
             </div>
-        </section>
-                </div>
-            </div>
-        </section>
+        </div>
+    </footer>
 
-        <!-- Features Section -->
-        <section id="features" class="py-24 px-6 lg:px-8 bg-white">
-            <div class="max-w-7xl mx-auto">
-                <div class="text-center mb-16 relative">
-                    <span class="text-mustard-500 font-black uppercase tracking-[0.2em] text-sm mb-4 block">Our Expertise</span>
-                    <h3 class="text-5xl font-black text-slate-900 mb-4">
-                        Explore Our <span class="text-mustard-500">Categories</span>
-                    </h3>
-                    <p class="text-slate-500 max-w-xl mx-auto">Providing specialized support across all critical areas of student development.</p>
-                </div>
-                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-10">
-                    <!-- Feature 1 -->
-                    <div class="p-10 rounded-[2.5rem] bg-[#f8fafc] border-2 border-transparent hover:border-mustard-400 hover:bg-white transition-all duration-500 group shadow-sm hover:shadow-2xl">
-                        <div class="w-16 h-16 rounded-[1.5rem] bg-mustard-100 flex items-center justify-center mb-8 group-hover:bg-mustard-400 group-hover:rotate-12 transition-all duration-300">
-                            <svg class="w-8 h-8 text-mustard-600 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                            </svg>
-                        </div>
-                        <h4 class="text-2xl font-black text-slate-900 mb-4">IEP Tool</h4>
-                        <p class="text-slate-600 leading-relaxed">Personalized education plans with customizable goals and accommodations.</p>
-                    </div>
+    <script>
+        // Accessibility toggle
+        const toggle = document.getElementById('accessibility-toggle');
+        const options = document.getElementById('accessibility-options');
+        
+        toggle.addEventListener('click', () => {
+            options.classList.toggle('hidden');
+        });
 
-                    <!-- Feature 2 -->
-                    <div class="p-10 rounded-[2.5rem] bg-[#f8fafc] border-2 border-transparent hover:border-accent-500 hover:bg-white transition-all duration-500 group shadow-sm hover:shadow-2xl">
-                        <div class="w-16 h-16 rounded-[1.5rem] bg-accent-100 flex items-center justify-center mb-8 group-hover:bg-accent-500 group-hover:-rotate-12 transition-all duration-300">
-                            <svg class="w-8 h-8 text-accent-500 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                            </svg>
-                        </div>
-                        <h4 class="text-2xl font-black text-slate-900 mb-4">Accessibility</h4>
-                        <p class="text-slate-600 leading-relaxed">WCAG 2.1 compliant interface ensuring every student can learn effectively.</p>
-                    </div>
+        // Accessibility features
+        document.getElementById('large-font').addEventListener('change', function() {
+            if (this.checked) {
+                document.body.style.fontSize = '18px';
+            } else {
+                document.body.style.fontSize = '16px';
+            }
+        });
 
-                    <!-- Feature 3 -->
-                    <div class="p-10 rounded-[2.5rem] bg-[#f8fafc] border-2 border-transparent hover:border-cheerful-pink hover:bg-white transition-all duration-500 group shadow-sm hover:shadow-2xl">
-                        <div class="w-16 h-16 rounded-[1.5rem] bg-pink-100 flex items-center justify-center mb-8 group-hover:bg-cheerful-pink group-hover:rotate-12 transition-all duration-300">
-                            <svg class="w-8 h-8 text-cheerful-pink group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
-                            </svg>
-                        </div>
-                        <h4 class="text-2xl font-black text-slate-900 mb-4">Therapy</h4>
-                        <p class="text-slate-600 leading-relaxed">Tracking therapy sessions and progress for a holistic growth journey.</p>
-                    </div>
+        document.getElementById('dark-mode').addEventListener('change', function() {
+            document.documentElement.classList.toggle('dark', this.checked);
+        });
 
-                    <!-- Feature 4 -->
-                    <div class="p-10 rounded-[2.5rem] bg-[#f8fafc] border-2 border-transparent hover:border-cheerful-teal hover:bg-white transition-all duration-500 group shadow-sm hover:shadow-2xl">
-                        <div class="w-16 h-16 rounded-[1.5rem] bg-teal-100 flex items-center justify-center mb-8 group-hover:bg-cheerful-teal group-hover:-rotate-12 transition-all duration-300">
-                            <svg class="w-8 h-8 text-cheerful-teal group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                            </svg>
-                        </div>
-                        <h4 class="text-2xl font-black text-slate-900 mb-4">Compliance</h4>
-                        <p class="text-slate-600 leading-relaxed">Automated governance and reporting for all educational standards.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
+        document.getElementById('high-contrast').addEventListener('change', function() {
+            if (this.checked) {
+                document.body.style.filter = 'contrast(1.5)';
+            } else {
+                document.body.style.filter = 'contrast(1)';
+            }
+        });
 
-        <!-- User Types Section -->
-        <section id="everyone" class="py-24 px-6 lg:px-8 bg-[#fafafa]">
-            <div class="max-w-7xl mx-auto">
-                <div class="text-center mb-20">
-                    <h3 class="text-5xl font-black text-slate-900">
-                        Built For <span class="text-mustard-500">Everyone</span>
-                    </h3>
-                </div>
-                <div class="grid md:grid-cols-2 gap-12">
-                    <!-- Students -->
-                    <div class="relative p-10 rounded-[3rem] bg-white border-2 border-slate-100 transition-all cursor-default group overflow-hidden">
-                        <div class="absolute -top-10 -right-10 w-32 h-32 bg-mustard-400/10 rounded-full group-hover:scale-150 transition-transform duration-700"></div>
-                        <div class="flex items-center gap-6 mb-8">
-                            <div class="w-16 h-16 rounded-2xl bg-mustard-400 flex items-center justify-center text-white shadow-lg">
-                                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path d="M12 14l9-5-9-5-9 5 9 5z"></path>
-                                    <path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"></path>
-                                </svg>
-                            </div>
-                            <h4 class="text-3xl font-black text-slate-900">Students</h4>
-                        </div>
-                        <ul class="space-y-4 text-lg font-medium text-slate-600">
-                            <li class="flex items-center gap-3"><span class="w-6 h-6 rounded-full bg-mustard-100 text-mustard-600 flex items-center justify-center text-xs">✓</span> Personalized learning paths</li>
-                            <li class="flex items-center gap-3"><span class="w-6 h-6 rounded-full bg-mustard-100 text-mustard-600 flex items-center justify-center text-xs">✓</span> Track your progress</li>
-                            <li class="flex items-center gap-3"><span class="w-6 h-6 rounded-full bg-mustard-100 text-mustard-600 flex items-center justify-center text-xs">✓</span> Adaptive accommodations</li>
-                        </ul>
-                    </div>
-
-                    <!-- Educators -->
-                    <div class="relative p-10 rounded-[3rem] bg-white border-2 border-slate-100 transition-all cursor-default group overflow-hidden">
-                        <div class="absolute -top-10 -right-10 w-32 h-32 bg-accent-500/10 rounded-full group-hover:scale-150 transition-transform duration-700"></div>
-                        <div class="flex items-center gap-6 mb-8">
-                            <div class="w-16 h-16 rounded-2xl bg-accent-500 flex items-center justify-center text-white shadow-lg shadow-accent-100">
-                                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-                                </svg>
-                            </div>
-                            <h4 class="text-3xl font-black text-slate-900">Educators</h4>
-                        </div>
-                        <ul class="space-y-4 text-lg font-medium text-slate-600">
-                            <li class="flex items-center gap-3"><span class="w-6 h-6 rounded-full bg-accent-100 text-accent-500 flex items-center justify-center text-xs">✓</span> Manage student IEPs</li>
-                            <li class="flex items-center gap-3"><span class="w-6 h-6 rounded-full bg-accent-100 text-accent-500 flex items-center justify-center text-xs">✓</span> Monitor engagement</li>
-                            <li class="flex items-center gap-3"><span class="w-6 h-6 rounded-full bg-accent-100 text-accent-500 flex items-center justify-center text-xs">✓</span> Collaborative tools</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- CTA Section -->
-        <section class="py-24 px-6 lg:px-8">
-            <div class="max-w-5xl mx-auto relative group">
-                <!-- Background decoration behind CTA -->
-                <div class="absolute inset-0 bg-pink-100 rounded-[4rem] rotate-1 group-hover:rotate-0 transition-transform duration-500"></div>
-                <div class="relative bg-cheerful-pink rounded-[4rem] p-16 text-center text-white shadow-2xl -rotate-1 group-hover:rotate-0 transition-transform duration-500">
-                    <h3 class="text-5xl font-black mb-8">Ready to <span class="text-white">transform</span> learning?</h3>
-                    <p class="text-xl mb-12 text-white/90 max-w-2xl mx-auto leading-relaxed">Join a community dedicated to breaking educational barriers for specially-abled students.</p>
-                    <div class="flex flex-col sm:flex-row gap-6 justify-center">
-                        @auth
-                            <a href="{{ url('/dashboard') }}" class="px-12 py-5 rounded-3xl bg-white text-cheerful-pink font-black text-xl hover:shadow-xl transition-all shadow-xl">
-                                Enter Dashboard
-                            </a>
-                        @else
-                            <a href="{{ route('register') }}" class="px-12 py-5 rounded-3xl bg-white text-cheerful-pink font-black text-xl hover:shadow-xl transition-all shadow-xl">
-                                Create Free Account
-                            </a>
-                            <a href="{{ route('login') }}" class="px-12 py-5 rounded-3xl border-2 border-white/40 text-white font-black text-xl hover:bg-white/10 transition-all">
-                                Sign In
-                            </a>
-                        @endauth
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Footer -->
-        <footer class="bg-slate-950 py-24 px-6 lg:px-8">
-            <div class="max-w-7xl mx-auto">
-                <div class="grid md:grid-cols-4 gap-16 mb-20">
-                    <div class="col-span-1 md:col-span-1">
-                        <div class="flex items-center space-x-3 mb-8">
-                            <div class="w-11 h-11 rounded-2xl bg-mustard-400 flex items-center justify-center shadow-lg shadow-mustard-400/20 rotate-3">
-                                <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path d="M12 14l9-5-9-5-9 5 9 5z"></path>
-                                    <path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"></path>
-                                </svg>
-                            </div>
-                            <span class="font-black text-white text-2xl tracking-tighter">Edu<span class="text-mustard-400">E</span></span>
-                        </div>
-                        <p class="text-slate-400 leading-relaxed font-medium">Empowering every learner through specialized technology and inclusive care.</p>
-                    </div>
-                    <div>
-                        <h5 class="font-black text-white mb-10 uppercase tracking-widest text-xs opacity-50">Quick Links</h5>
-                        <ul class="space-y-5">
-                            <li><a href="#" class="text-slate-300 hover:text-mustard-400 font-bold transition-all">Home</a></li>
-                            <li><a href="#features" class="text-slate-300 hover:text-mustard-400 font-bold transition-all">Features</a></li>
-                            <li><a href="#everyone" class="text-slate-300 hover:text-mustard-400 font-bold transition-all">For Everyone</a></li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h5 class="font-black text-white mb-10 uppercase tracking-widest text-xs opacity-50">Support</h5>
-                        <ul class="space-y-5">
-                            <li><a href="#" class="text-slate-300 hover:text-mustard-400 font-bold transition-all">Documentation</a></li>
-                            <li><a href="#" class="text-slate-300 hover:text-mustard-400 font-bold transition-all">Help Center</a></li>
-                            <li><a href="#" class="text-slate-300 hover:text-mustard-400 font-bold transition-all">Privacy</a></li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h5 class="font-black text-white mb-10 uppercase tracking-widest text-xs opacity-50">Contact</h5>
-                        <ul class="space-y-4">
-                            <li class="text-slate-300 font-bold">hello@eduecosystem.com</li>
-                            <li class="text-slate-300 font-bold">+1 (555) 000-0000</li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="border-t border-white/5 pt-12 flex flex-col md:flex-row justify-between items-center gap-8">
-                    <p class="text-slate-500 font-bold text-sm">&copy; 2026 <span class="text-mustard-400">EduEcosystem</span>. All rights reserved.</p>
-                    <div class="flex gap-6">
-                        <div class="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-slate-400 hover:bg-mustard-400 hover:text-white transition-all cursor-pointer group">
-                            <svg class="w-5 h-5 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24"><path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/></svg>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </footer>
-    </body>
+        document.getElementById('text-speech').addEventListener('change', function() {
+            if (this.checked && 'speechSynthesis' in window) {
+                const text = document.body.innerText.substring(0, 500);
+                const utterance = new SpeechSynthesisUtterance(text);
+                speechSynthesis.speak(utterance);
+            }
+        });
+    </script>
+</body>
 </html>
