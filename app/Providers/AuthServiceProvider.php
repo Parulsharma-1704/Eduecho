@@ -9,6 +9,7 @@ use App\Models\Assessment;
 use App\Models\Invitation;
 use App\Models\AdaptiveContent;
 use App\Models\ProgressReport;
+use App\Models\EducatorRequest;
 use App\Policies\StudentPolicy;
 use App\Policies\CoursePolicy;
 use App\Policies\IEPPolicy;
@@ -16,6 +17,7 @@ use App\Policies\AssessmentPolicy;
 use App\Policies\InvitationPolicy;
 use App\Policies\AdaptiveContentPolicy;
 use App\Policies\ProgressReportPolicy;
+use App\Policies\EducatorRequestPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
 
@@ -34,6 +36,7 @@ class AuthServiceProvider extends ServiceProvider
         Invitation::class => InvitationPolicy::class,
         AdaptiveContent::class => AdaptiveContentPolicy::class,
         ProgressReport::class => ProgressReportPolicy::class,
+        EducatorRequest::class => EducatorRequestPolicy::class,
     ];
 
     /**

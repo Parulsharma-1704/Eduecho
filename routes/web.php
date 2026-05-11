@@ -86,13 +86,14 @@ Route::middleware('auth')->group(function () {
         Route::get('/governance', [\App\Http\Controllers\ComplianceController::class, 'governance'])->name('compliance.governance');
     });
 
-    // Tutoring Hub & Matching
-    Route::prefix('tutoring')->group(function () {
-        Route::get('/matching', [\App\Http\Controllers\TutoringController::class, 'matching'])->name('tutoring.matching');
-        Route::post('/connect/{student}', [\App\Http\Controllers\TutoringController::class, 'connect'])->name('tutoring.connect');
-        Route::get('/hub', [\App\Http\Controllers\TutoringController::class, 'hub'])->name('tutoring.hub');
-        Route::get('/api/messages/{contact}', [\App\Http\Controllers\TutoringController::class, 'getMessages'])->name('tutoring.messages.get');
-        Route::post('/api/messages/{contact}', [\App\Http\Controllers\TutoringController::class, 'sendMessage'])->name('tutoring.messages.send');
+    // Educator Requests
+    Route::prefix('educator-requests')->group(function () {
+        Route::get('/create', [App\Http\Controllers\EducatorRequestController::class, 'create'])->name('educator-request.create');
+        Route::post('/', [App\Http\Controllers\EducatorRequestController::class, 'store'])->name('educator-request.store');
+        Route::get('/', [App\Http\Controllers\EducatorRequestController::class, 'index'])->name('educator-request.index');
+        Route::get('/{educatorRequest}', [App\Http\Controllers\EducatorRequestController::class, 'show'])->name('educator-request.show');
+        Route::post('/{educatorRequest}/approve', [App\Http\Controllers\EducatorRequestController::class, 'approve'])->name('educator-request.approve');
+        Route::post('/{educatorRequest}/reject', [App\Http\Controllers\EducatorRequestController::class, 'reject'])->name('educator-request.reject');
     });
 });
 

@@ -42,25 +42,60 @@ class TutoringController extends Controller
     }
 
     /**
-     * Connect an Educator with a Student.
+     * Show available tutors for students.
      */
-    public function connect(Request $request, Student $student)
+    public function findTutors()
     {
         $user = Auth::user();
         
-        if (!$user->hasRole('special_educator')) {
+        if (!$user->hasRole('student')) {
             abort(403, 'Unauthorized action.');
         }
 
-        if ($student->assigned_educator_id !== null) {
-            return redirect()->back()->with('error', 'Student is already assigned to an educator.');
+        $student = $user->student;
+        if (!$student || !$student->disabilityProfile) {
+            return redirect()->back()->with('error', 'Please complete your disability profile first.');
         }
 
+        $disabilityType = $student->disabilityProfile->disability_type;
+
+        // Find educators who specialize in this disability type
+        $educators = User::whereHas('roles', function($q) {
+            $q->where('name', 'special_educator');
+        })->whereHas('specialEducator.disabilitySpecializations', function($q) use ($disabilityType) {
+            $q->where('disability_type', $disabilityType);
+        })->with(['specialEducator.disabilitySpecializations'])
+          ->get();
+
+        return view('tutoring.find-tutors', compact('educators', 'student'));
+    }
+
+    /**
+     * Student requests connection with an educator.
+     */
+    public function requestConnection(Request $request, User $educator)
+    {
+        $user = Auth::user();
+        
+        if (!$user->hasRole('student')) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $student = $user->student;
+        if (!$student) {
+            return redirect()->back()->with('error', 'Student profile not found.');
+        }
+
+        if ($student->assigned_educator_id) {
+            return redirect()->back()->with('error', 'You are already connected to an educator.');
+        }
+
+        // For now, directly assign. In a real app, this might create a request that educator approves.
         $student->update([
-            'assigned_educator_id' => $user->id
+            'assigned_educator_id' => $educator->id
         ]);
 
-        return redirect()->route('tutoring.hub')->with('success', 'Successfully connected with ' . $student->user->name . '.');
+        return redirect()->route('tutoring.hub')->with('success', 'Successfully connected with ' . $educator->name . '.');
     }
 
     /**

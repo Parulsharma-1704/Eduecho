@@ -241,6 +241,11 @@
         <button class="sb-item" onclick="window.location.href='{{ route('tutoring.hub') }}'">
             <i class="ti ti-message-circle"></i> Tutoring Chat
         </button>
+        @if(Auth::user()->hasRole('student'))
+        <button class="sb-item" onclick="window.location.href='{{ route('educator-request.create') }}'">
+            <i class="ti ti-user-plus"></i> Become Educator
+        </button>
+        @endif
         @if(Auth::user()->hasRole('special_educator'))
         <button class="sb-item" onclick="window.location.href='{{ route('tutoring.matching') }}'">
             <i class="ti ti-user-search"></i> Find Students
@@ -321,13 +326,38 @@
         <div class="panel show" id="panel-overview">
             <div class="welcome">
                 <div class="wb-left">
-                    <div class="wb-eyebrow">Administrator Portal</div>
-                    <h1>Welcome back, {{ explode(' ', Auth::user()->name)[0] }}!</h1>
-                    <p>System operational and running smoothly.</p>
+                    @if(Auth::user()->hasRole('admin'))
+                        <div class="wb-eyebrow">Administrator Portal</div>
+                        <h1>Welcome back, {{ explode(' ', Auth::user()->name)[0] }}!</h1>
+                        <p>System operational and running smoothly.</p>
+                    @elseif(Auth::user()->hasRole('student'))
+                        <div class="wb-eyebrow">Student Dashboard</div>
+                        <h1>Welcome back, {{ explode(' ', Auth::user()->name)[0] }}!</h1>
+                        <p>Your learning journey continues here.</p>
+                    @elseif(Auth::user()->hasRole('special_educator'))
+                        <div class="wb-eyebrow">Educator Portal</div>
+                        <h1>Welcome back, {{ explode(' ', Auth::user()->name)[0] }}!</h1>
+                        <p>Supporting student success through specialized education.</p>
+                    @else
+                        <div class="wb-eyebrow">Dashboard</div>
+                        <h1>Welcome back, {{ explode(' ', Auth::user()->name)[0] }}!</h1>
+                        <p>Access your educational tools and resources.</p>
+                    @endif
                 </div>
+                @if(Auth::user()->hasRole('student') && isset($disabilityProfile))
+                <div class="wb-status">
+                    <div class="wb-stat-icon"><i class="ti ti-accessible"></i></div>
+                    <div class="wb-stat-label">Disability Profile</div>
+                    <div class="wb-stat-val">
+                        <div class="wb-green"></div>
+                        <span>{{ ucfirst(str_replace('_', ' ', $disabilityProfile->disability_type ?? 'Not specified')) }}</span>
+                    </div>
+                </div>
+                @endif
             </div>
 
             <!-- STAT CARDS -->
+            @if(Auth::user()->hasRole('admin'))
             <div class="stat-row">
                 <div class="sc" onclick="showPanel('students',null)">
                     <div class="sc-ico" style="background:var(--teal-ll)"><i class="ti ti-users" style="color:var(--teal)"></i></div>
@@ -350,13 +380,65 @@
                     <div class="sc-val" style="color:var(--ad)">{{ $stats['total_assessments'] ?? 0 }}</div>
                 </div>
             </div>
+            @elseif(Auth::user()->hasRole('student'))
+            <div class="stat-row">
+                <div class="sc">
+                    <div class="sc-ico" style="background:var(--teal-ll)"><i class="ti ti-books" style="color:var(--teal)"></i></div>
+                    <div class="sc-label">Enrolled Courses</div>
+                    <div class="sc-val" style="color:var(--teal)">{{ $stats['courses_count'] ?? 0 }}</div>
+                </div>
+                <div class="sc">
+                    <div class="sc-ico" style="background:var(--violet-l)"><i class="ti ti-clipboard-list" style="color:var(--violet)"></i></div>
+                    <div class="sc-label">My IEPs</div>
+                    <div class="sc-val" style="color:var(--violet)">{{ $stats['ieps_count'] ?? 0 }}</div>
+                </div>
+                <div class="sc">
+                    <div class="sc-ico" style="background:var(--rl)"><i class="ti ti-heart" style="color:var(--rd)"></i></div>
+                    <div class="sc-label">Therapy Sessions</div>
+                    <div class="sc-val" style="color:var(--rd)">{{ $stats['therapy_sessions'] ?? 0 }}</div>
+                </div>
+                <div class="sc">
+                    <div class="sc-ico" style="background:var(--al)"><i class="ti ti-writing" style="color:var(--ad)"></i></div>
+                    <div class="sc-label">Pending Assessments</div>
+                    <div class="sc-val" style="color:var(--ad)">{{ $pendingAssessments->count() ?? 0 }}</div>
+                </div>
+            </div>
+            @elseif(Auth::user()->hasRole('special_educator'))
+            <div class="stat-row">
+                <div class="sc">
+                    <div class="sc-ico" style="background:var(--teal-ll)"><i class="ti ti-users" style="color:var(--teal)"></i></div>
+                    <div class="sc-label">My Students</div>
+                    <div class="sc-val" style="color:var(--teal)">{{ $stats['total_students'] ?? 0 }}</div>
+                </div>
+                <div class="sc">
+                    <div class="sc-ico" style="background:var(--violet-l)"><i class="ti ti-books" style="color:var(--violet)"></i></div>
+                    <div class="sc-label">My Courses</div>
+                    <div class="sc-val" style="color:var(--violet)">{{ $stats['total_courses'] ?? 0 }}</div>
+                </div>
+                <div class="sc">
+                    <div class="sc-ico" style="background:var(--teal-ll)"><i class="ti ti-clipboard-list" style="color:var(--teal)"></i></div>
+                    <div class="sc-label">My IEPs</div>
+                    <div class="sc-val" style="color:var(--teal)">{{ $stats['total_ieps'] ?? 0 }}</div>
+                </div>
+                <div class="sc">
+                    <div class="sc-ico" style="background:var(--al)"><i class="ti ti-message-circle" style="color:var(--ad)"></i></div>
+                    <div class="sc-label">Active Chats</div>
+                    <div class="sc-val" style="color:var(--ad)">{{ $recentStudents->count() ?? 0 }}</div>
+                </div>
+            </div>
+            @endif
 
             <!-- QUICK ACTIONS -->
+            @if(Auth::user()->hasRole('admin'))
             <div class="eyebrow" style="margin-top:16px">Quick Actions</div>
             <div class="qa-grid">
                 <div class="qa" onclick="showPanel('students',null)">
                     <div class="qa-ico" style="background:var(--teal-ll)"><i class="ti ti-user-plus" style="color:var(--teal)"></i></div>
                     <strong>Add Student</strong>
+                </div>
+                <div class="qa" onclick="window.location.href='{{ route('educator-request.index') }}'">
+                    <div class="qa-ico" style="background:var(--green)"><i class="ti ti-user-check" style="color:#fff"></i></div>
+                    <strong>Review Educators</strong>
                 </div>
                 <div class="qa" onclick="showPanel('ieps',null)">
                     <div class="qa-ico" style="background:var(--violet-l)"><i class="ti ti-clipboard-plus" style="color:var(--violet)"></i></div>
@@ -371,6 +453,54 @@
                     <strong>Generate Report</strong>
                 </div>
             </div>
+            @elseif(Auth::user()->hasRole('student'))
+            <div class="eyebrow" style="margin-top:16px">Quick Actions</div>
+            <div class="qa-grid">
+                @if(isset($user->student) && $user->student->assigned_educator_id)
+                <div class="qa" onclick="window.location.href='{{ route('tutoring.hub') }}'">
+                    <div class="qa-ico" style="background:var(--teal-ll)"><i class="ti ti-message-circle" style="color:var(--teal)"></i></div>
+                    <strong>Chat with Tutor</strong>
+                </div>
+                @else
+                <div class="qa" onclick="window.location.href='{{ route('tutoring.find-tutors') }}'">
+                    <div class="qa-ico" style="background:var(--teal-ll)"><i class="ti ti-user-search" style="color:var(--teal)"></i></div>
+                    <strong>Find a Tutor</strong>
+                </div>
+                @endif
+                <div class="qa" onclick="showPanel('courses',null)">
+                    <div class="qa-ico" style="background:var(--violet-l)"><i class="ti ti-books" style="color:var(--violet)"></i></div>
+                    <strong>My Courses</strong>
+                </div>
+                <div class="qa" onclick="showPanel('assessments',null)">
+                    <div class="qa-ico" style="background:var(--rl)"><i class="ti ti-writing" style="color:var(--rd)"></i></div>
+                    <strong>Take Assessment</strong>
+                </div>
+                <div class="qa" onclick="showPanel('therapy',null)">
+                    <div class="qa-ico" style="background:var(--al)"><i class="ti ti-heart" style="color:var(--ad)"></i></div>
+                    <strong>My Therapy</strong>
+                </div>
+            </div>
+            @elseif(Auth::user()->hasRole('special_educator'))
+            <div class="eyebrow" style="margin-top:16px">Quick Actions</div>
+            <div class="qa-grid">
+                <div class="qa" onclick="window.location.href='{{ route('tutoring.matching') }}'">
+                    <div class="qa-ico" style="background:var(--teal-ll)"><i class="ti ti-user-search" style="color:var(--teal)"></i></div>
+                    <strong>Find Students</strong>
+                </div>
+                <div class="qa" onclick="window.location.href='{{ route('tutoring.hub') }}'">
+                    <div class="qa-ico" style="background:var(--violet-l)"><i class="ti ti-message-circle" style="color:var(--violet)"></i></div>
+                    <strong>Chat with Students</strong>
+                </div>
+                <div class="qa" onclick="showPanel('courses',null)">
+                    <div class="qa-ico" style="background:var(--rl)"><i class="ti ti-book-plus" style="color:var(--rd)"></i></div>
+                    <strong>Create Course</strong>
+                </div>
+                <div class="qa" onclick="showPanel('ieps',null)">
+                    <div class="qa-ico" style="background:var(--al)"><i class="ti ti-clipboard-plus" style="color:var(--ad)"></i></div>
+                    <strong>Create IEP</strong>
+                </div>
+            </div>
+            @endif
         </div><!-- /overview -->
 
         <!-- STUDENTS PANEL -->

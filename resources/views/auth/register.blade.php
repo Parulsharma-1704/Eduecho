@@ -142,7 +142,8 @@
         </p>
 
         <p class="text-center text-xs text-slate-500 pt-3 border-t border-lavender-200">
-            👨‍🏫 <strong>Educator?</strong> Contact administration for an invitation link.
+            👨‍🏫 <strong>Want to become an educator?</strong> 
+            <a href="{{ route('educator-request.create') }}" class="text-teal-500 hover:text-teal-600 font-bold">Apply here</a> after registration.
         </p>
     </form>
 
