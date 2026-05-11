@@ -57,8 +57,16 @@
                 <a href="#why" class="text-slate-700 font-semibold hover:text-indigo-700 transition">Why Us</a>
                 <a href="#features" class="text-slate-700 font-semibold hover:text-indigo-700 transition">Features</a>
                 <a href="#everyone" class="text-slate-700 font-semibold hover:text-indigo-700 transition">For Everyone</a>
-                <a href="{{ route('login') }}" class="text-slate-700 font-bold hover:text-indigo-700">Login</a>
-                <a href="{{ route('register') }}" class="px-6 py-3 rounded-2xl bg-teal-500 text-white font-bold hover:shadow-warm transition">Get Started</a>
+                @if (Auth::check())
+                    <a href="{{ route('dashboard') }}" class="text-slate-700 font-bold hover:text-indigo-700">Dashboard</a>
+                    <form method="POST" action="{{ route('logout') }}" class="inline">
+                        @csrf
+                        <button type="submit" class="px-6 py-3 rounded-2xl bg-red-500 text-white font-bold hover:shadow-warm transition">Logout</button>
+                    </form>
+                @else
+                    <a href="{{ route('login') }}" class="text-slate-700 font-bold hover:text-indigo-700">Login</a>
+                    <a href="{{ route('register') }}" class="px-6 py-3 rounded-2xl bg-teal-500 text-white font-bold hover:shadow-warm transition">Get Started</a>
+                @endif
             </div>
         </div>
     </nav>
@@ -77,12 +85,24 @@
                     Comprehensive support for students with special needs. Personalized learning, therapy tracking, and holistic development in one inclusive platform.
                 </p>
                 <div class="flex flex-wrap gap-4">
-                    <a href="{{ route('register') }}" class="px-8 py-4 rounded-3xl bg-teal-500 text-white font-bold hover:shadow-warm-lg transition-all transform hover:-translate-y-1">
-                        Let's Get Started
-                    </a>
-                    <a href="#features" class="px-8 py-4 rounded-3xl bg-white border-2 border-lavender-200 text-indigo-700 font-bold hover:bg-lavender-50 transition">
-                        Explore Platform
-                    </a>
+                    @if (Auth::check())
+                        <a href="{{ route('dashboard') }}" class="px-8 py-4 rounded-3xl bg-teal-500 text-white font-bold hover:shadow-warm-lg transition-all transform hover:-translate-y-1">
+                            Go to Dashboard
+                        </a>
+                        <form method="POST" action="{{ route('logout') }}" class="inline">
+                            @csrf
+                            <button type="submit" class="px-8 py-4 rounded-3xl bg-red-500 text-white font-bold hover:shadow-warm-lg transition-all transform hover:-translate-y-1">
+                                Logout
+                            </button>
+                        </form>
+                    @else
+                        <a href="{{ route('register') }}" class="px-8 py-4 rounded-3xl bg-teal-500 text-white font-bold hover:shadow-warm-lg transition-all transform hover:-translate-y-1">
+                            Let's Get Started
+                        </a>
+                        <a href="#features" class="px-8 py-4 rounded-3xl bg-white border-2 border-lavender-200 text-indigo-700 font-bold hover:bg-lavender-50 transition">
+                            Explore Platform
+                        </a>
+                    @endif
                 </div>
             </div>
             <div class="relative">

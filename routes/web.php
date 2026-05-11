@@ -16,6 +16,10 @@ use Illuminate\Support\Facades\Auth;
 
 // Public routes
 Route::get('/', function () {
+    // Redirect to dashboard if already logged in
+    if (Auth::check()) {
+        return redirect()->route('dashboard');
+    }
     return view('welcome');
 });
 
