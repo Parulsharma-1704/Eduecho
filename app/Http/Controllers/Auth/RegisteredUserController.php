@@ -37,7 +37,7 @@ class RegisteredUserController extends Controller
         // Validation rules for student registration only
         $rules = [
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'email' => ['required', 'string', 'lowercase', 'email:rfc,dns', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'disability_type' => ['nullable', 'in:autism,adhd,dyslexia,hearing,visual,mobility'],
             'severity' => ['nullable', 'required_with:disability_type', 'in:mild,moderate,severe'],

@@ -57,12 +57,8 @@
                 <a href="#why" class="text-slate-700 font-semibold hover:text-indigo-700 transition">Why Us</a>
                 <a href="#features" class="text-slate-700 font-semibold hover:text-indigo-700 transition">Features</a>
                 <a href="#everyone" class="text-slate-700 font-semibold hover:text-indigo-700 transition">For Everyone</a>
-                @auth
-                    <a href="{{ url('/dashboard') }}" class="px-6 py-3 rounded-2xl bg-indigo-700 text-white font-bold hover:shadow-warm transition">Dashboard</a>
-                @else
-                    <a href="{{ route('login') }}" class="text-slate-700 font-bold hover:text-indigo-700">Login</a>
-                    <a href="{{ route('register') }}" class="px-6 py-3 rounded-2xl bg-teal-500 text-white font-bold hover:shadow-warm transition">Get Started</a>
-                @endauth
+                <a href="{{ route('login') }}" class="text-slate-700 font-bold hover:text-indigo-700">Login</a>
+                <a href="{{ route('register') }}" class="px-6 py-3 rounded-2xl bg-teal-500 text-white font-bold hover:shadow-warm transition">Get Started</a>
             </div>
         </div>
     </nav>
@@ -81,18 +77,12 @@
                     Comprehensive support for students with special needs. Personalized learning, therapy tracking, and holistic development in one inclusive platform.
                 </p>
                 <div class="flex flex-wrap gap-4">
-                    @auth
-                        <a href="{{ url('/dashboard') }}" class="px-8 py-4 rounded-3xl bg-indigo-700 text-white font-bold hover:shadow-warm-lg transition-all transform hover:-translate-y-1">
-                            Go to Dashboard
-                        </a>
-                    @else
-                        <a href="{{ route('register') }}" class="px-8 py-4 rounded-3xl bg-teal-500 text-white font-bold hover:shadow-warm-lg transition-all transform hover:-translate-y-1">
-                            Start Free Trial
-                        </a>
-                        <a href="#features" class="px-8 py-4 rounded-3xl bg-white border-2 border-lavender-200 text-indigo-700 font-bold hover:bg-lavender-50 transition">
-                            Explore Platform
-                        </a>
-                    @endauth
+                    <a href="{{ route('register') }}" class="px-8 py-4 rounded-3xl bg-teal-500 text-white font-bold hover:shadow-warm-lg transition-all transform hover:-translate-y-1">
+                        Let's Get Started
+                    </a>
+                    <a href="#features" class="px-8 py-4 rounded-3xl bg-white border-2 border-lavender-200 text-indigo-700 font-bold hover:bg-lavender-50 transition">
+                        Explore Platform
+                    </a>
                 </div>
             </div>
             <div class="relative">
@@ -267,18 +257,12 @@
                 Join educators, therapists, and families revolutionizing special education support. Start free today.
             </p>
             <div class="flex flex-wrap justify-center gap-6">
-                @auth
-                    <a href="{{ url('/dashboard') }}" class="px-10 py-5 rounded-3xl bg-white text-indigo-700 font-black text-lg hover:shadow-warm-lg transition-all transform hover:-translate-y-1">
-                        Go to Dashboard
-                    </a>
-                @else
-                    <a href="{{ route('register') }}" class="px-10 py-5 rounded-3xl bg-teal-500 text-white font-black text-lg hover:bg-teal-600 shadow-lg transition-all transform hover:-translate-y-1">
-                        Start Free Trial
-                    </a>
-                    <a href="{{ route('login') }}" class="px-10 py-5 rounded-3xl bg-white/20 text-white font-black text-lg border-2 border-white hover:bg-white/30 transition-all transform hover:-translate-y-1">
-                        Sign In
-                    </a>
-                @endauth
+                <a href="{{ route('register') }}" class="px-10 py-5 rounded-3xl bg-teal-500 text-white font-black text-lg hover:bg-teal-600 shadow-lg transition-all transform hover:-translate-y-1">
+                    Let's Get Started
+                </a>
+                <a href="{{ route('login') }}" class="px-10 py-5 rounded-3xl bg-white/20 text-white font-black text-lg border-2 border-white hover:bg-white/30 transition-all transform hover:-translate-y-1">
+                    Sign In
+                </a>
             </div>
         </div>
     </section>

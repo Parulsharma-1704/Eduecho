@@ -16,10 +16,7 @@ use Illuminate\Support\Facades\Auth;
 
 // Public routes
 Route::get('/', function () {
-    if (Auth::check()) {
-        return redirect()->route('dashboard');
-    }
-    return redirect()->route('login');
+    return view('welcome');
 });
 
 // Authenticated routes
@@ -87,6 +84,15 @@ Route::middleware('auth')->group(function () {
         Route::get('/reports', [\App\Http\Controllers\ComplianceController::class, 'generateReport'])->name('compliance.reports');
         Route::get('/export', [\App\Http\Controllers\ComplianceController::class, 'export'])->name('compliance.export');
         Route::get('/governance', [\App\Http\Controllers\ComplianceController::class, 'governance'])->name('compliance.governance');
+    });
+
+    // Tutoring Hub & Matching
+    Route::prefix('tutoring')->group(function () {
+        Route::get('/matching', [\App\Http\Controllers\TutoringController::class, 'matching'])->name('tutoring.matching');
+        Route::post('/connect/{student}', [\App\Http\Controllers\TutoringController::class, 'connect'])->name('tutoring.connect');
+        Route::get('/hub', [\App\Http\Controllers\TutoringController::class, 'hub'])->name('tutoring.hub');
+        Route::get('/api/messages/{contact}', [\App\Http\Controllers\TutoringController::class, 'getMessages'])->name('tutoring.messages.get');
+        Route::post('/api/messages/{contact}', [\App\Http\Controllers\TutoringController::class, 'sendMessage'])->name('tutoring.messages.send');
     });
 });
 

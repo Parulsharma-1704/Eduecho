@@ -13,6 +13,7 @@ class Student extends Model
         'user_id',
         'enrollment_date',
         'is_active',
+        'assigned_educator_id',
     ];
 
     protected $casts = [
@@ -24,6 +25,11 @@ class Student extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function assignedEducator()
+    {
+        return $this->belongsTo(User::class, 'assigned_educator_id');
     }
 
     public function disabilityProfile()

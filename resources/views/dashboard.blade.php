@@ -238,6 +238,14 @@
             <i class="ti ti-clipboard-list"></i> IEPs
             <span class="sb-badge">3</span>
         </button>
+        <button class="sb-item" onclick="window.location.href='{{ route('tutoring.hub') }}'">
+            <i class="ti ti-message-circle"></i> Tutoring Chat
+        </button>
+        @if(Auth::user()->hasRole('special_educator'))
+        <button class="sb-item" onclick="window.location.href='{{ route('tutoring.matching') }}'">
+            <i class="ti ti-user-search"></i> Find Students
+        </button>
+        @endif
 
         <div class="sb-group">Support</div>
         <button class="sb-item" onclick="showPanel('therapy',this)">

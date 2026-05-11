@@ -29,7 +29,7 @@ class DatabaseSeeder extends Seeder
 
         // Create test users for each role
         $users = [
-            ['name' => 'Admin User', 'email' => 'admin@test.com', 'role' => 'admin'],
+            ['name' => 'Admin User', 'email' => 'rashmipandit678@gmail.com', 'role' => 'admin'],
             ['name' => 'John Student', 'email' => 'student@test.com', 'role' => 'student'],
             ['name' => 'Sarah Educator', 'email' => 'educator@test.com', 'role' => 'special_educator'],
             ['name' => 'Dr. Thompson', 'email' => 'therapist@test.com', 'role' => 'therapist'],
