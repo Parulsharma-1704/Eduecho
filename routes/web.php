@@ -95,6 +95,16 @@ Route::middleware('auth')->group(function () {
         Route::post('/{educatorRequest}/approve', [App\Http\Controllers\EducatorRequestController::class, 'approve'])->name('educator-request.approve');
         Route::post('/{educatorRequest}/reject', [App\Http\Controllers\EducatorRequestController::class, 'reject'])->name('educator-request.reject');
     });
+
+    // Tutoring Hub & Matching
+    Route::prefix('tutoring')->group(function () {
+        Route::get('/matching', [\App\Http\Controllers\TutoringController::class, 'matching'])->name('tutoring.matching');
+        Route::get('/find-tutors', [\App\Http\Controllers\TutoringController::class, 'findTutors'])->name('tutoring.find-tutors');
+        Route::post('/connect/{educator}', [\App\Http\Controllers\TutoringController::class, 'requestConnection'])->name('tutoring.request-connect');
+        Route::get('/hub', [\App\Http\Controllers\TutoringController::class, 'hub'])->name('tutoring.hub');
+        Route::get('/api/messages/{contact}', [\App\Http\Controllers\TutoringController::class, 'getMessages'])->name('tutoring.messages.get');
+        Route::post('/api/messages/{contact}', [\App\Http\Controllers\TutoringController::class, 'sendMessage'])->name('tutoring.messages.send');
+    });
 });
 
 require __DIR__ . '/auth.php';
