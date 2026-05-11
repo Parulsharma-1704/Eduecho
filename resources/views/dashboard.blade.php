@@ -379,6 +379,11 @@
                     <div class="sc-label">Assessments</div>
                     <div class="sc-val" style="color:var(--ad)">{{ $stats['total_assessments'] ?? 0 }}</div>
                 </div>
+                <div class="sc" onclick="window.location.href='{{ route('educator-request.index') }}'">
+                    <div class="sc-ico" style="background:var(--gl)"><i class="ti ti-user-check" style="color:var(--gd)"></i></div>
+                    <div class="sc-label">Total Educators</div>
+                    <div class="sc-val" style="color:var(--gd)">{{ $stats['total_educators'] ?? 0 }}</div>
+                </div>
             </div>
             @elseif(Auth::user()->hasRole('student'))
             <div class="stat-row">
@@ -451,6 +456,27 @@
                 <div class="qa" onclick="showPanel('reports',null)">
                     <div class="qa-ico" style="background:var(--al)"><i class="ti ti-file-analytics" style="color:var(--ad)"></i></div>
                     <strong>Generate Report</strong>
+                </div>
+            </div>
+
+            <!-- RECENT EDUCATORS SECTION -->
+            <div style="margin-top:20px">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+                    <div>
+                        <div class="eyebrow">Team</div>
+                        <div style="font-family:var(--font-head);font-size:18px;font-weight:900;color:var(--navy)">Recent Educators</div>
+                    </div>
+                </div>
+                <div class="card">
+                    @forelse($recentEducators ?? [] as $educator)
+                        <div class="stu" style="padding:11px 8px">
+                            <div class="stu-av" style="background:linear-gradient(135deg, #6D28D9, #0D9488);color:#fff;width:36px;height:36px;font-size:13px;font-weight:800">{{ substr($educator->name, 0, 1) }}</div>
+                            <div style="flex:1"><div class="stu-name">{{ $educator->name }}</div><div class="stu-meta">{{ $educator->email }}</div></div>
+                            <span class="pill" style="background:var(--gl);color:var(--gd);font-size:10px">Approved</span>
+                        </div>
+                    @empty
+                        <p style="text-align:center;color:var(--gray);padding:20px">No educators yet</p>
+                    @endforelse
                 </div>
             </div>
             @elseif(Auth::user()->hasRole('student'))

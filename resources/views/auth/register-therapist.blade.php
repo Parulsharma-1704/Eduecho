@@ -203,16 +203,15 @@
 
             <!-- Additional Certifications -->
             <div class="mb-3">
-                <x-input-label for="certifications" :value="__('Additional Certifications (Optional)')" class="text-indigo-700 font-bold mb-2" />
+                <x-input-label for="certifications" :value="__('Additional Certification (Optional)')" class="text-indigo-700 font-bold mb-2" />
                 <input 
                     type="file" 
                     id="certifications" 
-                    name="certifications[]" 
-                    multiple
+                    name="certifications" 
                     class="block w-full rounded-2xl border-2 border-lavender-200 focus:border-teal-500 px-4 py-3 transition-colors bg-slate-50"
                     accept=".pdf,.jpg,.jpeg,.png"
                 >
-                <p class="text-xs text-slate-500 mt-1">PDF, JPG, or PNG files (Max 5MB each)</p>
+                <p class="text-xs text-slate-500 mt-1">PDF, JPG, or PNG file (Max 5MB)</p>
                 <x-input-error :messages="$errors->get('certifications')" class="mt-2 text-red-500 text-sm" />
             </div>
         </div>

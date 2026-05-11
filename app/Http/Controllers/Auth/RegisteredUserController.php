@@ -95,7 +95,7 @@ class RegisteredUserController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email:rfc,dns', 'max:255', 'unique:users'],
+            'email' => ['required', 'string', 'lowercase', 'email:rfc', 'max:255', 'unique:users'],
             'phone' => ['required', 'string', 'max:20'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'qualification' => ['required', 'string', 'max:255'],
@@ -106,8 +106,7 @@ class RegisteredUserController extends Controller
             'educator_disability_type' => ['nullable', 'in:autism,adhd,dyslexia,hearing,visual,mobility'],
             'educator_support_devices' => ['nullable', 'string'],
             'resume' => ['nullable', 'file', 'mimes:pdf,doc,docx', 'max:5120'],
-            'certifications' => ['nullable', 'array'],
-            'certifications.*' => ['file', 'mimes:pdf,jpg,jpeg,png', 'max:5120'],
+            'certifications' => ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:5120'],
             'motivation' => ['nullable', 'string', 'max:1000'],
             'terms_agreed' => ['required', 'accepted'],
         ]);
@@ -123,15 +122,13 @@ class RegisteredUserController extends Controller
         // Store resume if provided
         $resumePath = null;
         if ($request->hasFile('resume')) {
-            $resumePath = $request->file('resume')->store('educator_documents/resumes', 'private');
+            $resumePath = $request->file('resume')->store('educator_documents/resumes', 'local');
         }
 
-        // Store certifications if provided
-        $certificationPaths = [];
+        // Store certification if provided
+        $certificationPath = null;
         if ($request->hasFile('certifications')) {
-            foreach ($request->file('certifications') as $cert) {
-                $certificationPaths[] = $cert->store('educator_documents/certifications', 'private');
-            }
+            $certificationPath = $request->file('certifications')->store('educator_documents/certifications', 'local');
         }
 
         // Create educator request (pending approval)
@@ -144,7 +141,7 @@ class RegisteredUserController extends Controller
             'status' => 'pending',
             'review_notes' => json_encode([
                 'resume' => $resumePath,
-                'certifications' => $certificationPaths,
+                'certifications' => $certificationPath,
                 'experience_years' => $request->experience_years,
                 'educator_disability' => $request->educator_disability_type,
                 'educator_support' => $request->educator_support_devices,
@@ -173,7 +170,7 @@ class RegisteredUserController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email:rfc,dns', 'max:255', 'unique:users'],
+            'email' => ['required', 'string', 'lowercase', 'email:rfc', 'max:255', 'unique:users'],
             'phone' => ['required', 'string', 'max:20'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'license_type' => ['required', 'string', 'max:255'],
@@ -183,8 +180,7 @@ class RegisteredUserController extends Controller
             'specializations' => ['required', 'array', 'min:1'],
             'specializations.*' => ['in:autism,adhd,dyslexia,hearing,visual,mobility,anxiety,depression'],
             'license_certificate' => ['required', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:5120'],
-            'certifications' => ['nullable', 'array'],
-            'certifications.*' => ['file', 'mimes:pdf,jpg,jpeg,png', 'max:5120'],
+            'certifications' => ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:5120'],
             'motivation' => ['nullable', 'string', 'max:1000'],
             'terms_agreed' => ['required', 'accepted'],
         ]);
@@ -198,14 +194,12 @@ class RegisteredUserController extends Controller
         ]);
 
         // Store license certificate
-        $licensePath = $request->file('license_certificate')->store('therapist_documents/licenses', 'private');
+        $licensePath = $request->file('license_certificate')->store('therapist_documents/licenses', 'local');
 
         // Store certifications if provided
-        $certificationPaths = [];
+        $certificationPath = null;
         if ($request->hasFile('certifications')) {
-            foreach ($request->file('certifications') as $cert) {
-                $certificationPaths[] = $cert->store('therapist_documents/certifications', 'private');
-            }
+            $certificationPath = $request->file('certifications')->store('therapist_documents/certifications', 'local');
         }
 
         // Create therapist request (pending approval)
@@ -220,7 +214,7 @@ class RegisteredUserController extends Controller
                 'role' => 'therapist',
                 'license_number' => $request->license_number,
                 'license_certificate' => $licensePath,
-                'certifications' => $certificationPaths,
+                'certifications' => $certificationPath,
                 'experience_years' => $request->experience_years,
             ]),
         ]);

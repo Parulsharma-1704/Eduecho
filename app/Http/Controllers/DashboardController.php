@@ -8,6 +8,7 @@ use App\Models\IEP;
 use App\Models\Assessment;
 use App\Models\TherapySession;
 use App\Models\SpecialEducator;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -28,6 +29,7 @@ class DashboardController extends Controller
                 'total_courses' => Course::count(),
                 'total_ieps' => IEP::count(),
                 'total_assessments' => Assessment::count(),
+                'total_educators' => User::role('special_educator')->count(),
             ];
 
             // Get recent students and all students for admin dashboard
@@ -40,6 +42,13 @@ class DashboardController extends Controller
             $allStudents = Student::select('id', 'user_id')
                 ->with('user:id,name,email')
                 ->take(20)
+                ->get();
+
+            // Get recent educators
+            $recentEducators = User::role('special_educator')
+                ->select('id', 'name', 'email', 'created_at')
+                ->latest('created_at')
+                ->take(5)
                 ->get();
 
             // Get upcoming therapy sessions
@@ -55,6 +64,7 @@ class DashboardController extends Controller
                 'stats' => $stats,
                 'recentStudents' => $recentStudents,
                 'allStudents' => $allStudents,
+                'recentEducators' => $recentEducators,
                 'upcomingSessions' => $upcomingSessions,
             ]);
         } elseif ($user->hasRole('student')) {
