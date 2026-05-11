@@ -13,10 +13,28 @@ use App\Http\Controllers\Auth\InvitationController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
-    Route::get('register', [RegisteredUserController::class, 'create'])
-        ->name('register');
+    // Role-based registration
+    Route::get('register', function () {
+        return view('auth.register-roles');
+    })->name('register');
 
-    Route::post('register', [RegisteredUserController::class, 'store']);
+    Route::get('register/student', [RegisteredUserController::class, 'createStudent'])
+        ->name('register.student');
+
+    Route::post('register/student', [RegisteredUserController::class, 'storeStudent'])
+        ->name('register.student.store');
+
+    Route::get('register/educator', [RegisteredUserController::class, 'createEducator'])
+        ->name('register.educator');
+
+    Route::post('register/educator', [RegisteredUserController::class, 'storeEducator'])
+        ->name('register.educator.store');
+
+    Route::get('register/therapist', [RegisteredUserController::class, 'createTherapist'])
+        ->name('register.therapist');
+
+    Route::post('register/therapist', [RegisteredUserController::class, 'storeTherapist'])
+        ->name('register.therapist.store');
 
     // Invitation-based registration for non-student roles
     Route::get('invitation/{token}', [InvitationController::class, 'show'])
