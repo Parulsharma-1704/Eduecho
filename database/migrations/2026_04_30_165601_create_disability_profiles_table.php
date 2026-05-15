@@ -11,7 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('disability_profiles', function (Blueprint $table) {
+        if (!Schema::hasTable('disability_profiles')) {
+            Schema::create('disability_profiles', function (Blueprint $table) {
             $table->id();
             $table->foreignId('student_id')->unique()->constrained('students')->onDelete('cascade');
             $table->string('disability_type'); // Visual, Hearing, Motor, Cognitive, Multiple
@@ -23,6 +24,7 @@ return new class extends Migration
             $table->string('emergency_contact')->nullable();
             $table->timestamps();
         });
+        }
     }
 
     /**

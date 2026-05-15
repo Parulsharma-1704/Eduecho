@@ -27,6 +27,7 @@ Route::get('/', function () {
 Route::middleware('auth')->group(function () {
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::post('/support-tickets', [DashboardController::class, 'storeSupportTicket'])->name('support-tickets.store');
 
     // Profile
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -108,6 +109,32 @@ Route::middleware('auth')->group(function () {
         Route::get('/hub', [\App\Http\Controllers\TutoringController::class, 'hub'])->name('tutoring.hub');
         Route::get('/api/messages/{contact}', [\App\Http\Controllers\TutoringController::class, 'getMessages'])->name('tutoring.messages.get');
         Route::post('/api/messages/{contact}', [\App\Http\Controllers\TutoringController::class, 'sendMessage'])->name('tutoring.messages.send');
+    });
+    // Admin User Management
+    Route::prefix('admin/users')->name('admin.users.')->group(function () {
+        Route::patch('/{user}/toggle-status', [\App\Http\Controllers\Admin\UserController::class, 'toggleStatus'])->name('toggle-status');
+        Route::delete('/{user}', [\App\Http\Controllers\Admin\UserController::class, 'destroy'])->name('destroy');
+    });
+
+    // Admin Course Management
+    Route::prefix('admin/courses')->name('admin.courses.')->group(function () {
+        Route::post('/', [\App\Http\Controllers\Admin\CourseController::class, 'store'])->name('store');
+        Route::patch('/{course}/toggle-active', [\App\Http\Controllers\Admin\CourseController::class, 'toggleActive'])->name('toggle-active');
+        Route::delete('/{course}', [\App\Http\Controllers\Admin\CourseController::class, 'destroy'])->name('destroy');
+    });
+
+    // Admin Therapy Session Management
+    Route::prefix('admin/therapy-sessions')->name('admin.therapy.')->group(function () {
+        Route::post('/', [\App\Http\Controllers\Admin\TherapySessionController::class, 'store'])->name('store');
+        Route::patch('/{therapySession}/status', [\App\Http\Controllers\Admin\TherapySessionController::class, 'updateStatus'])->name('update-status');
+        Route::delete('/{therapySession}', [\App\Http\Controllers\Admin\TherapySessionController::class, 'destroy'])->name('destroy');
+    });
+
+    // Admin Notification Management
+    Route::prefix('admin/notifications')->name('admin.notifications.')->group(function () {
+        Route::post('/', [\App\Http\Controllers\Admin\NotificationController::class, 'store'])->name('store');
+        Route::patch('/{notification}/mark-read', [\App\Http\Controllers\Admin\NotificationController::class, 'markRead'])->name('mark-read');
+        Route::delete('/{notification}', [\App\Http\Controllers\Admin\NotificationController::class, 'destroy'])->name('destroy');
     });
 });
 

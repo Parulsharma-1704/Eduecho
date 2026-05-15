@@ -1,7 +1,7 @@
 <x-guest-layout>
     <div class="mb-8">
-        <div class="inline-block px-3 py-1 rounded-2xl bg-violet-100 text-violet-700 font-bold text-xs mb-4">
-            👨‍🏫 Professional Profile
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-2xl bg-violet-100 text-violet-700 font-bold text-xs mb-4">
+            <i data-lucide="presentation" class="w-3 h-3"></i> Professional Profile
         </div>
         <h1 class="text-4xl font-black text-indigo-700 mb-2">Educator Registration</h1>
         <p class="text-slate-600">Help students achieve their full potential</p>

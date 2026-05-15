@@ -18,8 +18,6 @@ class RoleSeeder extends Seeder
             'student' => 'Student user accessing courses and assessments',
             'special_educator' => 'Special educator creating courses and IEPs',
             'therapist' => 'Therapist managing therapy sessions and notes',
-            'care_giver' => 'Care giver or parent monitoring student progress',
-            'support_staff' => 'Support staff assisting with daily operations',
         ];
 
         foreach ($roles as $role => $description) {

@@ -3,7 +3,8 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>EduEcho - Inclusive Learning Platform</title>
+    <title>EduEcho</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%234338ca' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z'/%3E%3Cpath d='m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65'/%3E%3Cpath d='m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65'/%3E%3C/svg%3E">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -11,6 +12,7 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     @endif
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         html { scroll-behavior: smooth; }
@@ -47,10 +49,8 @@
     <!-- Sticky Navigation -->
     <nav class="fixed w-full top-0 z-50 bg-white/60 backdrop-blur-2xl border-b border-lavender-100">
         <div class="max-w-7xl mx-auto px-6 py-5 flex justify-between items-center">
-            <div class="flex items-center gap-3">
-                <div class="w-12 h-12 rounded-2xl bg-gradient-indigo flex items-center justify-center text-white font-black text-xl">
-                    E
-                </div>
+            <div class="flex items-center gap-2">
+                <i data-lucide="layers" class="w-10 h-10 text-indigo-700"></i>
                 <span class="text-2xl font-black text-indigo-700">EduEcho</span>
             </div>
             <div class="hidden md:flex items-center gap-8">
@@ -75,8 +75,8 @@
     <section class="pt-32 pb-16 px-6">
         <div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
             <div class="animate-fade-in">
-                <div class="inline-block px-4 py-2 rounded-2xl bg-teal-100 text-teal-700 font-bold text-sm mb-6">
-                    ♿ Accessibility First Platform
+                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-teal-100 text-teal-700 font-bold text-sm mb-6">
+                    <i data-lucide="accessibility" class="w-4 h-4"></i> Accessibility First Platform
                 </div>
                 <h1 class="text-6xl lg:text-7xl font-black text-indigo-700 leading-tight mb-6">
                     Learning Without <span class="text-teal-500">Barriers</span>
@@ -131,28 +131,36 @@
             <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <!-- Card 1: Accessibility -->
                 <div class="group p-8 rounded-3xl glassmorphism hover:shadow-warm-lg transition-all transform hover:-translate-y-2">
-                    <div class="w-16 h-16 rounded-2xl bg-teal-100 flex items-center justify-center text-3xl mb-6 group-hover:bg-teal-500 group-hover:text-white transition">♿</div>
+                    <div class="w-16 h-16 rounded-2xl bg-teal-100 flex items-center justify-center text-teal-700 mb-6 group-hover:bg-teal-500 group-hover:text-white transition">
+                        <i data-lucide="accessibility" class="w-8 h-8"></i>
+                    </div>
                     <h3 class="text-2xl font-black text-slate-900 mb-3">Accessibility</h3>
                     <p class="text-slate-600">WCAG 2.1 AA compliant. Designed for all abilities with multiple input methods and display options.</p>
                 </div>
 
                 <!-- Card 2: Personalized -->
                 <div class="group p-8 rounded-3xl glassmorphism hover:shadow-warm-lg transition-all transform hover:-translate-y-2">
-                    <div class="w-16 h-16 rounded-2xl bg-indigo-100 flex items-center justify-center text-3xl mb-6 group-hover:bg-indigo-700 group-hover:text-white transition">🧠</div>
+                    <div class="w-16 h-16 rounded-2xl bg-indigo-100 flex items-center justify-center text-indigo-700 mb-6 group-hover:bg-indigo-700 group-hover:text-white transition">
+                        <i data-lucide="brain" class="w-8 h-8"></i>
+                    </div>
                     <h3 class="text-2xl font-black text-slate-900 mb-3">AI-Powered</h3>
                     <p class="text-slate-600">Adaptive learning content that adjusts to each student's pace, learning style, and needs.</p>
                 </div>
 
                 <!-- Card 3: Therapy -->
                 <div class="group p-8 rounded-3xl glassmorphism hover:shadow-warm-lg transition-all transform hover:-translate-y-2">
-                    <div class="w-16 h-16 rounded-2xl bg-coral-300/30 flex items-center justify-center text-3xl mb-6 group-hover:bg-coral-500 group-hover:text-white transition">🩺</div>
+                    <div class="w-16 h-16 rounded-2xl bg-coral-300/30 flex items-center justify-center text-coral-600 mb-6 group-hover:bg-coral-500 group-hover:text-white transition">
+                        <i data-lucide="stethoscope" class="w-8 h-8"></i>
+                    </div>
                     <h3 class="text-2xl font-black text-slate-900 mb-3">Therapy Tracking</h3>
                     <p class="text-slate-600">Integrated therapy session management with progress tracking and multi-discipline collaboration.</p>
                 </div>
 
                 <!-- Card 4: Compliance -->
                 <div class="group p-8 rounded-3xl glassmorphism hover:shadow-warm-lg transition-all transform hover:-translate-y-2">
-                    <div class="w-16 h-16 rounded-2xl bg-mint-300/40 flex items-center justify-center text-3xl mb-6 group-hover:bg-mint-500 group-hover:text-white transition">📋</div>
+                    <div class="w-16 h-16 rounded-2xl bg-mint-300/40 flex items-center justify-center text-mint-700 mb-6 group-hover:bg-mint-500 group-hover:text-white transition">
+                        <i data-lucide="clipboard-list" class="w-8 h-8"></i>
+                    </div>
                     <h3 class="text-2xl font-black text-slate-900 mb-3">Compliance</h3>
                     <p class="text-slate-600">IEP management, FERPA-compliant data handling, and comprehensive compliance tracking.</p>
                 </div>
@@ -173,7 +181,7 @@
             <div class="grid md:grid-cols-3 gap-8">
                 <!-- Students -->
                 <div class="p-10 rounded-3xl bg-gradient-lavender border-2 border-lavender-100 hover:shadow-warm-lg transition">
-                    <div class="text-5xl mb-6">👨‍🎓</div>
+                    <div class="text-indigo-700 mb-6"><i data-lucide="graduation-cap" class="w-12 h-12"></i></div>
                     <h3 class="text-3xl font-black text-indigo-700 mb-4">Students</h3>
                     <ul class="space-y-3 text-slate-700">
                         <li class="flex gap-3"><span class="text-teal-500 font-black">✓</span> Personalized learning paths</li>
@@ -185,7 +193,7 @@
 
                 <!-- Parents -->
                 <div class="p-10 rounded-3xl bg-indigo-50 border-2 border-indigo-100 hover:shadow-warm-lg transition">
-                    <div class="text-5xl mb-6">👨‍👩‍👧</div>
+                    <div class="text-indigo-700 mb-6"><i data-lucide="users" class="w-12 h-12"></i></div>
                     <h3 class="text-3xl font-black text-indigo-700 mb-4">Parents</h3>
                     <ul class="space-y-3 text-slate-700">
                         <li class="flex gap-3"><span class="text-coral-500 font-black">✓</span> Real-time progress updates</li>
@@ -197,7 +205,7 @@
 
                 <!-- Educators -->
                 <div class="p-10 rounded-3xl bg-slate-100 border-2 border-slate-200 hover:shadow-warm-lg transition">
-                    <div class="text-5xl mb-6">👨‍🏫</div>
+                    <div class="text-indigo-700 mb-6"><i data-lucide="presentation" class="w-12 h-12"></i></div>
                     <h3 class="text-3xl font-black text-indigo-700 mb-4">Educators</h3>
                     <ul class="space-y-3 text-slate-700">
                         <li class="flex gap-3"><span class="text-mint-500 font-black">✓</span> IEP management</li>
@@ -223,37 +231,49 @@
             <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                 <!-- Feature cards -->
                 <div class="p-8 rounded-3xl bg-white border-2 border-lavender-100 hover:border-teal-300 hover:shadow-warm transition group">
-                    <div class="w-14 h-14 rounded-2xl bg-lavender-50 flex items-center justify-center text-2xl mb-6 group-hover:bg-teal-500 group-hover:text-white transition">📚</div>
+                    <div class="w-14 h-14 rounded-2xl bg-lavender-50 flex items-center justify-center text-lavender-700 mb-6 group-hover:bg-teal-500 group-hover:text-white transition">
+                        <i data-lucide="book-open" class="w-6 h-6"></i>
+                    </div>
                     <h4 class="text-xl font-black text-slate-900 mb-3">Learning Hub</h4>
                     <p class="text-slate-600">Structured courses with adaptive difficulty, multimedia content, and progress tracking.</p>
                 </div>
 
                 <div class="p-8 rounded-3xl bg-white border-2 border-indigo-100 hover:border-indigo-300 hover:shadow-warm transition group">
-                    <div class="w-14 h-14 rounded-2xl bg-indigo-50 flex items-center justify-center text-2xl mb-6 group-hover:bg-indigo-700 group-hover:text-white transition">🧠</div>
+                    <div class="w-14 h-14 rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-700 mb-6 group-hover:bg-indigo-700 group-hover:text-white transition">
+                        <i data-lucide="brain" class="w-6 h-6"></i>
+                    </div>
                     <h4 class="text-xl font-black text-slate-900 mb-3">AI Assistant</h4>
                     <p class="text-slate-600">Smart recommendations, adaptive difficulty, and personalized learning suggestions.</p>
                 </div>
 
                 <div class="p-8 rounded-3xl bg-white border-2 border-coral-200 hover:border-coral-400 hover:shadow-warm transition group">
-                    <div class="w-14 h-14 rounded-2xl bg-coral-100 flex items-center justify-center text-2xl mb-6 group-hover:bg-coral-500 group-hover:text-white transition">📊</div>
+                    <div class="w-14 h-14 rounded-2xl bg-coral-100 flex items-center justify-center text-coral-600 mb-6 group-hover:bg-coral-500 group-hover:text-white transition">
+                        <i data-lucide="bar-chart-3" class="w-6 h-6"></i>
+                    </div>
                     <h4 class="text-xl font-black text-slate-900 mb-3">Analytics</h4>
                     <p class="text-slate-600">Comprehensive progress reports, learning analytics, and growth insights.</p>
                 </div>
 
                 <div class="p-8 rounded-3xl bg-white border-2 border-mint-200 hover:border-mint-400 hover:shadow-warm transition group">
-                    <div class="w-14 h-14 rounded-2xl bg-mint-100 flex items-center justify-center text-2xl mb-6 group-hover:bg-mint-500 group-hover:text-white transition">🩺</div>
+                    <div class="w-14 h-14 rounded-2xl bg-mint-100 flex items-center justify-center text-mint-700 mb-6 group-hover:bg-mint-500 group-hover:text-white transition">
+                        <i data-lucide="stethoscope" class="w-6 h-6"></i>
+                    </div>
                     <h4 class="text-xl font-black text-slate-900 mb-3">Therapy Tracker</h4>
                     <p class="text-slate-600">Session scheduling, progress tracking, multi-discipline collaboration tools.</p>
                 </div>
 
                 <div class="p-8 rounded-3xl bg-white border-2 border-teal-200 hover:border-teal-400 hover:shadow-warm transition group">
-                    <div class="w-14 h-14 rounded-2xl bg-teal-100 flex items-center justify-center text-2xl mb-6 group-hover:bg-teal-500 group-hover:text-white transition">♿</div>
+                    <div class="w-14 h-14 rounded-2xl bg-teal-100 flex items-center justify-center text-teal-700 mb-6 group-hover:bg-teal-500 group-hover:text-white transition">
+                        <i data-lucide="accessibility" class="w-6 h-6"></i>
+                    </div>
                     <h4 class="text-xl font-black text-slate-900 mb-3">Accessibility</h4>
                     <p class="text-slate-600">Text-to-speech, dyslexia fonts, dark mode, keyboard navigation, high contrast.</p>
                 </div>
 
                 <div class="p-8 rounded-3xl bg-white border-2 border-peach-200 hover:border-peach-400 hover:shadow-warm transition group">
-                    <div class="w-14 h-14 rounded-2xl bg-peach-100 flex items-center justify-center text-2xl mb-6 group-hover:bg-peach-500 group-hover:text-white transition">📋</div>
+                    <div class="w-14 h-14 rounded-2xl bg-peach-100 flex items-center justify-center text-peach-700 mb-6 group-hover:bg-peach-500 group-hover:text-white transition">
+                        <i data-lucide="clipboard-list" class="w-6 h-6"></i>
+                    </div>
                     <h4 class="text-xl font-black text-slate-900 mb-3">Compliance</h4>
                     <p class="text-slate-600">IEP management, compliance tracking, audit logs, FERPA-compliant data.</p>
                 </div>
@@ -289,8 +309,8 @@
 
     <!-- Accessibility Panel -->
     <div id="accessibility-panel" class="fixed bottom-8 right-8 z-40">
-        <button id="accessibility-toggle" class="w-16 h-16 rounded-full bg-teal-500 text-white font-black text-2xl shadow-lg hover:shadow-warm-lg hover:-translate-y-1 transition-all flex items-center justify-center">
-            ♿
+        <button id="accessibility-toggle" class="w-16 h-16 rounded-full bg-teal-500 text-white shadow-lg hover:shadow-warm-lg hover:-translate-y-1 transition-all flex items-center justify-center">
+            <i data-lucide="accessibility" class="w-8 h-8"></i>
         </button>
         
         <!-- Accessibility Options (hidden by default) -->
@@ -298,24 +318,24 @@
             <h3 class="font-black text-slate-900 mb-4">Accessibility Options</h3>
             <div class="space-y-3">
                 <label class="flex items-center gap-3 cursor-pointer hover:bg-lavender-50 p-2 rounded-lg">
-                    <input type="checkbox" id="large-font" class="w-5 h-5 rounded text-teal-500">
-                    <span class="text-slate-700 font-semibold">🔤 Large Font</span>
+                    <i data-lucide="type" class="w-5 h-5 text-teal-500"></i>
+                    <span class="text-slate-700 font-semibold">Large Font</span>
                 </label>
                 <label class="flex items-center gap-3 cursor-pointer hover:bg-lavender-50 p-2 rounded-lg">
-                    <input type="checkbox" id="dyslexia-font" class="w-5 h-5 rounded text-teal-500">
-                    <span class="text-slate-700 font-semibold">📖 Dyslexia Font</span>
+                    <i data-lucide="book" class="w-5 h-5 text-teal-500"></i>
+                    <span class="text-slate-700 font-semibold">Dyslexia Font</span>
                 </label>
                 <label class="flex items-center gap-3 cursor-pointer hover:bg-lavender-50 p-2 rounded-lg">
-                    <input type="checkbox" id="dark-mode" class="w-5 h-5 rounded text-teal-500">
-                    <span class="text-slate-700 font-semibold">🌙 Dark Mode</span>
+                    <i data-lucide="moon" class="w-5 h-5 text-teal-500"></i>
+                    <span class="text-slate-700 font-semibold">Dark Mode</span>
                 </label>
                 <label class="flex items-center gap-3 cursor-pointer hover:bg-lavender-50 p-2 rounded-lg">
-                    <input type="checkbox" id="text-speech" class="w-5 h-5 rounded text-teal-500">
-                    <span class="text-slate-700 font-semibold">🔊 Text-to-Speech</span>
+                    <i data-lucide="volume-2" class="w-5 h-5 text-teal-500"></i>
+                    <span class="text-slate-700 font-semibold">Text-to-Speech</span>
                 </label>
                 <label class="flex items-center gap-3 cursor-pointer hover:bg-lavender-50 p-2 rounded-lg">
-                    <input type="checkbox" id="high-contrast" class="w-5 h-5 rounded text-teal-500">
-                    <span class="text-slate-700 font-semibold">⚪ High Contrast</span>
+                    <i data-lucide="contrast" class="w-5 h-5 text-teal-500"></i>
+                    <span class="text-slate-700 font-semibold">High Contrast</span>
                 </label>
             </div>
         </div>
@@ -327,7 +347,7 @@
             <div class="grid md:grid-cols-4 gap-12 mb-12">
                 <div>
                     <div class="flex items-center gap-2 mb-4">
-                        <div class="w-10 h-10 rounded-2xl bg-gradient-indigo flex items-center justify-center text-white font-black">E</div>
+                        <i data-lucide="layers" class="w-8 h-8 text-indigo-700"></i>
                         <span class="text-xl font-black text-indigo-700">EduEcho</span>
                     </div>
                     <p class="text-slate-600">Inclusive education for every learner.</p>
@@ -371,6 +391,9 @@
         toggle.addEventListener('click', () => {
             options.classList.toggle('hidden');
         });
+
+        // Initialize Lucide icons
+        lucide.createIcons();
 
         // Accessibility features
         document.getElementById('large-font').addEventListener('change', function() {

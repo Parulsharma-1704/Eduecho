@@ -12,7 +12,7 @@ class StudentPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasPermissionTo('view_students');
+        return $user->can('view_students');
     }
 
     /**
@@ -20,7 +20,7 @@ class StudentPolicy
      */
     public function view(User $user, Student $student): bool
     {
-        if ($user->hasPermissionTo('view_students')) {
+        if ($user->can('view_students')) {
             // Students can only view their own profile
             if ($user->hasRole('student') && $user->student->id === $student->id) {
                 return true;
@@ -36,7 +36,7 @@ class StudentPolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasPermissionTo('create_students');
+        return $user->can('create_students');
     }
 
     /**
@@ -44,7 +44,7 @@ class StudentPolicy
      */
     public function update(User $user, Student $student): bool
     {
-        if ($user->hasPermissionTo('edit_students')) {
+        if ($user->can('edit_students')) {
             // Students can only edit their own profile
             if ($user->hasRole('student') && $user->student->id === $student->id) {
                 return true;
@@ -60,7 +60,7 @@ class StudentPolicy
      */
     public function delete(User $user, Student $student): bool
     {
-        return $user->hasPermissionTo('delete_students') && $user->hasRole('admin');
+        return $user->can('delete_students') && $user->hasRole('admin');
     }
 
     /**

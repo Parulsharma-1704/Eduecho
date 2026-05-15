@@ -11,7 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('accessibility_profiles', function (Blueprint $table) {
+        if (!Schema::hasTable('accessibility_profiles')) {
+            Schema::create('accessibility_profiles', function (Blueprint $table) {
             $table->id();
             $table->foreignId('student_id')->unique()->constrained('students')->onDelete('cascade');
             $table->integer('font_size')->default(16);
@@ -29,6 +30,7 @@ return new class extends Migration
             $table->string('color_scheme')->default('light');
             $table->timestamps();
         });
+        }
     }
 
     /**

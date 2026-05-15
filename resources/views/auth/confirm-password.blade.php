@@ -4,8 +4,9 @@
         <p class="text-edu-gray-text">This is a secure area. Please verify your password.</p>
     </div>
 
-    <div class="mb-6 p-4 rounded-lg bg-edu-pink-light border border-edu-pink/20">
-        <p class="text-sm text-edu-navy">🔒 For your security, please confirm your password to continue.</p>
+    <div class="mb-6 p-4 rounded-lg bg-edu-pink-light border border-edu-pink/20 flex items-center gap-2">
+        <i data-lucide="lock" class="w-4 h-4 text-edu-navy"></i>
+        <p class="text-sm text-edu-navy">For your security, please confirm your password to continue.</p>
     </div>
 
     <form method="POST" action="{{ route('password.confirm') }}" class="space-y-4">

@@ -1,10 +1,13 @@
 <x-guest-layout>
     <div class="mb-8">
-        <h1 class="text-4xl font-black text-edu-navy mb-2">Reset Password</h1>
+        <h1 class="text-4xl font-black text-edu-navy mb-2 flex items-center gap-2">
+            <i data-lucide="key-round" class="w-8 h-8 text-edu-purple"></i> Reset Password
+        </h1>
         <p class="text-edu-gray-text">Enter your email to receive a password reset link</p>
     </div>
 
-    <div class="mb-6 p-4 rounded-lg bg-edu-purple-light border border-edu-purple/20">
+    <div class="mb-6 p-4 rounded-lg bg-edu-purple-light border border-edu-purple/20 flex items-center gap-3">
+        <i data-lucide="info" class="w-5 h-5 text-edu-purple"></i>
         <p class="text-sm text-edu-navy">Forgot your password? No problem! We'll send you a link to reset it.</p>
     </div>
 

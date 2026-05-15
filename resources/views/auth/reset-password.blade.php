@@ -1,6 +1,8 @@
 <x-guest-layout>
     <div class="mb-8">
-        <h1 class="text-4xl font-black text-edu-navy mb-2">Set New Password</h1>
+        <h1 class="text-4xl font-black text-edu-navy mb-2 flex items-center gap-2">
+            <i data-lucide="shield-check" class="w-8 h-8 text-edu-purple"></i> Set New Password
+        </h1>
         <p class="text-edu-gray-text">Create a strong password for your account</p>
     </div>
 

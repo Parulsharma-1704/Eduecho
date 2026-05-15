@@ -1,7 +1,7 @@
 <x-guest-layout>
     <div class="mb-8">
-        <div class="inline-block px-3 py-1 rounded-2xl bg-teal-100 text-teal-700 font-bold text-xs mb-4">
-            ♿ Accessibility First
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-2xl bg-teal-100 text-teal-700 font-bold text-xs mb-4">
+            <i data-lucide="accessibility" class="w-3 h-3"></i> Accessibility First
         </div>
         <h1 class="text-4xl font-black text-indigo-700 mb-2">Create Your Account</h1>
         <p class="text-slate-600">Join EduEcho and start learning today</p>
@@ -75,7 +75,9 @@
 
         <!-- Accessibility Profile Section -->
         <div class="border-t border-lavender-200 pt-4 mt-4">
-            <h3 class="text-lg font-black text-indigo-700 mb-3">♿ Your Accessibility Profile</h3>
+            <h3 class="text-lg font-black text-indigo-700 mb-3 flex items-center gap-2">
+                <i data-lucide="accessibility" class="w-5 h-5"></i> Your Accessibility Profile
+            </h3>
 
             <!-- Disability Type -->
             <div class="mb-3">
@@ -141,8 +143,8 @@
             </a>
         </p>
 
-        <p class="text-center text-xs text-slate-500 pt-3 border-t border-lavender-200">
-            👨‍🏫 <strong>Want to become an educator?</strong> 
+        <p class="text-center text-xs text-slate-500 pt-3 border-t border-lavender-200 flex items-center justify-center gap-2">
+            <i data-lucide="presentation" class="w-4 h-4 text-teal-500"></i> <strong>Want to become an educator?</strong> 
             <a href="{{ route('educator-request.create') }}" class="text-teal-500 hover:text-teal-600 font-bold">Apply here</a> after registration.
         </p>
     </form>

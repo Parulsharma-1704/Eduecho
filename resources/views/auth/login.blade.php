@@ -1,7 +1,7 @@
 <x-guest-layout>
     <div class="mb-8">
-        <div class="inline-block px-3 py-1 rounded-2xl bg-teal-100 text-teal-700 font-bold text-xs mb-4">
-            ♿ Accessibility First
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-2xl bg-teal-100 text-teal-700 font-bold text-xs mb-4">
+            <i data-lucide="accessibility" class="w-3 h-3"></i> Accessibility First
         </div>
         <h1 class="text-4xl font-black text-indigo-700 mb-2">Welcome Back!</h1>
         <p class="text-slate-600">Sign in to your account to continue learning</p>
@@ -86,8 +86,8 @@
 
         <!-- Info Box -->
         <div class="bg-lavender-50 rounded-2xl p-4 border border-lavender-200">
-            <p class="text-xs text-indigo-700 font-semibold">
-                👤 <strong>Invited?</strong> Check your email for your invitation link to register with your assigned role.
+            <p class="text-xs text-indigo-700 font-semibold flex items-center gap-2">
+                <i data-lucide="user" class="w-3 h-3"></i> <strong>Invited?</strong> Check your email for your invitation link to register with your assigned role.
             </p>
         </div>
     </form>

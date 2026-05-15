@@ -1,7 +1,7 @@
 <x-guest-layout>
     <div class="mb-8">
-        <div class="inline-block px-3 py-1 rounded-2xl bg-teal-100 text-teal-700 font-bold text-xs mb-4">
-            ♿ Accessibility First
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-2xl bg-teal-100 text-teal-700 font-bold text-xs mb-4">
+            <i data-lucide="accessibility" class="w-3 h-3"></i> Accessibility First
         </div>
         <h1 class="text-4xl font-black text-indigo-700 mb-2">Choose Your Account Type</h1>
         <p class="text-slate-600">Select how you'll use EduEcho</p>
@@ -15,7 +15,9 @@
                     <i class="ti ti-school text-2xl text-teal-600"></i>
                 </div>
                 <div class="flex-1">
-                    <h3 class="text-xl font-black text-indigo-700 mb-2">📚 Student</h3>
+                    <h3 class="text-xl font-black text-indigo-700 mb-2 flex items-center gap-2">
+                        <i data-lucide="book" class="w-5 h-5"></i> Student
+                    </h3>
                     <p class="text-sm text-slate-600 mb-3">
                         Get immediate access to personalized learning, courses, assessments, and support.
                     </p>
@@ -34,7 +36,9 @@
                     <i class="ti ti-briefcase text-2xl text-violet-600"></i>
                 </div>
                 <div class="flex-1">
-                    <h3 class="text-xl font-black text-indigo-700 mb-2">👨‍🏫 Educator / Tutor</h3>
+                    <h3 class="text-xl font-black text-indigo-700 mb-2 flex items-center gap-2">
+                        <i data-lucide="presentation" class="w-5 h-5"></i> Educator / Tutor
+                    </h3>
                     <p class="text-sm text-slate-600 mb-3">
                         Help students with special needs. Manage courses, IEPs, and provide personalized support.
                     </p>
@@ -53,7 +57,9 @@
                     <i class="ti ti-heart text-2xl text-rose-600"></i>
                 </div>
                 <div class="flex-1">
-                    <h3 class="text-xl font-black text-indigo-700 mb-2">💚 Therapist / Specialist</h3>
+                    <h3 class="text-xl font-black text-indigo-700 mb-2 flex items-center gap-2">
+                        <i data-lucide="heart" class="w-5 h-5 text-rose-500"></i> Therapist / Specialist
+                    </h3>
                     <p class="text-sm text-slate-600 mb-3">
                         Provide therapy sessions and behavioral support for students in the platform.
                     </p>

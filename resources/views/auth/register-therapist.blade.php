@@ -1,7 +1,7 @@
 <x-guest-layout>
     <div class="mb-8">
-        <div class="inline-block px-3 py-1 rounded-2xl bg-rose-100 text-rose-700 font-bold text-xs mb-4">
-            💚 Healthcare Professional
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-2xl bg-rose-100 text-rose-700 font-bold text-xs mb-4">
+            <i data-lucide="heart" class="w-3 h-3 text-rose-500"></i> Healthcare Professional
         </div>
         <h1 class="text-4xl font-black text-indigo-700 mb-2">Therapist Registration</h1>
         <p class="text-slate-600">Provide therapeutic support for students</p>

@@ -31,23 +31,31 @@ class AccessibilitySettingController extends Controller
         $this->authorize('update', $student);
 
         $validated = $request->validate([
-            'font_size' => ['required', 'integer', 'in:12,14,16,18,20,24'],
-            'font_family' => ['required', 'string', 'in:Roboto,Serif,Monospace,Dyslexia'],
-            'line_spacing' => ['required', 'numeric', 'between:1,3'],
-            'letter_spacing' => ['required', 'numeric', 'between:-10,10'],
-            'high_contrast' => ['boolean'],
-            'invert_colors' => ['boolean'],
-            'text_to_speech' => ['boolean'],
-            'screen_reader_mode' => ['boolean'],
-            'voice_control' => ['boolean'],
-            'keyboard_only' => ['boolean'],
-            'reading_guide' => ['boolean'],
-            'focus_mode' => ['boolean'],
-            'color_scheme' => ['required', 'string', 'in:light,dark'],
+            'font_size' => ['sometimes', 'integer', 'in:12,14,16,18,20,24'],
+            'font_family' => ['sometimes', 'string', 'in:Roboto,Serif,Monospace,Dyslexia'],
+            'line_spacing' => ['sometimes', 'numeric', 'between:1,3'],
+            'letter_spacing' => ['sometimes', 'numeric', 'between:-10,10'],
+            'high_contrast' => ['sometimes', 'boolean'],
+            'invert_colors' => ['sometimes', 'boolean'],
+            'text_to_speech' => ['sometimes', 'boolean'],
+            'screen_reader_mode' => ['sometimes', 'boolean'],
+            'voice_control' => ['sometimes', 'boolean'],
+            'keyboard_only' => ['sometimes', 'boolean'],
+            'reading_guide' => ['sometimes', 'boolean'],
+            'focus_mode' => ['sometimes', 'boolean'],
+            'color_scheme' => ['sometimes', 'string', 'in:light,dark'],
         ]);
 
         $profile = $student->accessibilityProfile ?? new AccessibilityProfile(['student_id' => $student->id]);
         $profile->update($validated);
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Accessibility settings updated successfully.',
+                'profile' => $profile
+            ]);
+        }
 
         return redirect()->route('accessibility.show', $student)
             ->with('success', 'Accessibility settings updated successfully.');

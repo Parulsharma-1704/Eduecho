@@ -4,16 +4,10 @@
         <div class="flex justify-between h-16">
             <div class="flex items-center">
                 <!-- Logo -->
-                <div class="shrink-0 flex items-center space-x-3">
-                    <a href="{{ Auth::check() ? route('dashboard') : url('/') }}" class="flex items-center space-x-3 group">
-                        <!-- Yellow Icon Circle -->
-                        <div class="w-11 h-11 rounded-lg flex items-center justify-center shadow-lg transition-transform group-hover:scale-110" style="background-color: #FCD34D;">
-                            <svg class="w-6 h-6 text-indigo-700 font-bold" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M10.5 1.5H4.75A3.25 3.25 0 001.5 4.75v10.5a3.25 3.25 0 003.25 3.25h10.5a3.25 3.25 0 003.25-3.25V9.5"></path>
-                                <path d="M14 1.5v4m0 0h4m-4 0L10 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-                            </svg>
-                        </div>
-                        <span class="hidden md:block text-xl font-black tracking-tight" style="color: #312E81;">Edu<span style="color: #FCD34D;">Ecosystem</span></span>
+                <div class="shrink-0 flex items-center space-x-2">
+                    <a href="{{ Auth::check() ? route('dashboard') : url('/') }}" class="flex items-center space-x-2 group">
+                        <i data-lucide="layers" class="w-8 h-8 text-indigo-700"></i>
+                        <span class="hidden md:block text-xl font-black tracking-tight" style="color: #312E81;">EduEcho</span>
                     </a>
                 </div>
 

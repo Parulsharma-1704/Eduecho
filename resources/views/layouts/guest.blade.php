@@ -5,7 +5,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'EduEcosystem') }}</title>
+        <title>EduEcho</title>
+        <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%234338ca' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z'/%3E%3Cpath d='m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65'/%3E%3Cpath d='m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65'/%3E%3C/svg%3E">
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -14,6 +15,7 @@
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+        <script src="https://unpkg.com/lucide@latest"></script>
         
         <style>
             html { scroll-behavior: smooth; }
@@ -32,9 +34,7 @@
             <div class="w-full sm:max-w-md">
                 <!-- Logo -->
                 <a href="{{ url('/') }}" class="flex items-center gap-3 group justify-center mb-8">
-                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-700 to-teal-500 flex items-center justify-center text-white font-black text-xl shadow-lg">
-                        E
-                    </div>
+                    <i data-lucide="layers" class="w-10 h-10 text-indigo-700"></i>
                     <span class="text-2xl font-black text-indigo-700">EduEcho</span>
                 </a>
 
@@ -51,5 +51,8 @@
                 </p>
             </div>
         </div>
+        <script>
+            lucide.createIcons();
+        </script>
     </body>
 </html>

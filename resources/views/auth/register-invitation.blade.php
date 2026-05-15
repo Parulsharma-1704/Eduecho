@@ -72,15 +72,17 @@
 
         <!-- Role Display -->
         <div class="p-4 rounded-lg bg-edu-purple-light border border-edu-purple/20">
-            <p class="text-sm font-bold text-edu-navy">
-                👤 Your Role: <span class="text-edu-purple capitalize">{{ str_replace('_', ' ', $invitation->role) }}</span>
+            <p class="text-sm font-bold text-edu-navy flex items-center gap-2">
+                <i data-lucide="user" class="w-4 h-4 text-edu-purple"></i> Your Role: <span class="text-edu-purple capitalize">{{ str_replace('_', ' ', $invitation->role) }}</span>
             </p>
         </div>
 
         <!-- Student Disability Profile Section -->
         @if($invitation->role === 'student')
             <div class="border-t border-edu-gray-bg pt-4 mt-4">
-                <h3 class="text-lg font-black text-edu-navy mb-3">♿ Your Accessibility Profile</h3>
+                <h3 class="text-lg font-black text-edu-navy mb-3 flex items-center gap-2">
+                    <i data-lucide="accessibility" class="w-5 h-5"></i> Your Accessibility Profile
+                </h3>
 
                 <!-- Disability Type -->
                 <div class="mb-3">
@@ -140,7 +142,9 @@
             </div>
         @elseif($invitation->role === 'special_educator')
             <div class="border-t border-edu-gray-bg pt-4 mt-4">
-                <h3 class="text-lg font-black text-edu-navy mb-3">🎓 Teaching Specializations</h3>
+                <h3 class="text-lg font-black text-edu-navy mb-3 flex items-center gap-2">
+                    <i data-lucide="graduation-cap" class="w-5 h-5 text-edu-purple"></i> Teaching Specializations
+                </h3>
 
                 <!-- Specialization Checkboxes -->
                 <div class="space-y-2 mb-4">
@@ -231,8 +235,8 @@
         </div>
 
         <!-- Invitation Expiry Info -->
-        <p class="text-xs text-slate-500 text-center pt-4 border-t border-lavender-200">
-            ⏰ This invitation expires on <span class="font-bold text-indigo-700">{{ $invitation->expires_at->format('M d, Y') }}</span>
+        <p class="text-xs text-slate-500 text-center pt-4 border-t border-lavender-200 flex items-center justify-center gap-2">
+            <i data-lucide="clock" class="w-3 h-3 text-indigo-700"></i> This invitation expires on <span class="font-bold text-indigo-700">{{ $invitation->expires_at->format('M d, Y') }}</span>
         </p>
     </form>
 </x-guest-layout>
