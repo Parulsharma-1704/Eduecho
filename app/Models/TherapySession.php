@@ -17,10 +17,12 @@ class TherapySession extends Model
         'duration',
         'notes',
         'progress',
+        'status',
     ];
 
     protected $casts = [
-        'session_date' => 'date',
+        'session_date' => 'datetime',
+        'status' => 'string',
     ];
 
     public function student()

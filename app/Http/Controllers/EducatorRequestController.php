@@ -5,8 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\EducatorRequest;
 use App\Models\SpecialEducator;
 use App\Models\EducatorDisabilitySpecialization;
+use App\Mail\EducatorApplicationApproved;
+use App\Mail\TherapistApplicationApproved;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class EducatorRequestController extends Controller
 {
@@ -98,32 +101,63 @@ class EducatorRequestController extends Controller
             return redirect()->back()->with('error', 'Request has already been processed.');
         }
 
+        // Determine the role from review_notes (which contains registration data)
+        $registrationData = json_decode($educatorRequest->review_notes, true);
+        $isTherapist = isset($registrationData['role']) && $registrationData['role'] === 'therapist';
+        $roleName = $isTherapist ? 'therapist' : 'special_educator';
+
         $educatorRequest->update([
             'status' => 'approved',
             'reviewed_by' => Auth::id(),
             'reviewed_at' => now(),
         ]);
 
-        // Assign educator role to the user
+        // Assign correct role to the user
         $user = $educatorRequest->user;
-        $user->assignRole('special_educator');
+        if (!\Spatie\Permission\Models\Role::where('name', $roleName)->exists()) {
+            \Spatie\Permission\Models\Role::create(['name' => $roleName]);
+        }
+        $user->assignRole($roleName);
 
-        // Create SpecialEducator record
-        $specialEducator = SpecialEducator::create([
-            'user_id' => $user->id,
-            'qualification' => $educatorRequest->qualification,
-            'experience_years' => 0, // Could be calculated from experience text
-        ]);
+        if ($isTherapist) {
+            // Create Therapist record
+            \App\Models\Therapist::firstOrCreate(
+                ['user_id' => $user->id],
+                [
+                    'specialization' => is_array($educatorRequest->specializations) ? implode(', ', $educatorRequest->specializations) : $educatorRequest->specializations,
+                    'certification' => $registrationData['license_number'] ?? null,
+                    'experience_years' => $registrationData['experience_years'] ?? 0,
+                ]
+            );
+        } else {
+            // Create SpecialEducator record
+            $specialEducator = SpecialEducator::firstOrCreate(
+                ['user_id' => $user->id],
+                [
+                    'qualification' => $educatorRequest->qualification,
+                    'experience_years' => $registrationData['experience_years'] ?? 0,
+                ]
+            );
 
-        // Create disability specializations
-        foreach ($educatorRequest->specializations as $disabilityType) {
-            EducatorDisabilitySpecialization::create([
-                'educator_id' => $specialEducator->id,
-                'disability_type' => $disabilityType,
-            ]);
+            // Create disability specializations
+            if (is_array($educatorRequest->specializations)) {
+                foreach ($educatorRequest->specializations as $disabilityType) {
+                    EducatorDisabilitySpecialization::firstOrCreate([
+                        'educator_id' => $specialEducator->id,
+                        'disability_type' => $disabilityType,
+                    ]);
+                }
+            }
         }
 
-        return redirect()->back()->with('success', 'Educator request approved successfully.');
+        // Send appropriate approval email
+        if ($isTherapist) {
+            Mail::to($user->email)->send(new TherapistApplicationApproved($user));
+        } else {
+            Mail::to($user->email)->send(new EducatorApplicationApproved($user));
+        }
+
+        return redirect()->route('educator-request.index')->with('success', 'Request approved successfully. The user has been notified.');
     }
 
     /**

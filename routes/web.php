@@ -11,6 +11,7 @@ use App\Http\Controllers\ProgressReportController;
 use App\Http\Controllers\UserInvitationController;
 use App\Http\Controllers\AccessibilitySettingController;
 use App\Http\Controllers\AdaptiveContentController;
+use App\Http\Controllers\CourseResourceController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
@@ -24,10 +25,14 @@ Route::get('/', function () {
 });
 
 // Authenticated routes
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'approved'])->group(function () {
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::post('/support-tickets', [DashboardController::class, 'storeSupportTicket'])->name('support-tickets.store');
+
+    Route::get('/pending-approval', function () {
+        return view('auth.pending-approval');
+    })->name('pending-approval');
 
     // Profile
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -39,6 +44,7 @@ Route::middleware('auth')->group(function () {
 
     // Courses
     Route::resource('courses', CourseController::class);
+    Route::post('/course-resources', [CourseResourceController::class, 'store'])->name('course-resources.store');
 
     // IEPs (Individualized Education Programs)
     Route::resource('ieps', IEPController::class);
@@ -106,6 +112,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/matching', [\App\Http\Controllers\TutoringController::class, 'matching'])->name('tutoring.matching');
         Route::get('/find-tutors', [\App\Http\Controllers\TutoringController::class, 'findTutors'])->name('tutoring.find-tutors');
         Route::post('/connect/{educator}', [\App\Http\Controllers\TutoringController::class, 'requestConnection'])->name('tutoring.request-connect');
+        Route::post('/connect-student/{student}', [\App\Http\Controllers\TutoringController::class, 'connectStudent'])->name('tutoring.connect');
         Route::get('/hub', [\App\Http\Controllers\TutoringController::class, 'hub'])->name('tutoring.hub');
         Route::get('/api/messages/{contact}', [\App\Http\Controllers\TutoringController::class, 'getMessages'])->name('tutoring.messages.get');
         Route::post('/api/messages/{contact}', [\App\Http\Controllers\TutoringController::class, 'sendMessage'])->name('tutoring.messages.send');

@@ -13,6 +13,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\EducatorApplicationPending;
 use Illuminate\View\View;
 use Spatie\Permission\Models\Role;
 
@@ -150,6 +152,8 @@ class RegisteredUserController extends Controller
             ]),
         ]);
 
+        Mail::to($user->email)->send(new EducatorApplicationPending($user));
+
         event(new Registered($user));
         Auth::login($user);
 
@@ -220,6 +224,8 @@ class RegisteredUserController extends Controller
                 'experience_years' => $request->experience_years,
             ]),
         ]);
+
+        Mail::to($user->email)->send(new EducatorApplicationPending($user));
 
         event(new Registered($user));
         Auth::login($user);

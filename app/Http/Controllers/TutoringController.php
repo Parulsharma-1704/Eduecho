@@ -99,6 +99,28 @@ class TutoringController extends Controller
     }
 
     /**
+     * Educator connects with a student.
+     */
+    public function connectStudent(Request $request, Student $student)
+    {
+        $user = Auth::user();
+        
+        if (!$user->hasRole('special_educator')) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        if ($student->assigned_educator_id) {
+            return redirect()->back()->with('error', 'This student is already connected to an educator.');
+        }
+
+        $student->update([
+            'assigned_educator_id' => $user->id
+        ]);
+
+        return redirect()->route('tutoring.hub')->with('success', 'Successfully connected with ' . $student->user->name . '.');
+    }
+
+    /**
      * Show the Tutoring Hub / Chat Interface.
      */
     public function hub(Request $request)

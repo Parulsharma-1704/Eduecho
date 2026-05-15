@@ -26,15 +26,39 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
+        $user = $request->user();
+        $user->fill($request->validated());
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
+        if ($user->isDirty('email')) {
+            $user->email_verified_at = null;
         }
 
-        $request->user()->save();
+        $user->save();
 
-        return Redirect::route('profile.edit')->with('status', 'profile-updated');
+        // Handle therapist-specific profile updates
+        if ($user->hasRole('therapist') && $user->therapist) {
+            $user->therapist->update(array_filter([
+                'specialization'   => $request->specialization,
+                'certification'    => $request->certification,
+                'experience_years' => $request->experience_years,
+            ], fn($v) => !is_null($v)));
+        }
+
+        // Handle educator specializations
+        if ($user->hasRole('special_educator') && $request->has('specializations')) {
+            $specialEducator = $user->specialEducator;
+            if ($specialEducator) {
+                $specialEducator->disabilitySpecializations()->delete();
+                foreach ($request->specializations as $type) {
+                    \App\Models\EducatorDisabilitySpecialization::create([
+                        'educator_id'   => $specialEducator->id,
+                        'disability_type' => $type,
+                    ]);
+                }
+            }
+        }
+
+        return Redirect::route('dashboard')->with('success', 'Profile updated successfully.');
     }
 
     /**
