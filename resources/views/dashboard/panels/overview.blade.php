@@ -97,6 +97,41 @@
     @include('dashboard._quick_actions')
 
     @if(Auth::user()->hasRole('admin'))
+        @if(isset($pendingEnrollments) && $pendingEnrollments->count() > 0)
+            <!-- PENDING COURSE ENROLLMENT REQUESTS -->
+            <div class="eyebrow" style="margin-top:24px; color:var(--amber)">Pending Course Enrollments</div>
+            <div class="card" style="margin-top:12px; border-left:4px solid var(--amber); margin-bottom:24px;">
+                <p style="font-size:11.5px; color:var(--gray); margin-bottom:16px;">Approve pending accessibility course enrollment requests filed by students.</p>
+                <div style="display:flex; flex-direction:column; gap:10px;">
+                    @foreach($pendingEnrollments as $req)
+                        <div style="background:var(--gray-l); border-radius:12px; padding:16px; border:1px solid var(--gray-b); display:flex; align-items:center; justify-content:space-between; gap:16px; box-sizing:border-box;">
+                            <div style="display:flex; align-items:center; gap:12px;">
+                                <div style="width:36px; height:36px; border-radius:50%; background:var(--al); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                                    <i class="ti ti-user-exclamation" style="color:var(--amber); font-size:16px;"></i>
+                                </div>
+                                <div>
+                                    <div style="font-size:13px; font-weight:700; color:var(--navy);">
+                                        {{ $req->student->user->name ?? 'Unknown Student' }}
+                                    </div>
+                                    <div style="font-size:11px; color:var(--gray); margin-top:2px;">
+                                        Wants to enroll in: <span style="font-weight:700; color:var(--teal);">{{ $req->course->title }}</span> ({{ $req->course->support_type }})
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <form method="POST" action="{{ route('admin.courses.approve-enrollment', $req->id) }}" style="margin:0;">
+                                @csrf
+                                @method('PATCH')
+                                <button type="submit" class="btn-teal" style="background:var(--teal); color:#fff; border:none; padding:8px 14px; font-size:11px; border-radius:8px; cursor:pointer;">
+                                    <i class="ti ti-check"></i> Approve Enrollment
+                                </button>
+                            </form>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        @endif
+
         <!-- RECENT ACTIVITIES -->
         <div class="eyebrow" style="margin-top:24px">Recent Activities</div>
         <div class="card" style="margin-top:12px; max-height:300px; overflow-y:auto;">

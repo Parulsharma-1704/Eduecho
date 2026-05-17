@@ -85,6 +85,8 @@
                 @include('dashboard.panels.profile')
                 @include('dashboard.panels.accessibility')
                 @include('dashboard.panels.learning_materials')
+                @include('dashboard.panels.reports')
+                @include('dashboard.panels.support_tickets')
 
                 @include('dashboard.panels.therapy-notes')
                 @include('dashboard.panels.progress')
@@ -99,7 +101,7 @@
         const panels = [
             'overview', 'profile', 'courses', 'students', 'ieps', 'notifications', 'support',
             'adaptive-content', 'learning-materials', 'therapy-sessions', 'therapy-notes', 'progress',
-            'educators', 'therapy', 'reports', 'settings', 'accessibility'
+            'educators', 'therapy', 'reports', 'settings', 'accessibility', 'support-tickets'
         ];
         const titles = { 
             overview: 'Dashboard', 
@@ -115,6 +117,7 @@
             settings: 'Settings', 
             ieps: 'IEPs',
             support: 'Support & Help',
+            'support-tickets': 'Support Tickets',
             profile: 'My Profile'
         };
 
@@ -183,10 +186,70 @@
             if (e.key === 'Escape') closeModal();
         });
 
-        // Initialize first panel
+        // Global Search & Filter Functionality
+        function applyFilters(container) {
+            if (!container) return;
+
+            // Get search term (either panel specific or global)
+            let searchInput = container.querySelector('input[placeholder*="earch"]');
+            let globalInput = document.querySelector('.tb-search input');
+            const searchTerm = (searchInput ? searchInput.value : (globalInput ? globalInput.value : '')).toLowerCase();
+
+            // Get filter value if a select exists
+            const selectFilter = container.querySelector('select');
+            const filterValue = selectFilter ? selectFilter.value.toLowerCase() : '';
+
+            // Find searchable items in the panel
+            let items = container.querySelectorAll('.stu, .course-item, tbody tr:not(.empty-state)');
+            
+            // Fallback for grid layouts
+            if (items.length === 0) {
+                items = Array.from(container.querySelectorAll('.card')).filter(card => {
+                    return !card.classList.contains('welcome') && !card.classList.contains('sc') && !card.classList.contains('qa');
+                });
+            }
+
+            items.forEach(item => {
+                const text = item.innerText.toLowerCase();
+                const matchesSearch = text.includes(searchTerm);
+                
+                let matchesFilter = true;
+                if (filterValue) {
+                    // Check specifically for active/inactive text to avoid partial matches
+                    const pills = Array.from(item.querySelectorAll('.pill, button'));
+                    const statusEl = pills.find(p => {
+                        const t = p.innerText.trim().toLowerCase();
+                        return t === 'active' || t === 'inactive';
+                    });
+                    
+                    if (statusEl) {
+                        matchesFilter = statusEl.innerText.trim().toLowerCase() === filterValue;
+                    } else {
+                        const regex = new RegExp(`\\b${filterValue}\\b`, 'i');
+                        matchesFilter = regex.test(text);
+                    }
+                }
+                
+                item.style.display = (matchesSearch && matchesFilter) ? '' : 'none';
+            });
+        }
+
+        function handleInput(e) {
+            let container = e.target.closest('.panel');
+            if (!container) container = document.querySelector('.panel.show');
+            applyFilters(container);
+        }
+
+        // Initialize first panel and search listeners
         document.addEventListener('DOMContentLoaded', () => {
             const activePanel = '{{ $activePanel ?? 'overview' }}';
             showPanel(activePanel, document.querySelector(`.sb-item[onclick*="${activePanel}"]`));
+
+            // Attach search listeners
+            document.querySelectorAll('input[placeholder*="earch"], select').forEach(input => {
+                input.addEventListener('input', handleInput);
+                input.addEventListener('change', handleInput);
+            });
         });
     </script>
 </body>

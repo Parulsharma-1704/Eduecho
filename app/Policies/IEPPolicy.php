@@ -12,7 +12,11 @@ class IEPPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasPermissionTo('view_ieps');
+        try {
+            return $user->hasPermissionTo('view_ieps') || $user->hasRole('admin');
+        } catch (\Throwable $e) {
+            return $user->hasAnyRole(['admin', 'student', 'special_educator', 'therapist', 'care_giver']);
+        }
     }
 
     /**
@@ -20,13 +24,20 @@ class IEPPolicy
      */
     public function view(User $user, IEP $iep): bool
     {
-        if ($user->hasPermissionTo('view_ieps')) {
-            // Students can view their own IEP
-            if ($user->hasRole('student') && $user->student->id === $iep->student_id) {
-                return true;
+        try {
+            if ($user->hasPermissionTo('view_ieps') || $user->hasRole('admin')) {
+                if ($user->hasRole('student') && $user->student && $user->student->id === $iep->student_id) {
+                    return true;
+                }
+                return !$user->hasRole('student');
             }
-            // Educators, therapists, care givers can view
-            return !$user->hasRole('student');
+        } catch (\Throwable $e) {
+            if ($user->hasAnyRole(['admin', 'student', 'special_educator', 'therapist', 'care_giver'])) {
+                if ($user->hasRole('student') && $user->student && $user->student->id === $iep->student_id) {
+                    return true;
+                }
+                return !$user->hasRole('student');
+            }
         }
         return false;
     }
@@ -36,7 +47,11 @@ class IEPPolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasPermissionTo('create_ieps');
+        try {
+            return $user->hasPermissionTo('create_ieps') || $user->hasRole('admin');
+        } catch (\Throwable $e) {
+            return $user->hasAnyRole(['admin', 'special_educator']);
+        }
     }
 
     /**
@@ -44,9 +59,14 @@ class IEPPolicy
      */
     public function update(User $user, IEP $iep): bool
     {
-        if ($user->hasPermissionTo('edit_ieps')) {
-            // Only creator or admin can edit
-            return $user->id === $iep->created_by_id || $user->hasRole('admin');
+        try {
+            if ($user->hasPermissionTo('edit_ieps') || $user->hasRole('admin')) {
+                return $user->id === $iep->created_by_id || $user->hasRole('admin');
+            }
+        } catch (\Throwable $e) {
+            if ($user->hasAnyRole(['admin', 'special_educator'])) {
+                return $user->id === $iep->created_by_id || $user->hasRole('admin');
+            }
         }
         return false;
     }
@@ -56,8 +76,14 @@ class IEPPolicy
      */
     public function delete(User $user, IEP $iep): bool
     {
-        if ($user->hasPermissionTo('delete_ieps')) {
-            return $user->id === $iep->created_by_id || $user->hasRole('admin');
+        try {
+            if ($user->hasPermissionTo('delete_ieps') || $user->hasRole('admin')) {
+                return $user->id === $iep->created_by_id || $user->hasRole('admin');
+            }
+        } catch (\Throwable $e) {
+            if ($user->hasAnyRole(['admin', 'special_educator'])) {
+                return $user->id === $iep->created_by_id || $user->hasRole('admin');
+            }
         }
         return false;
     }

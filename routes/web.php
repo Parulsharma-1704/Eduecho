@@ -29,6 +29,8 @@ Route::middleware(['auth', 'approved'])->group(function () {
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::post('/support-tickets', [DashboardController::class, 'storeSupportTicket'])->name('support-tickets.store');
+    Route::patch('/support-tickets/{ticket}/status', [DashboardController::class, 'updateSupportTicketStatus'])->name('support-tickets.update-status');
+    Route::post('/notifications/mark-all-read', [\App\Http\Controllers\Admin\NotificationController::class, 'markAllRead'])->name('notifications.mark-all-read');
 
     Route::get('/pending-approval', function () {
         return view('auth.pending-approval');
@@ -123,10 +125,15 @@ Route::middleware(['auth', 'approved'])->group(function () {
         Route::delete('/{user}', [\App\Http\Controllers\Admin\UserController::class, 'destroy'])->name('destroy');
     });
 
+    // Course Management
+    Route::post('/courses/{course}/enroll', [\App\Http\Controllers\Admin\CourseController::class, 'enroll'])->name('courses.enroll');
+
     // Admin Course Management
     Route::prefix('admin/courses')->name('admin.courses.')->group(function () {
         Route::post('/', [\App\Http\Controllers\Admin\CourseController::class, 'store'])->name('store');
+        Route::patch('/{course}/assign-educator', [\App\Http\Controllers\Admin\CourseController::class, 'assignEducator'])->name('assign-educator');
         Route::patch('/{course}/toggle-active', [\App\Http\Controllers\Admin\CourseController::class, 'toggleActive'])->name('toggle-active');
+        Route::patch('/enrollments/{enrollment}/approve', [\App\Http\Controllers\Admin\CourseController::class, 'approveEnrollment'])->name('approve-enrollment');
         Route::delete('/{course}', [\App\Http\Controllers\Admin\CourseController::class, 'destroy'])->name('destroy');
     });
 

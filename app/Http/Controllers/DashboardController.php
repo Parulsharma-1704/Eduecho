@@ -22,6 +22,12 @@ class DashboardController extends Controller
     {
         $user = $request->user();
 
+        // Fetch notifications for the logged in user
+        $notifications = \App\Models\Notification::where('user_id', $user->id)
+            ->latest()
+            ->take(20)
+            ->get();
+
         // Get statistics based on user role
         $stats = [];
         if ($user->hasRole('admin')) {
@@ -90,13 +96,27 @@ class DashboardController extends Controller
             // Recent Activities
             $recentActivities = \App\Models\Notification::latest()->take(5)->get();
 
+            // Fetch admin notifications
+            $notifications = \App\Models\Notification::where('user_id', $user->id)
+                ->orWhereNull('user_id')
+                ->latest()
+                ->take(20)
+                ->get();
+
             // Pending Educator Requests for table
             $pendingEducatorRequests = EducatorRequest::with('user')->where('status', 'pending')->get();
 
+            // Fetch pending student course enrollments
+            $pendingEnrollments = \App\Models\CourseEnrollment::where('status', 'Pending')->with(['student.user', 'course'])->latest()->get();
+
             // --- Phase 3 Analytics Aggregations ---
             // 1. Student Registration Chart (By Month)
+            $dateFormat = \Illuminate\Support\Facades\DB::getDriverName() === 'sqlite'
+                ? 'strftime("%Y-%m", created_at) as month'
+                : 'DATE_FORMAT(created_at, "%Y-%m") as month';
+
             $studentRegistrations = User::role('student')
-                ->selectRaw('COUNT(id) as count, DATE_FORMAT(created_at, "%Y-%m") as month')
+                ->selectRaw('COUNT(id) as count, ' . $dateFormat)
                 ->groupBy('month')
                 ->orderBy('month', 'asc')
                 ->take(6)
@@ -122,6 +142,9 @@ class DashboardController extends Controller
             ];
             // --------------------------------------
 
+            // Fetch all support tickets for Admin to solve
+            $supportTickets = \App\Models\SupportTicket::with('user')->latest()->get();
+
             return view('dashboard', [
                 'user' => $user,
                 'stats' => $stats,
@@ -135,6 +158,9 @@ class DashboardController extends Controller
                 'allTherapySessions' => $allTherapySessions,
                 'recentActivities' => $recentActivities,
                 'pendingEducatorRequests' => $pendingEducatorRequests,
+                'pendingEnrollments' => $pendingEnrollments,
+                'notifications' => $notifications,
+                'supportTickets' => $supportTickets,
                 'analytics' => compact('studentRegistrations', 'courseCompletions', 'disabilityDistribution'),
             ]);
         } elseif ($user->hasRole('student')) {
@@ -178,7 +204,7 @@ class DashboardController extends Controller
                                 ->from('assessment_responses')
                                 ->where('student_id', $student->id);
                         })
-                        ->select('id', 'course_id', 'title', 'type')
+                        ->select('id', 'course_id', 'title', 'is_adaptive')
                         ->take(3)
                         ->get();
                 }
@@ -233,16 +259,62 @@ class DashboardController extends Controller
                     ->get();
             }
 
+            // Fetch student support tickets
+            $supportTickets = \App\Models\SupportTicket::where('student_id', $user->id)->latest()->get();
+
+            $enrollments = collect();
+            $recommendedCourses = collect();
+            $availableCourses = collect();
+
+            if ($student) {
+                // Fetch enrollments with course details
+                $enrollments = \App\Models\CourseEnrollment::where('student_id', $student->id)
+                    ->with(['course.assignedEducator.specialEducator.disabilitySpecializations'])
+                    ->latest()
+                    ->get();
+
+                $enrolledCourseIds = $enrollments->pluck('course_id')->toArray();
+
+                // Fetch recommendations based on disability
+                $type = $disabilityProfile ? strtolower($disabilityProfile->disability_type) : '';
+                
+                $recommendedCourses = Course::where('is_active', true)
+                    ->whereNotIn('id', $enrolledCourseIds)
+                    ->where(function($q) use ($type) {
+                        if (str_contains($type, 'visual')) $q->where('target_disabilities', 'LIKE', '%visual%');
+                        elseif (str_contains($type, 'hearing')) $q->where('target_disabilities', 'LIKE', '%hearing%');
+                        elseif (str_contains($type, 'dyslexia')) $q->where('target_disabilities', 'LIKE', '%dyslexia%');
+                        elseif (str_contains($type, 'autism') || str_contains($type, 'adhd')) $q->where('target_disabilities', 'LIKE', '%autism%')->orWhere('target_disabilities', 'LIKE', '%adhd%');
+                        else $q->where('target_disabilities', 'LIKE', '%' . $type . '%');
+                    })
+                    ->with('assignedEducator')
+                    ->latest()
+                    ->get();
+
+                // Fetch other available courses that are not recommended and not enrolled
+                $recCourseIds = $recommendedCourses->pluck('id')->toArray();
+                $excludeIds = array_merge($enrolledCourseIds, $recCourseIds);
+
+                $availableCourses = Course::where('is_active', true)
+                    ->whereNotIn('id', $excludeIds)
+                    ->with('assignedEducator')
+                    ->latest()
+                    ->get();
+            }
+
             return view('dashboard', [
                 'user' => $user,
                 'stats' => $stats,
                 'enrolledCourses' => $enrolledCourses,
+                'enrollments' => $enrollments,
+                'recommendedCourses' => $recommendedCourses,
+                'availableCourses' => $availableCourses,
                 'pendingAssessments' => $pendingAssessments,
                 'upcomingSessions' => $upcomingSessions,
                 'disabilityProfile' => $disabilityProfile,
                 'accessibilityProfile' => $accessibilityProfile ?? null,
                 'disabilityResources' => $disabilityResources ?? collect(),
-                'supportTickets' => $supportTickets ?? collect(),
+                'supportTickets' => $supportTickets,
                 'notifications' => $notifications ?? collect(),
             ]);
         } elseif ($user->hasRole('special_educator')) {
@@ -282,8 +354,7 @@ class DashboardController extends Controller
                 ->latest()
                 ->get();
 
-            // Get notifications
-            $notifications = $user->notifications()->where('is_read', false)->take(10)->get();
+            // Get notifications (using global $notifications)
 
             // Get upcoming sessions
             $upcomingSessions = TherapySession::whereIn('student_id', function ($q) use ($user) {
@@ -295,6 +366,8 @@ class DashboardController extends Controller
                 ->take(5)
                 ->get();
 
+            $supportTickets = \App\Models\SupportTicket::where('student_id', $user->id)->latest()->get();
+
             return view('dashboard', [
                 'user' => $user,
                 'stats' => $stats,
@@ -304,6 +377,7 @@ class DashboardController extends Controller
                 'allMaterials' => $allMaterials,
                 'notifications' => $notifications,
                 'upcomingSessions' => $upcomingSessions,
+                'supportTickets' => $supportTickets,
             ]);
         } elseif ($user->hasRole('therapist')) {
             $stats = [
@@ -331,10 +405,11 @@ class DashboardController extends Controller
                 ->where('status', 'SCHEDULED')
                 ->take(5);
 
-            // Get notifications
-            $notifications = $user->notifications()->where('is_read', false)->take(10)->get();
+            // Get notifications (using global $notifications)
 
             $therapist = $user->therapist;
+
+            $supportTickets = \App\Models\SupportTicket::where('student_id', $user->id)->latest()->get();
 
             return view('dashboard', [
                 'user' => $user,
@@ -344,6 +419,7 @@ class DashboardController extends Controller
                 'allSessions' => $allSessions,
                 'upcomingSessions' => $upcomingSessions,
                 'notifications' => $notifications,
+                'supportTickets' => $supportTickets,
             ]);
         } elseif ($user->hasRole('support_staff')) {
             $stats = [
@@ -356,6 +432,7 @@ class DashboardController extends Controller
             return view('dashboard', [
                 'user' => $user,
                 'stats' => $stats,
+                'notifications' => $notifications,
             ]);
         } elseif ($user->hasRole('care_giver')) {
             $stats = [
@@ -368,12 +445,14 @@ class DashboardController extends Controller
             return view('dashboard', [
                 'user' => $user,
                 'stats' => $stats,
+                'notifications' => $notifications,
             ]);
         }
 
         return view('dashboard', [
             'user' => $user,
             'stats' => $stats ?? [],
+            'notifications' => $notifications,
         ]);
     }
     
@@ -387,18 +466,43 @@ class DashboardController extends Controller
             'description' => 'required|string',
         ]);
 
-        $student = auth()->user()->student;
-        if (!$student) {
-            return back()->with('error', 'Only students can submit support tickets.');
-        }
-
         \App\Models\SupportTicket::create([
-            'student_id' => $student->id,
+            'student_id' => auth()->id(), // student_id references users.id in the migration
             'title' => $request->title,
             'description' => $request->description,
             'status' => 'pending',
         ]);
 
         return back()->with('success', 'Your support ticket has been submitted successfully.');
+    }
+
+    /**
+     * Update support ticket status (Admin only).
+     */
+    public function updateSupportTicketStatus(Request $request, $ticketId)
+    {
+        if (!auth()->user()->hasRole('admin')) {
+            return back()->with('error', 'Unauthorized action.');
+        }
+
+        $request->validate([
+            'status' => 'required|in:pending,resolved',
+        ]);
+
+        $ticket = \App\Models\SupportTicket::findOrFail($ticketId);
+        $ticket->update(['status' => $request->status]);
+
+        // Dispatch status notification back to the user
+        if ($ticket->student_id) {
+            \App\Models\Notification::create([
+                'user_id' => $ticket->student_id,
+                'notification_type' => 'reminder',
+                'title' => 'Support Ticket Update',
+                'message' => 'Your support ticket "' . $ticket->title . '" has been marked as ' . ucfirst($request->status) . '.',
+                'is_read' => false,
+            ]);
+        }
+
+        return redirect()->back()->with('success', 'Ticket status updated successfully.');
     }
 }

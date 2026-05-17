@@ -124,6 +124,13 @@
     .eyebrow { font-size: 11px; font-weight: 800; color: var(--teal); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 12px; }
     .pill { padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 700; }
 
+    /* QUICK ACTIONS */
+    .qa-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 32px; }
+    .qa { background: var(--white); padding: 20px; border-radius: 16px; border: 1px solid var(--teal-ll); transition: 0.3s; cursor: pointer; }
+    .qa:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(0,0,0,0.04); border-color: var(--teal); }
+    .qa-ico { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; margin-bottom: 12px; }
+
+
     /* BUTTONS */
     .btn-teal { background: var(--teal); color: white; padding: 12px 24px; border-radius: 12px; border: none; font-weight: 700; font-size: 14px; display: flex; align-items: center; gap: 8px; transition: 0.2s; cursor: pointer; }
     .btn-teal:hover { background: var(--teal-d); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(13,148,136,0.2); }
@@ -136,6 +143,6 @@
     /* DARK MODE */
     body.dark-mode { --page: #0f172a; --white: #1e293b; --navy: #f8fafc; --gray-l: #334155; --teal-ll: #134e4a; --teal-l: #115e59; }
     body.dark-mode .topbar { background: #1e293b; border-color: #334155; }
-    body.dark-mode .sc, body.dark-mode .card { background: #1e293b; border-color: #334155; }
+    body.dark-mode .sc, body.dark-mode .card, body.dark-mode .qa { background: #1e293b; border-color: #334155; }
     body.dark-mode td, body.dark-mode th { border-color: #334155; }
 </style>

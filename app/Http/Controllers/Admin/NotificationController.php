@@ -52,6 +52,18 @@ class NotificationController extends Controller
     }
 
     /**
+     * Mark all notifications for the authenticated user as read.
+     */
+    public function markAllRead(Request $request)
+    {
+        Notification::where('user_id', $request->user()->id)
+            ->where('is_read', false)
+            ->update(['is_read' => true, 'read_at' => now()]);
+
+        return redirect()->back()->with('success', 'All notifications marked as read.');
+    }
+
+    /**
      * Delete a notification.
      */
     public function destroy(Notification $notification)

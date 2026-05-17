@@ -121,9 +121,29 @@
                 <textarea name="description" rows="3" placeholder="Brief course description..." style="width:100%; padding:12px; border:1px solid #e2e8f0; border-radius:8px; font-family:var(--font-body); font-size:14px; outline:none; box-sizing:border-box; resize:vertical;"></textarea>
             </div>
             <div>
-                <label style="font-size:12px; font-weight:700; color:var(--navy); display:block; margin-bottom:6px;">Assigned Educator</label>
-                <select name="created_by_id" required style="width:100%; padding:12px; border:1px solid #e2e8f0; border-radius:8px; font-family:var(--font-body); font-size:14px; outline:none; background:#fff; box-sizing:border-box;">
-                    <option value="">-- Select an Educator --</option>
+                <label style="font-size:12px; font-weight:700; color:var(--navy); display:block; margin-bottom:6px;">Disability Support Category</label>
+                <select name="target_disabilities" required style="width:100%; padding:12px; border:1px solid #e2e8f0; border-radius:8px; font-family:var(--font-body); font-size:14px; outline:none; background:#fff; box-sizing:border-box;">
+                    <option value="">-- Select Category --</option>
+                    <option value="Visual Impairment">Visual Impairment</option>
+                    <option value="Hearing Impairment">Hearing Impairment</option>
+                    <option value="Dyslexia">Dyslexia</option>
+                    <option value="Autism / ADHD">Autism / ADHD</option>
+                </select>
+            </div>
+            <div>
+                <label style="font-size:12px; font-weight:700; color:var(--navy); display:block; margin-bottom:6px;">Learning Format / Support Type</label>
+                <select name="support_type" required style="width:100%; padding:12px; border:1px solid #e2e8f0; border-radius:8px; font-family:var(--font-body); font-size:14px; outline:none; background:#fff; box-sizing:border-box;">
+                    <option value="">-- Select Support Type --</option>
+                    <option value="Audio-Based">Audio-Based</option>
+                    <option value="Caption-Supported">Caption-Supported</option>
+                    <option value="Text-Based">Text-Based</option>
+                    <option value="Interactive Learning">Interactive Learning</option>
+                </select>
+            </div>
+            <div>
+                <label style="font-size:12px; font-weight:700; color:var(--navy); display:block; margin-bottom:6px;">Assigned Educator (Optional)</label>
+                <select name="created_by_id" style="width:100%; padding:12px; border:1px solid #e2e8f0; border-radius:8px; font-family:var(--font-body); font-size:14px; outline:none; background:#fff; box-sizing:border-box;">
+                    <option value="{{ Auth::id() }}">-- Assign Later (Self) --</option>
                     @foreach($allEducators ?? [] as $edu)
                         <option value="{{ $edu->id }}">{{ $edu->name }}</option>
                     @endforeach
@@ -152,8 +172,11 @@
             <div>
                 <label style="font-size:12px; font-weight:700; color:var(--navy); display:block; margin-bottom:6px;">Student</label>
                 <select name="student_id" required style="width:100%; padding:12px; border:1px solid #e2e8f0; border-radius:8px; font-family:var(--font-body); font-size:14px; outline:none; background:#fff; box-sizing:border-box;">
+                    <option value="">-- Select Student --</option>
                     @foreach($allStudents ?? [] as $stu)
-                        <option value="{{ $stu->student?->id }}">{{ $stu->name }}</option>
+                        @if($stu->student)
+                            <option value="{{ $stu->student->id }}">{{ $stu->name }}</option>
+                        @endif
                     @endforeach
                 </select>
             </div>
@@ -167,8 +190,35 @@
             </div>
             <div style="display:flex; gap:12px;">
                 <div style="flex:1;">
+                    <label style="font-size:12px; font-weight:700; color:var(--navy); display:block; margin-bottom:6px;">Session Type</label>
+                    <select name="session_type" required style="width:100%; padding:12px; border:1px solid #e2e8f0; border-radius:8px; font-family:var(--font-body); font-size:14px; outline:none; background:#fff; box-sizing:border-box;">
+                        <option value="">-- Select Type --</option>
+                        <option value="speech">Speech Therapy</option>
+                        <option value="occupational">Occupational Therapy</option>
+                        <option value="physical">Physical Therapy</option>
+                        <option value="behavioral">Behavioral Therapy</option>
+                        <option value="counseling">Counseling</option>
+                        <option value="special_education">Special Education</option>
+                    </select>
+                </div>
+                <div style="flex:1;">
+                    <label style="font-size:12px; font-weight:700; color:var(--navy); display:block; margin-bottom:6px;">Duration (min)</label>
+                    <select name="duration" required style="width:100%; padding:12px; border:1px solid #e2e8f0; border-radius:8px; font-family:var(--font-body); font-size:14px; outline:none; background:#fff; box-sizing:border-box;">
+                        <option value="30">30 minutes</option>
+                        <option value="45">45 minutes</option>
+                        <option value="60" selected>60 minutes</option>
+                        <option value="90">90 minutes</option>
+                    </select>
+                </div>
+            </div>
+            <div style="display:flex; gap:12px;">
+                <div style="flex:1;">
                     <label style="font-size:12px; font-weight:700; color:var(--navy); display:block; margin-bottom:6px;">Date</label>
                     <input type="date" name="session_date" required min="{{ date('Y-m-d') }}" style="width:100%; padding:12px; border:1px solid #e2e8f0; border-radius:8px; font-family:var(--font-body); font-size:14px; outline:none; box-sizing:border-box;">
+                </div>
+                <div style="flex:1;">
+                    <label style="font-size:12px; font-weight:700; color:var(--navy); display:block; margin-bottom:6px;">Time</label>
+                    <input type="time" name="session_time" required style="width:100%; padding:12px; border:1px solid #e2e8f0; border-radius:8px; font-family:var(--font-body); font-size:14px; outline:none; box-sizing:border-box;">
                 </div>
             </div>
         </div>

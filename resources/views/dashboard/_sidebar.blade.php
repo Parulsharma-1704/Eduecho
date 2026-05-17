@@ -26,6 +26,9 @@
     <button class="sb-item {{ $activePanel === 'notifications' ? 'active' : '' }}" onclick="showPanel('notifications',this)">
         <i class="ti ti-bell"></i> Notifications
     </button>
+    <button class="sb-item {{ $activePanel === 'support-tickets' ? 'active' : '' }}" onclick="showPanel('support-tickets',this)">
+        <i class="ti ti-headset"></i> Support Tickets
+    </button>
 
     <div class="sb-group">System</div>
     <button class="sb-item {{ $activePanel === 'settings' ? 'active' : '' }}" onclick="showPanel('settings',this)">

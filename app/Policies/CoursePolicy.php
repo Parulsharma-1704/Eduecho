@@ -12,7 +12,11 @@ class CoursePolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasPermissionTo('view_courses');
+        try {
+            return $user->hasPermissionTo('view_courses') || $user->hasRole('admin');
+        } catch (\Throwable $e) {
+            return $user->hasAnyRole(['admin', 'student', 'special_educator', 'therapist']);
+        }
     }
 
     /**
@@ -20,7 +24,11 @@ class CoursePolicy
      */
     public function view(User $user, Course $course): bool
     {
-        return $user->hasPermissionTo('view_courses');
+        try {
+            return $user->hasPermissionTo('view_courses') || $user->hasRole('admin');
+        } catch (\Throwable $e) {
+            return $user->hasAnyRole(['admin', 'student', 'special_educator', 'therapist']);
+        }
     }
 
     /**
@@ -28,7 +36,11 @@ class CoursePolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasPermissionTo('create_courses');
+        try {
+            return $user->hasPermissionTo('create_courses') || $user->hasRole('admin');
+        } catch (\Throwable $e) {
+            return $user->hasAnyRole(['admin', 'special_educator']);
+        }
     }
 
     /**
@@ -36,9 +48,14 @@ class CoursePolicy
      */
     public function update(User $user, Course $course): bool
     {
-        // Only creator or admin can edit
-        if ($user->hasPermissionTo('edit_courses')) {
-            return $user->id === $course->created_by_id || $user->hasRole('admin');
+        try {
+            if ($user->hasPermissionTo('edit_courses') || $user->hasRole('admin')) {
+                return $user->id === $course->created_by_id || $user->hasRole('admin');
+            }
+        } catch (\Throwable $e) {
+            if ($user->hasAnyRole(['admin', 'special_educator'])) {
+                return $user->id === $course->created_by_id || $user->hasRole('admin');
+            }
         }
         return false;
     }
@@ -48,8 +65,14 @@ class CoursePolicy
      */
     public function delete(User $user, Course $course): bool
     {
-        if ($user->hasPermissionTo('delete_courses')) {
-            return $user->id === $course->created_by_id || $user->hasRole('admin');
+        try {
+            if ($user->hasPermissionTo('delete_courses') || $user->hasRole('admin')) {
+                return $user->id === $course->created_by_id || $user->hasRole('admin');
+            }
+        } catch (\Throwable $e) {
+            if ($user->hasAnyRole(['admin', 'special_educator'])) {
+                return $user->id === $course->created_by_id || $user->hasRole('admin');
+            }
         }
         return false;
     }

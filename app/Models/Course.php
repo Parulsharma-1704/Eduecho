@@ -13,8 +13,10 @@ class Course extends Model
         'title',
         'description',
         'created_by_id',
+        'assigned_educator_id',
         'accessibility_level',
         'target_disabilities',
+        'support_type',
         'max_students',
         'is_active',
     ];
@@ -26,6 +28,11 @@ class Course extends Model
     public function creator()
     {
         return $this->belongsTo(User::class, 'created_by_id');
+    }
+
+    public function assignedEducator()
+    {
+        return $this->belongsTo(User::class, 'assigned_educator_id');
     }
 
     public function resources()

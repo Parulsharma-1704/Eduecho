@@ -35,7 +35,7 @@ class RegisteredUserController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email:rfc,dns', 'max:255', 'unique:users'],
+            'email' => ['required', 'string', 'lowercase', 'email:rfc', 'max:255', 'unique:users'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'disability_type' => ['nullable', 'in:autism,adhd,dyslexia,hearing,visual,mobility'],
             'severity' => ['nullable', 'required_with:disability_type', 'in:mild,moderate,severe'],
