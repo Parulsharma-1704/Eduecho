@@ -17,17 +17,19 @@ class CourseResourceController extends Controller
         $validated = $request->validate([
             'course_id' => 'required|exists:courses,id',
             'title' => 'required|string|max:255',
-            'resource_type' => 'required|string|in:video,audio,pdf,reading',
+            'resource_type' => 'required|string|in:video,audio,pdf,reading,interactive',
             'file' => 'required|file|max:20480', // 20MB max
             'has_captions' => 'boolean',
             'has_transcript' => 'boolean',
             'has_audio_description' => 'boolean',
+            'text_size_options' => 'boolean',
+            'high_contrast_version' => 'boolean',
         ]);
 
         $course = Course::findOrFail($validated['course_id']);
         
-        // Ensure user is authorized
-        if (auth()->id() !== $course->created_by_id && !auth()->user()->hasRole('admin')) {
+        // Ensure user is authorized (creator, assigned educator, or admin)
+        if (auth()->id() !== $course->created_by_id && auth()->id() !== $course->assigned_educator_id && !auth()->user()->hasRole('admin')) {
             return back()->with('error', 'You are not authorized to add resources to this course.');
         }
 
@@ -42,6 +44,8 @@ class CourseResourceController extends Controller
             'has_captions' => $request->has('has_captions'),
             'has_transcript' => $request->has('has_transcript'),
             'has_audio_description' => $request->has('has_audio_description'),
+            'text_size_options' => $request->has('text_size_options'),
+            'high_contrast_version' => $request->has('high_contrast_version'),
             'description' => $request->description ?? '',
         ]);
 

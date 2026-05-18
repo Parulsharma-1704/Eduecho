@@ -44,16 +44,24 @@ class ProfileController extends Controller
             ], fn($v) => !is_null($v)));
         }
 
-        // Handle educator specializations
-        if ($user->hasRole('special_educator') && $request->has('specializations')) {
+        // Handle educator specializations and general details
+        if ($user->hasRole('special_educator')) {
             $specialEducator = $user->specialEducator;
             if ($specialEducator) {
+                $specialEducator->update([
+                    'specialization'   => $request->specialization,
+                    'qualification'    => $request->qualification,
+                    'experience_years' => $request->experience_years,
+                ]);
+
                 $specialEducator->disabilitySpecializations()->delete();
-                foreach ($request->specializations as $type) {
-                    \App\Models\EducatorDisabilitySpecialization::create([
-                        'educator_id'   => $specialEducator->id,
-                        'disability_type' => $type,
-                    ]);
+                if ($request->has('specializations')) {
+                    foreach ($request->specializations as $type) {
+                        \App\Models\EducatorDisabilitySpecialization::create([
+                            'educator_id'   => $specialEducator->id,
+                            'disability_type' => $type,
+                        ]);
+                    }
                 }
             }
         }

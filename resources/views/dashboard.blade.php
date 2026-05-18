@@ -85,6 +85,7 @@
                 @include('dashboard.panels.profile')
                 @include('dashboard.panels.accessibility')
                 @include('dashboard.panels.learning_materials')
+                @include('dashboard.panels.ieps')
                 @include('dashboard.panels.reports')
                 @include('dashboard.panels.support_tickets')
 

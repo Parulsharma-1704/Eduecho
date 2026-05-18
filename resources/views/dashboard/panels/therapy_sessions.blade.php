@@ -13,9 +13,10 @@
     
     <div class="card">
         @php 
-            $sessionsData = Auth::user()->hasRole('student') ? ($upcomingSessions ?? []) : (Auth::user()->hasRole('therapist') ? ($upcomingSessions ?? []) : ($allTherapySessions ?? []));
+            $sessionsData = Auth::user()->hasRole('student') ? ($upcomingSessions ?? []) : (Auth::user()->hasRole('therapist') ? ($allSessions ?? []) : ($allTherapySessions ?? []));
         @endphp
         @forelse($sessionsData as $session)
+            @php /** @var \App\Models\TherapySession $session */ @endphp
             <div class="sess" style="justify-content:space-between; padding:16px; border-bottom:1px solid #f8fafc;">
                 <div style="display:flex; align-items:center; gap:12px; flex:1;">
                     <div class="sess-ico" style="background:var(--rl)">

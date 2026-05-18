@@ -68,19 +68,17 @@
     <button class="sb-item {{ $activePanel === 'overview' ? 'active' : '' }}" onclick="showPanel('overview',this)">
         <i class="ti ti-layout-dashboard"></i> Dashboard
     </button>
-    <button class="sb-item {{ $activePanel === 'students' ? 'active' : '' }}" onclick="showPanel('students',this)">
-        <i class="ti ti-users"></i> My Students
-    </button>
     <button class="sb-item {{ $activePanel === 'courses' ? 'active' : '' }}" onclick="showPanel('courses',this)">
-        <i class="ti ti-books"></i> My Courses
+        <i class="ti ti-books"></i> Assigned Courses
+    </button>
+    <button class="sb-item {{ $activePanel === 'students' ? 'active' : '' }}" onclick="showPanel('students',this)">
+        <i class="ti ti-users"></i> Students
+    </button>
+    <button class="sb-item {{ $activePanel === 'ieps' ? 'active' : '' }}" onclick="showPanel('ieps',this)">
+        <i class="ti ti-clipboard-list"></i> IEP Management
     </button>
     <button class="sb-item {{ $activePanel === 'learning-materials' ? 'active' : '' }}" onclick="showPanel('learning-materials',this)">
         <i class="ti ti-files"></i> Learning Materials
-    </button>
-
-    <div class="sb-group">Management</div>
-    <button class="sb-item {{ $activePanel === 'ieps' ? 'active' : '' }}" onclick="showPanel('ieps',this)">
-        <i class="ti ti-clipboard-list"></i> IEPs
     </button>
     <button class="sb-item {{ $activePanel === 'notifications' ? 'active' : '' }}" onclick="showPanel('notifications',this)">
         <i class="ti ti-bell"></i> Notifications
@@ -88,10 +86,13 @@
 
     <div class="sb-group">Account</div>
     <button class="sb-item {{ $activePanel === 'support' ? 'active' : '' }}" onclick="showPanel('support',this)">
-        <i class="ti ti-headset"></i> Support
+        <i class="ti ti-headset"></i> Support & Query Portal
     </button>
     <button class="sb-item {{ $activePanel === 'profile' ? 'active' : '' }}" onclick="showPanel('profile',this)">
         <i class="ti ti-user"></i> Profile
+    </button>
+    <button class="sb-item" onclick="toggleLogout()">
+        <i class="ti ti-logout"></i> Logout
     </button>
 
 @elseif(Auth::user()->hasRole('therapist'))

@@ -19,6 +19,7 @@
     <!-- Tickets List Layout -->
     <div style="display:flex; flex-direction:column; gap:20px;">
         @forelse($supportTickets ?? [] as $ticket)
+            @php /** @var \App\Models\SupportTicket $ticket */ @endphp
             <div class="card ticket-item" data-status="{{ $ticket->status }}" style="padding:24px; transition:transform 0.2s, box-shadow:0 10px 30px rgba(0,0,0,0.05); display:flex; flex-direction:column; gap:16px; border-left:4px solid {{ $ticket->status === 'resolved' ? 'var(--teal)' : 'var(--amber)' }};">
                 <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:16px;">
                     <div>

@@ -33,6 +33,22 @@
                         <td style="padding:16px;">
                             <div style="font-weight:700; color:var(--navy);">{{ $material->title }}</div>
                             <div style="font-size:11px; color:var(--gray);">{{ Str::limit($material->description, 50) }}</div>
+                            
+                            <!-- Alignment Check for Special Educators -->
+                            @php
+                                $user = Auth::user();
+                                $isAlignedSpecialization = false;
+                                if ($user->hasRole('special_educator') && $user->specialEducator && $material->course) {
+                                    $isAlignedSpecialization = $user->specialEducator->disabilitySpecializations->contains('disability_type', $material->course->target_disabilities);
+                                }
+                            @endphp
+                            @if($isAlignedSpecialization)
+                                <div style="margin-top:6px;">
+                                    <span class="pill" style="font-size:9px; padding:2px 6px; background:var(--teal-ll); color:var(--teal); font-weight:700; border:none;" title="Aligned with your Specializations">
+                                        <i class="ti ti-discount-check"></i> Specialization Match
+                                    </span>
+                                </div>
+                            @endif
                         </td>
                         <td style="padding:16px;">
                             <span class="pill" style="background:var(--bl); color:var(--blue);">{{ $material->course->title ?? 'N/A' }}</span>
@@ -43,24 +59,31 @@
                                     $icon = 'file';
                                     if(str_contains(strtolower($material->resource_type), 'video')) $icon = 'video';
                                     elseif(str_contains(strtolower($material->resource_type), 'audio')) $icon = 'volume';
-                                    elseif(str_contains(strtolower($material->resource_type), 'pdf')) $icon = 'pdf';
+                                    elseif(str_contains(strtolower($material->resource_type), 'pdf')) $icon = 'file-text';
+                                    elseif(str_contains(strtolower($material->resource_type), 'interactive')) $icon = 'devices';
                                 @endphp
                                 <i class="ti ti-{{ $icon }}"></i>
                                 {{ ucfirst($material->resource_type) }}
                             </div>
                         </td>
                         <td style="padding:16px;">
-                            <div style="display:flex; gap:6px;">
+                            <div style="display:flex; gap:6px; align-items:center;">
                                 @if($material->has_captions)
-                                    <span title="Captions Supported" style="color:var(--teal); font-size:16px;"><i class="ti ti-closed-captioning"></i></span>
+                                    <span title="Captions Supported (Caption-Supported Video)" style="color:var(--teal); font-size:16px;"><i class="ti ti-closed-captioning"></i></span>
                                 @endif
                                 @if($material->has_transcript)
                                     <span title="Transcript Available" style="color:var(--blue); font-size:16px;"><i class="ti ti-file-text"></i></span>
                                 @endif
                                 @if($material->has_audio_description)
-                                    <span title="Audio Description" style="color:var(--amber); font-size:16px;"><i class="ti ti-volume"></i></span>
+                                    <span title="Audio Description (Audio Lesson)" style="color:var(--amber); font-size:16px;"><i class="ti ti-volume"></i></span>
                                 @endif
-                                @if(!$material->has_captions && !$material->has_transcript && !$material->has_audio_description)
+                                @if($material->text_size_options)
+                                    <span title="Screen-Reader Friendly" style="color:var(--violet); font-size:16px;"><i class="ti ti-eye"></i></span>
+                                @endif
+                                @if($material->high_contrast_version)
+                                    <span title="Dyslexia-Friendly" style="color:var(--blue); font-size:16px;"><i class="ti ti-abc"></i></span>
+                                @endif
+                                @if(!$material->has_captions && !$material->has_transcript && !$material->has_audio_description && !$material->text_size_options && !$material->high_contrast_version)
                                     <span style="font-size:11px; color:var(--gray);">Standard</span>
                                 @endif
                             </div>

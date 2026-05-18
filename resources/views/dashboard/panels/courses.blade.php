@@ -251,66 +251,200 @@
             </div>
         </div>
         
-        <div id="course-list">
+        <div id="course-list" style="display:flex; flex-direction:column; gap:16px;">
             @forelse($allCourses ?? [] as $course)
-                <div class="course-item" style="display:flex; align-items:center; justify-content:space-between; padding:16px; border-bottom:1px solid var(--teal-ll);">
-                    <div style="display:flex; align-items:flex-start; gap:14px; flex:1;">
-                        <div style="width:44px; height:44px; border-radius:10px; background:var(--teal-ll); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
-                            <i class="ti ti-books" style="color:var(--teal); font-size:20px;"></i>
-                        </div>
-                        <div style="flex:1;">
-                            <div style="display:flex; justify-content:space-between; align-items:center;">
-                                <div style="font-weight:700; color:var(--navy); font-size:14px;">{{ $course->title }}</div>
-                                <div style="display:flex; gap:6px;">
-                                    @if($course->support_type)
-                                    <span class="pill" style="background:#f1f5f9; color:var(--navy); font-size:9px;">
-                                        <i class="ti ti-accessible"></i> {{ $course->support_type }}
-                                    </span>
-                                    @endif
-                                    @if($course->target_disabilities)
-                                    <span class="pill" style="background:var(--violet-ll); color:var(--violet); font-size:9px;">
-                                        {{ $course->target_disabilities }}
-                                    </span>
-                                    @endif
+                @if(Auth::user()->hasRole('special_educator'))
+                    <!-- Special Educator Rich Card with Collapsable Enrolled Students List -->
+                    <div class="course-card" style="border:1px solid var(--teal-ll); border-radius:12px; background:#fff; overflow:hidden; box-sizing:border-box;">
+                        <div class="course-item" style="display:flex; align-items:center; justify-content:space-between; padding:20px; background:var(--teal-ll);">
+                            <div style="display:flex; align-items:flex-start; gap:14px; flex:1;">
+                                <div style="width:44px; height:44px; border-radius:10px; background:#fff; display:flex; align-items:center; justify-content:center; flex-shrink:0; border:1px solid var(--teal-l);">
+                                    <i class="ti ti-books" style="color:var(--teal); font-size:20px;"></i>
+                                </div>
+                                <div style="flex:1;">
+                                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                                        <div style="font-weight:900; color:var(--navy); font-size:16px;">{{ $course->title }}</div>
+                                        <div style="display:flex; gap:6px;">
+                                            @if($course->support_type)
+                                            <span class="pill" style="background:#fff; color:var(--navy); font-size:9.5px; border:1px solid var(--teal-l);">
+                                                <i class="ti ti-accessible"></i> {{ $course->support_type }}
+                                            </span>
+                                            @endif
+                                            @if($course->target_disabilities)
+                                            <span class="pill" style="background:var(--violet-ll); color:var(--violet); font-size:9.5px; border:none;">
+                                                {{ $course->target_disabilities }}
+                                            </span>
+                                            @endif
+                                            <span class="pill" style="background:{{ $course->is_active ? 'var(--teal-ll)' : '#f1f5f9' }}; color:{{ $course->is_active ? 'var(--teal)' : 'var(--gray)' }}; font-size:9.5px; border:none; font-weight:700;">
+                                                {{ $course->is_active ? 'Active' : 'Inactive' }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div style="font-size:12.5px; color:var(--gray); margin-top:6px; line-height:1.4;">{{ Str::limit($course->description, 160) }}</div>
+                                    <div style="font-size:11.5px; color:var(--gray); margin-top:10px; display:flex; align-items:center; gap:16px; font-weight:600;">
+                                        <span><i class="ti ti-user"></i> Creator: {{ $course->creator->name ?? 'Admin' }}</span>
+                                        <span><i class="ti ti-users"></i> {{ $course->enrollments->count() }} Enrolled Students</span>
+                                    </div>
                                 </div>
                             </div>
-                            <div style="font-size:12px; color:var(--gray); margin-top:4px;">{{ Str::limit($course->description, 80) }}</div>
-                            <div style="font-size:11px; color:var(--gray); margin-top:8px; display:flex; align-items:center; gap:16px;">
-                                <span><i class="ti ti-user"></i> Educator: {{ $course->assignedEducator->name ?? 'Unassigned' }}</span>
-                                <span><i class="ti ti-users"></i> {{ $course->enrollments_count ?? 0 }} Enrolled Students</span>
+                            
+                            <div style="display:flex; align-items:center; gap:8px; flex-shrink:0; margin-left:16px;">
+                                <button class="pill" style="border:1px solid var(--teal); background:#fff; color:var(--teal); cursor:pointer; font-weight:700; padding:6px 12px;" onclick="showPanel('learning-materials', null)">Manage Resources</button>
+                                <button class="pill btn-teal" style="border:none; cursor:pointer; font-weight:700; padding:6px 12px; display:flex; align-items:center; gap:4px;" onclick="toggleCourseStudents({{ $course->id }})">
+                                    <i class="ti ti-users"></i> Students <i class="ti ti-chevron-down" id="chevron-{{ $course->id }}"></i>
+                                </button>
                             </div>
                         </div>
-                    </div>
-                    <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
-                        @if(Auth::user()->hasRole('admin'))
-                            <form method="POST" action="{{ route('admin.courses.assign-educator', $course->id) }}">
-                                @csrf @method('PATCH')
-                                <select name="assigned_educator_id" onchange="this.form.submit()" style="padding:4px 8px; border:1px solid var(--teal); border-radius:12px; font-size:11px; outline:none; background:transparent; color:var(--teal); cursor:pointer;">
-                                    <option value="">Assign Educator...</option>
-                                    @foreach($allEducators ?? [] as $edu)
+
+                        <!-- Enrolled Students Table (Collapsable) -->
+                        <div id="course-students-{{ $course->id }}" style="display:none; border-top:1px solid var(--teal-ll); padding:16px; background:#fafbfc; box-sizing:border-box;">
+                            <div style="font-family:var(--font-head); font-size:13px; font-weight:800; color:var(--navy); margin-bottom:12px;">Enrolled Students & Progress</div>
+                            <table style="width:100%; border-collapse:collapse; background:#fff; border-radius:8px; border:1px solid #f1f5f9; overflow:hidden;">
+                                <thead>
+                                    <tr style="background:#f8fafc; border-bottom:1px solid #f1f5f9;">
+                                        <th style="padding:12px; text-align:left; font-size:11px; color:var(--gray); font-weight:700;">Student Name</th>
+                                        <th style="padding:12px; text-align:left; font-size:11px; color:var(--gray); font-weight:700;">Disability Type</th>
+                                        <th style="padding:12px; text-align:left; font-size:11px; color:var(--gray); font-weight:700;">Accessibility Preferences</th>
+                                        <th style="padding:12px; text-align:left; font-size:11px; color:var(--gray); font-weight:700;">Learning Metrics & Progress</th>
+                                        <th style="padding:12px; text-align:left; font-size:11px; color:var(--gray); font-weight:700;">Status</th>
+                                        <th style="padding:12px; text-align:right; font-size:11px; color:var(--gray); font-weight:700;">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse($course->enrollments as $enrollment)
                                         @php
-                                            $hasSpec = $edu->specialEducator?->disabilitySpecializations->contains('disability_type', $course->target_disabilities);
+                                            $st = $enrollment->student;
+                                            $stUser = $st->user ?? null;
+                                            $dp = $st->disabilityProfile ?? null;
+                                            $ap = $st->accessibilityProfile ?? null;
+                                            $progress = $enrollment->status === 'Completed' ? 100 : ($enrollment->status === 'Active' ? 35 : 0);
                                         @endphp
-                                        @if($hasSpec)
-                                            <option value="{{ $edu->id }}" {{ $course->assigned_educator_id == $edu->id ? 'selected' : '' }}>
-                                                {{ $edu->name }} (Match)
-                                            </option>
+                                        @if($stUser)
+                                            <tr style="border-bottom:1px solid #f8fafc;">
+                                                <td style="padding:12px;">
+                                                    <div style="display:flex; align-items:center; gap:8px;">
+                                                        <div style="width:28px; height:28px; border-radius:50%; background:var(--teal-ll); color:var(--teal); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:12px;">
+                                                            {{ substr($stUser->name, 0, 1) }}
+                                                        </div>
+                                                        <div>
+                                                            <div style="font-weight:700; color:var(--navy); font-size:13px;">{{ $stUser->name }}</div>
+                                                            <div style="font-size:10px; color:var(--gray);">{{ $stUser->email }}</div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td style="padding:12px;">
+                                                    <span style="font-weight:600; color:var(--navy); font-size:12.5px;">{{ $dp->disability_type ?? 'N/A' }}</span>
+                                                </td>
+                                                <td style="padding:12px;">
+                                                    <div style="display:flex; flex-wrap:wrap; gap:4px; max-width:180px;">
+                                                        @if($ap)
+                                                            @if($ap->text_to_speech) <span class="pill" style="font-size:9px; padding:2px 6px; background:var(--teal-ll); color:var(--teal);">TTS</span> @endif
+                                                            @if($ap->screen_reader_support) <span class="pill" style="font-size:9px; padding:2px 6px; background:var(--teal-ll); color:var(--teal);">SR</span> @endif
+                                                            @if($ap->high_contrast) <span class="pill" style="font-size:9px; padding:2px 6px; background:var(--al); color:var(--amber);">Contrast</span> @endif
+                                                            @if($ap->focus_mode) <span class="pill" style="font-size:9px; padding:2px 6px; background:var(--violet-ll); color:var(--violet);">Focus</span> @endif
+                                                            @if($ap->font_family === 'Dyslexia') <span class="pill" style="font-size:9px; padding:2px 6px; background:#f1f5f9; color:var(--navy);">Dyslexia-Font</span> @endif
+                                                        @else
+                                                            <span style="font-size:11px; color:var(--gray); font-style:italic;">Standard</span>
+                                                        @endif
+                                                    </div>
+                                                </td>
+                                                <td style="padding:12px; width:220px;">
+                                                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; font-size:10px; color:var(--gray); margin-bottom:6px;">
+                                                        <span>Lessons: <strong>{{ $enrollment->status === 'Completed' ? '6/6' : ($enrollment->status === 'Active' ? '2/6' : '0/6') }}</strong></span>
+                                                        <span>Engagement: <strong>{{ $enrollment->status === 'Completed' ? 'High' : ($enrollment->status === 'Active' ? 'Med' : 'None') }}</strong></span>
+                                                    </div>
+                                                    <div style="display:flex; align-items:center; gap:8px;">
+                                                        <div style="flex:1; height:6px; background:#f1f5f9; border-radius:99px; overflow:hidden;">
+                                                            <div style="width:{{ $progress }}%; height:100%; background:var(--teal); border-radius:99px;"></div>
+                                                        </div>
+                                                        <span style="font-size:11px; font-weight:700; color:var(--navy);">{{ $progress }}%</span>
+                                                    </div>
+                                                </td>
+                                                <td style="padding:12px;">
+                                                    @if($enrollment->status === 'Active')
+                                                        <span class="pill" style="background:var(--teal-ll); color:var(--teal); font-size:10px;">Active</span>
+                                                    @elseif($enrollment->status === 'Completed')
+                                                        <span class="pill" style="background:var(--bl); color:var(--blue); font-size:10px;">Completed</span>
+                                                    @else
+                                                        <span class="pill" style="background:#f1f5f9; color:#475569; font-size:10px;">Pending</span>
+                                                    @endif
+                                                </td>
+                                                <td style="padding:12px; text-align:right;">
+                                                    <button class="tb-icon-btn" style="width:28px; height:28px;" onclick="openStudentDetailsModal({{ json_encode($stUser) }}, {{ json_encode($st) }})" title="View Profile & Needs">
+                                                        <i class="ti ti-eye"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
                                         @endif
-                                    @endforeach
-                                </select>
-                            </form>
-                            <form method="POST" action="{{ route('admin.courses.toggle-active', $course->id) }}">
-                                @csrf @method('PATCH')
-                                <button type="submit" class="pill" style="border:none; cursor:pointer; background:{{ $course->is_active ? 'var(--teal-ll)' : '#f1f5f9' }}; color:{{ $course->is_active ? 'var(--teal)' : 'var(--gray)' }}; padding:4px 10px;">
-                                    {{ $course->is_active ? 'Active' : 'Inactive' }}
-                                </button>
-                            </form>
-                        @elseif(Auth::user()->hasRole('special_educator'))
-                            <button class="pill" style="border:1px solid var(--teal); background:transparent; color:var(--teal); cursor:pointer;" onclick="showPanel('learning-materials', null)">Manage Resources</button>
-                            <button class="pill" style="border:none; background:var(--teal); color:#fff; cursor:pointer;">Edit</button>
-                        @endif
+                                    @empty
+                                        <tr>
+                                            <td colspan="6" style="padding:20px; text-align:center; color:var(--gray); font-size:12px;">
+                                                No students enrolled in this course yet.
+                                            </td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                </div>
+                @else
+                    <!-- Original Admin/Default Flat Row Design -->
+                    <div class="course-item" style="display:flex; align-items:center; justify-content:space-between; padding:16px; border-bottom:1px solid var(--teal-ll);">
+                        <div style="display:flex; align-items:flex-start; gap:14px; flex:1;">
+                            <div style="width:44px; height:44px; border-radius:10px; background:var(--teal-ll); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                                <i class="ti ti-books" style="color:var(--teal); font-size:20px;"></i>
+                            </div>
+                            <div style="flex:1;">
+                                <div style="display:flex; justify-content:space-between; align-items:center;">
+                                    <div style="font-weight:700; color:var(--navy); font-size:14px;">{{ $course->title }}</div>
+                                    <div style="display:flex; gap:6px;">
+                                        @if($course->support_type)
+                                        <span class="pill" style="background:#f1f5f9; color:var(--navy); font-size:9px;">
+                                            <i class="ti ti-accessible"></i> {{ $course->support_type }}
+                                        </span>
+                                        @endif
+                                        @if($course->target_disabilities)
+                                        <span class="pill" style="background:var(--violet-ll); color:var(--violet); font-size:9px;">
+                                            {{ $course->target_disabilities }}
+                                        </span>
+                                        @endif
+                                    </div>
+                                </div>
+                                <div style="font-size:12px; color:var(--gray); margin-top:4px;">{{ Str::limit($course->description, 80) }}</div>
+                                <div style="font-size:11px; color:var(--gray); margin-top:8px; display:flex; align-items:center; gap:16px;">
+                                    <span><i class="ti ti-user"></i> Educator: {{ $course->assignedEducator->name ?? 'Unassigned' }}</span>
+                                    <span><i class="ti ti-users"></i> {{ $course->enrollments_count ?? 0 }} Enrolled Students</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
+                            @if(Auth::user()->hasRole('admin'))
+                                <form method="POST" action="{{ route('admin.courses.assign-educator', $course->id) }}">
+                                    @csrf @method('PATCH')
+                                    <select name="assigned_educator_id" onchange="this.form.submit()" style="padding:4px 8px; border:1px solid var(--teal); border-radius:12px; font-size:11px; outline:none; background:transparent; color:var(--teal); cursor:pointer;">
+                                        <option value="">Assign Educator...</option>
+                                        @foreach($allEducators ?? [] as $edu)
+                                            @php
+                                                $hasSpec = $edu->specialEducator?->disabilitySpecializations->contains('disability_type', $course->target_disabilities);
+                                            @endphp
+                                            @if($hasSpec)
+                                                <option value="{{ $edu->id }}" {{ $course->assigned_educator_id == $edu->id ? 'selected' : '' }}>
+                                                    {{ $edu->name }} (Match)
+                                                </option>
+                                            @endif
+                                        @endforeach
+                                    </select>
+                                </form>
+                                <form method="POST" action="{{ route('admin.courses.toggle-active', $course->id) }}">
+                                    @csrf @method('PATCH')
+                                    <button type="submit" class="pill" style="border:none; cursor:pointer; background:{{ $course->is_active ? 'var(--teal-ll)' : '#f1f5f9' }}; color:{{ $course->is_active ? 'var(--teal)' : 'var(--gray)' }}; padding:4px 10px;">
+                                        {{ $course->is_active ? 'Active' : 'Inactive' }}
+                                    </button>
+                                </form>
+                            @endif
+                        </div>
+                    </div>
+                @endif
             @empty
                 <div style="text-align:center; padding:40px; color:var(--gray);">
                     <p>No courses found.</p>
@@ -319,3 +453,19 @@
         </div>
     @endif
 </div>
+
+<script>
+    function toggleCourseStudents(courseId) {
+        const div = document.getElementById('course-students-' + courseId);
+        const icon = document.getElementById('chevron-' + courseId);
+        if (div) {
+            if (div.style.display === 'none') {
+                div.style.display = 'block';
+                if (icon) icon.className = 'ti ti-chevron-up';
+            } else {
+                div.style.display = 'none';
+                if (icon) icon.className = 'ti ti-chevron-down';
+            }
+        }
+    }
+</script>

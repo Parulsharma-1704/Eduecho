@@ -22,8 +22,9 @@ class DashboardController extends Controller
     {
         $user = $request->user();
 
-        // Fetch notifications for the logged in user
+        // Fetch notifications for the logged in user, including broadcast announcements
         $notifications = \App\Models\Notification::where('user_id', $user->id)
+            ->orWhereNull('user_id')
             ->latest()
             ->take(20)
             ->get();
@@ -111,7 +112,7 @@ class DashboardController extends Controller
 
             // --- Phase 3 Analytics Aggregations ---
             // 1. Student Registration Chart (By Month)
-            $dateFormat = \Illuminate\Support\Facades\DB::getDriverName() === 'sqlite'
+            $dateFormat = DB::getDriverName() === 'sqlite'
                 ? 'strftime("%Y-%m", created_at) as month'
                 : 'DATE_FORMAT(created_at, "%Y-%m") as month';
 
@@ -164,7 +165,7 @@ class DashboardController extends Controller
                 'analytics' => compact('studentRegistrations', 'courseCompletions', 'disabilityDistribution'),
             ]);
         } elseif ($user->hasRole('student')) {
-            $student = \App\Models\Student::where('user_id', $user->id)->with('disabilityProfile', 'accessibilityProfile')->first();
+            $student = Student::where('user_id', $user->id)->with('disabilityProfile', 'accessibilityProfile')->first();
             $stats = [];
             if ($student) {
                 $stats = [
@@ -302,6 +303,14 @@ class DashboardController extends Controller
                     ->get();
             }
 
+            $studentIeps = collect();
+            if ($student) {
+                $studentIeps = IEP::where('student_id', $student->id)
+                    ->with(['student.user', 'createdBy'])
+                    ->latest()
+                    ->get();
+            }
+
             return view('dashboard', [
                 'user' => $user,
                 'stats' => $stats,
@@ -316,16 +325,50 @@ class DashboardController extends Controller
                 'disabilityResources' => $disabilityResources ?? collect(),
                 'supportTickets' => $supportTickets,
                 'notifications' => $notifications ?? collect(),
+                'studentIeps' => $studentIeps,
             ]);
         } elseif ($user->hasRole('special_educator')) {
             $educator = SpecialEducator::where('user_id', $user->id)
-                ->with(['disabilitySpecializations:id,educator_id,disability_type', 'user'])
+                ->with(['disabilitySpecializations', 'user'])
                 ->first();
 
-            $educatorCourseIds = Course::where('created_by_id', $user->id)->pluck('id');
+            // Get all courses created by or assigned to this educator
+            $allCourses = Course::where('assigned_educator_id', $user->id)
+                ->orWhere('created_by_id', $user->id)
+                ->with([
+                    'creator:id,name',
+                    'assignedEducator:id,name',
+                    'enrollments.student.user',
+                    'enrollments.student.disabilityProfile',
+                    'enrollments.student.accessibilityProfile'
+                ])
+                ->withCount(['enrollments', 'resources'])
+                ->latest()
+                ->get();
+
+            $educatorCourseIds = $allCourses->pluck('id');
+
+            // Enrolled student user IDs
+            $enrolledStudentUserIds = DB::table('course_enrollments')
+                ->join('students', 'course_enrollments.student_id', '=', 'students.id')
+                ->whereIn('course_enrollments.course_id', $educatorCourseIds)
+                ->pluck('students.user_id')
+                ->toArray();
+
+            // Get students assigned to this educator OR enrolled in their courses
+            $allStudents = User::role('student')
+                ->where(function($query) use ($user, $enrolledStudentUserIds) {
+                    $query->whereHas('student', function ($q) use ($user) {
+                        $q->where('assigned_educator_id', $user->id);
+                    })
+                    ->orWhereIn('id', $enrolledStudentUserIds);
+                })
+                ->select('id', 'name', 'email', 'created_at', 'is_active')
+                ->with(['student.disabilityProfile', 'student.accessibilityProfile', 'student.courseEnrollments.course'])
+                ->get();
 
             $stats = [
-                'total_students' => DB::table('students')->where('assigned_educator_id', $user->id)->count(),
+                'total_students' => $allStudents->count(),
                 'total_courses' => $educatorCourseIds->count(),
                 'total_materials' => \App\Models\CourseResource::whereIn('course_id', $educatorCourseIds)->count(),
                 'upcoming_activities' => TherapySession::whereIn('student_id', function ($q) use ($user) {
@@ -333,40 +376,32 @@ class DashboardController extends Controller
                 })->where('session_date', '>=', now())->count(),
             ];
 
-            // Get students assigned to this educator with progress
-            $allStudents = User::role('student')
-                ->whereHas('student', function ($q) use ($user) {
-                    $q->where('assigned_educator_id', $user->id);
-                })
-                ->select('id', 'name', 'email', 'created_at', 'is_active')
-                ->with(['student.disabilityProfile', 'student.courseEnrollments.course'])
-                ->get();
-
-            // Get all courses created by this educator
-            $allCourses = Course::where('created_by_id', $user->id)
-                ->withCount(['enrollments', 'resources'])
-                ->latest()
-                ->get();
-
             // Get all learning materials (resources) uploaded by this educator
             $allMaterials = \App\Models\CourseResource::whereIn('course_id', $educatorCourseIds)
                 ->with('course:id,title')
                 ->latest()
                 ->get();
 
-            // Get notifications (using global $notifications)
+            // Get all IEPs for the educator's students
+            $allIeps = IEP::where('created_by_id', $user->id)
+                ->orWhereIn('student_id', $allStudents->pluck('student.id')->filter())
+                ->with(['student.user', 'createdBy'])
+                ->latest()
+                ->get();
 
-            // Get upcoming sessions
-            $upcomingSessions = TherapySession::whereIn('student_id', function ($q) use ($user) {
-                $q->select('id')->from('students')->where('assigned_educator_id', $user->id);
-            })
+            // Get upcoming sessions for students
+            $upcomingSessions = TherapySession::whereIn('student_id', $allStudents->pluck('student.id')->filter())
                 ->where('session_date', '>=', now())
                 ->with(['therapist:id,name', 'student.user:id,name'])
                 ->orderBy('session_date', 'asc')
                 ->take(5)
                 ->get();
 
-            $supportTickets = \App\Models\SupportTicket::where('student_id', $user->id)->latest()->get();
+            // Get pending student support requests
+            $supportTickets = \App\Models\SupportTicket::whereIn('student_id', $allStudents->pluck('id'))
+                ->with('user')
+                ->latest()
+                ->get();
 
             return view('dashboard', [
                 'user' => $user,
@@ -378,11 +413,12 @@ class DashboardController extends Controller
                 'notifications' => $notifications,
                 'upcomingSessions' => $upcomingSessions,
                 'supportTickets' => $supportTickets,
+                'allIeps' => $allIeps,
             ]);
         } elseif ($user->hasRole('therapist')) {
             $stats = [
                 'total_students' => TherapySession::where('therapist_id', $user->id)->distinct('student_id')->count('student_id'),
-                'upcoming_sessions' => TherapySession::where('therapist_id', $user->id)->where('session_date', '>=', now())->where('status', 'SCHEDULED')->count(),
+                'upcoming_sessions' => TherapySession::where('therapist_id', $user->id)->where('session_date', '>=', today())->where('status', 'SCHEDULED')->count(),
                 'completed_sessions' => TherapySession::where('therapist_id', $user->id)->where('status', 'COMPLETED')->count(),
                 'pending_notes' => TherapySession::where('therapist_id', $user->id)->whereNull('notes')->where('session_date', '<', now())->count(),
             ];
@@ -401,7 +437,7 @@ class DashboardController extends Controller
                 ->get();
 
             // Get upcoming sessions for quick view
-            $upcomingSessions = $allSessions->where('session_date', '>=', now())
+            $upcomingSessions = $allSessions->where('session_date', '>=', today())
                 ->where('status', 'SCHEDULED')
                 ->take(5);
 

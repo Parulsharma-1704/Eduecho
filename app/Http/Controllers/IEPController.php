@@ -40,7 +40,7 @@ class IEPController extends Controller
         $data = $request->validated();
         $data['created_by_id'] = auth()->id();
         $iep = IEP::create($data);
-        return redirect()->route('ieps.show', $iep)->with('success', 'IEP created successfully.');
+        return redirect()->back()->with('success', 'IEP created successfully.');
     }
 
     /**
@@ -69,7 +69,7 @@ class IEPController extends Controller
     {
         $this->authorize('update', $iep);
         $iep->update($request->validated());
-        return redirect()->route('ieps.show', $iep)->with('success', 'IEP updated successfully.');
+        return redirect()->back()->with('success', 'IEP updated successfully.');
     }
 
     /**
@@ -79,6 +79,6 @@ class IEPController extends Controller
     {
         $this->authorize('delete', $iep);
         $iep->delete();
-        return redirect()->route('ieps.index')->with('success', 'IEP deleted successfully.');
+        return redirect()->back()->with('success', 'IEP deleted successfully.');
     }
 }

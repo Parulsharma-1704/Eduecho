@@ -31,11 +31,27 @@
 
             @if(Auth::user()->hasRole('special_educator'))
                 <div style="margin-bottom:24px;">
-                    <label style="font-size:12px; font-weight:700; color:var(--navy); display:block; margin-bottom:6px;">My Specializations</label>
-                    <div style="display:flex; flex-wrap:wrap; gap:10px; background:#f8fafc; padding:16px; border-radius:12px; border:1px dashed var(--teal-m);">
+                    <label style="font-size:12px; font-weight:700; color:var(--navy); display:block; margin-bottom:10px;">Educator Professional Details & Specializations</label>
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px; margin-bottom:16px; background:#f8fafc; padding:16px; border-radius:12px; border:1px dashed var(--teal-m);">
+                        <div>
+                            <label style="font-size:11px; font-weight:700; color:var(--navy); display:block; margin-bottom:6px;">Specialization Focus (General Text)</label>
+                            <input type="text" name="specialization" value="{{ $educator->specialization ?? '' }}" placeholder="e.g. Cognitive Disabilities Support" style="width:100%; padding:10px; border:1px solid #e2e8f0; border-radius:8px; font-family:var(--font-body); font-size:13px; outline:none; box-sizing:border-box;">
+                        </div>
+                        <div>
+                            <label style="font-size:11px; font-weight:700; color:var(--navy); display:block; margin-bottom:6px;">Highest Qualification</label>
+                            <input type="text" name="qualification" value="{{ $educator->qualification ?? '' }}" placeholder="e.g. M.Ed in Special Education" style="width:100%; padding:10px; border:1px solid #e2e8f0; border-radius:8px; font-family:var(--font-body); font-size:13px; outline:none; box-sizing:border-box;">
+                        </div>
+                        <div style="grid-column: span 2;">
+                            <label style="font-size:11px; font-weight:700; color:var(--navy); display:block; margin-bottom:6px;">Years of Special Education Experience</label>
+                            <input type="number" name="experience_years" value="{{ $educator->experience_years ?? '' }}" placeholder="e.g. 8" min="0" style="width:100%; padding:10px; border:1px solid #e2e8f0; border-radius:8px; font-family:var(--font-body); font-size:13px; outline:none; box-sizing:border-box;">
+                        </div>
+                    </div>
+
+                    <label style="font-size:12px; font-weight:700; color:var(--navy); display:block; margin-bottom:6px;">Supported Disability Categories</label>
+                    <div style="display:flex; flex-wrap:wrap; gap:12px; background:#f8fafc; padding:16px; border-radius:12px; border:1px dashed var(--teal-m);">
                         @foreach(['Visual Impairment', 'Hearing Impairment', 'Dyslexia', 'Autism', 'ADHD'] as $spec)
                             @php
-                                $hasSpec = $educator->disabilitySpecializations->contains('disability_type', strtolower(str_replace(' ', '_', $spec)));
+                                $hasSpec = $educator && $educator->disabilitySpecializations->contains('disability_type', strtolower(str_replace(' ', '_', $spec)));
                             @endphp
                             <label style="display:flex; align-items:center; gap:8px; font-size:13px; color:var(--navy); cursor:pointer;">
                                 <input type="checkbox" name="specializations[]" value="{{ strtolower(str_replace(' ', '_', $spec)) }}" {{ $hasSpec ? 'checked' : '' }} style="accent-color:var(--teal);">
@@ -73,6 +89,34 @@
             @endif
             <div style="border-top:1px solid #f1f5f9; padding-top:24px; display:flex; justify-content:flex-end;">
                 <button type="submit" class="btn-teal" style="padding:12px 32px;">Save Changes</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Secure Change Password Section Card -->
+    <div class="card" style="max-width:800px; padding:32px; margin-top:24px; box-sizing:border-box;">
+        <div style="font-family:var(--font-head); font-size:15px; font-weight:900; color:var(--navy); margin-bottom:20px; border-bottom:1px solid #f1f5f9; padding-bottom:10px; display:flex; align-items:center; gap:8px;">
+            <i class="ti ti-lock" style="color:var(--teal); font-size:18px;"></i> Change Password
+        </div>
+        <form method="POST" action="{{ route('password.update') }}">
+            @csrf
+            @method('put')
+            <div style="display:flex; flex-direction:column; gap:16px;">
+                <div>
+                    <label style="font-size:12px; font-weight:700; color:var(--navy); display:block; margin-bottom:6px;">Current Password</label>
+                    <input type="password" name="current_password" required autocomplete="current-password" placeholder="Enter current password" style="width:100%; padding:12px; border:1px solid #e2e8f0; border-radius:8px; font-family:var(--font-body); font-size:14px; outline:none; box-sizing:border-box;">
+                </div>
+                <div>
+                    <label style="font-size:12px; font-weight:700; color:var(--navy); display:block; margin-bottom:6px;">New Password</label>
+                    <input type="password" name="password" required autocomplete="new-password" placeholder="Create a new password" style="width:100%; padding:12px; border:1px solid #e2e8f0; border-radius:8px; font-family:var(--font-body); font-size:14px; outline:none; box-sizing:border-box;">
+                </div>
+                <div>
+                    <label style="font-size:12px; font-weight:700; color:var(--navy); display:block; margin-bottom:6px;">Confirm New Password</label>
+                    <input type="password" name="password_confirmation" required autocomplete="new-password" placeholder="Re-enter new password" style="width:100%; padding:12px; border:1px solid #e2e8f0; border-radius:8px; font-family:var(--font-body); font-size:14px; outline:none; box-sizing:border-box;">
+                </div>
+            </div>
+            <div style="margin-top:24px; display:flex; justify-content:flex-end;">
+                <button type="submit" class="btn-teal" style="padding:12px 32px;">Update Password</button>
             </div>
         </form>
     </div>
