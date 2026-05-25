@@ -25,6 +25,44 @@
 </head>
 
 <body class="{{ $bodyClasses }}">
+    <style>
+        @keyframes slideIn {
+            from { transform: translateX(120%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+    </style>
+
+    <!-- Floating Toast Alerts -->
+    @if(session('success'))
+        <div style="position:fixed; top:24px; right:24px; z-index:999999; background:var(--teal); color:#fff; padding:16px 24px; border-radius:12px; font-weight:700; font-family:var(--font-body); font-size:13px; box-shadow:0 10px 30px rgba(20,184,166,0.2); display:flex; align-items:center; gap:12px; animation: slideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;">
+            <i class="ti ti-circle-check" style="font-size:20px; color:#fff;"></i>
+            <span>{{ session('success') }}</span>
+            <button onclick="this.parentElement.remove()" style="background:none; border:none; color:#fff; cursor:pointer; font-size:16px; display:flex; align-items:center; justify-content:center; padding:0; margin-left:8px;"><i class="ti ti-x"></i></button>
+        </div>
+    @endif
+
+    @if(session('error'))
+        <div style="position:fixed; top:24px; right:24px; z-index:999999; background:var(--rose); color:#fff; padding:16px 24px; border-radius:12px; font-weight:700; font-family:var(--font-body); font-size:13px; box-shadow:0 10px 30px rgba(244,63,94,0.2); display:flex; align-items:center; gap:12px; animation: slideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;">
+            <i class="ti ti-alert-circle" style="font-size:20px; color:#fff;"></i>
+            <span>{{ session('error') }}</span>
+            <button onclick="this.parentElement.remove()" style="background:none; border:none; color:#fff; cursor:pointer; font-size:16px; display:flex; align-items:center; justify-content:center; padding:0; margin-left:8px;"><i class="ti ti-x"></i></button>
+        </div>
+    @endif
+
+    @if($errors->any())
+        <div style="position:fixed; top:24px; right:24px; z-index:999999; background:var(--rose); color:#fff; padding:18px 24px; border-radius:12px; font-family:var(--font-body); box-shadow:0 10px 30px rgba(244,63,94,0.2); display:flex; flex-direction:column; gap:8px; width:340px; animation: slideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;">
+            <div style="display:flex; align-items:center; gap:12px; border-bottom:1px solid rgba(255,255,255,0.15); padding-bottom:8px; margin-bottom:4px;">
+                <i class="ti ti-alert-circle" style="font-size:20px; color:#fff;"></i>
+                <span style="font-weight:800; font-size:13px;">Upload Failed</span>
+                <button onclick="this.parentElement.parentElement.remove()" style="background:none; border:none; color:#fff; cursor:pointer; font-size:16px; display:flex; align-items:center; justify-content:center; padding:0; margin-left:auto;"><i class="ti ti-x"></i></button>
+            </div>
+            <ul style="margin:0; padding-left:16px; font-size:12px; font-weight:600; line-height:1.4; color:rgba(255,255,255,0.9);">
+                @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
 
     <div class="app">
         <!-- SIDEBAR -->

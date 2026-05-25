@@ -82,9 +82,43 @@
                                         <div style="width:35%; height:100%; background:var(--teal); border-radius:99px;"></div>
                                     </div>
                                 </div>
-                                <button class="btn-teal" style="width:100%; font-size:12px; padding:10px;">
-                                    <i class="ti ti-player-play"></i> Continue Learning
-                                </button>
+                                <div style="display:flex; gap:8px; margin-bottom:10px;">
+                                    <button class="btn-teal" style="flex:1; font-size:12px; padding:10px; display:inline-flex; align-items:center; justify-content:center; gap:4px;">
+                                        <i class="ti ti-player-play"></i> Continue Learning
+                                    </button>
+                                    <button class="btn-teal" style="flex:1; font-size:12px; padding:10px; background:transparent; border:1px solid var(--teal); color:var(--teal); box-shadow:none; display:inline-flex; align-items:center; justify-content:center; gap:4px;" onclick="toggleMaterials({{ $course->id }})">
+                                        <i class="ti ti-books"></i> View Materials ({{ $course->resources->count() }})
+                                    </button>
+                                </div>
+                                
+                                <div id="materials-{{ $course->id }}" style="display:none; margin-top:12px; flex-direction:column; gap:8px; border-top:1px dashed #e2e8f0; padding-top:12px; max-height:220px; overflow-y:auto; padding-right:4px;">
+                                    @forelse($course->resources ?? [] as $resource)
+                                        <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:10px; display:flex; justify-content:space-between; align-items:center;">
+                                            <div style="flex:1; padding-right:8px; text-align:left;">
+                                                <div style="font-weight:700; color:var(--navy); font-size:11.5px; display:flex; align-items:center; gap:6px;">
+                                                    @if($resource->resource_type === 'video') <i class="ti ti-video" style="color:var(--teal)"></i>
+                                                    @elseif($resource->resource_type === 'audio') <i class="ti ti-volume" style="color:var(--teal)"></i>
+                                                    @elseif($resource->resource_type === 'pdf') <i class="ti ti-file-text" style="color:var(--teal)"></i>
+                                                    @elseif($resource->resource_type === 'reading') <i class="ti ti-book" style="color:var(--teal)"></i>
+                                                    @else <i class="ti ti-device-laptop" style="color:var(--teal)"></i>
+                                                    @endif
+                                                    {{ $resource->title }}
+                                                </div>
+                                                <div style="font-size:10px; color:var(--gray); margin-top:2px;">{{ Str::limit($resource->description, 60) }}</div>
+                                                <div style="display:flex; gap:6px; margin-top:4px;">
+                                                    <span style="font-size:8px; background:var(--teal-ll); color:var(--teal); padding:1px 5px; border-radius:4px; font-weight:700; text-transform:uppercase;">{{ $resource->accessibility_support_type }}</span>
+                                                </div>
+                                            </div>
+                                            <a href="{{ route('course-resources.download', $resource->id) }}" target="_blank" class="btn-teal" style="padding:6px 10px; font-size:10px; height:auto; text-decoration:none; display:inline-flex; align-items:center; gap:4px; box-shadow:none; flex-shrink:0;">
+                                                <i class="ti ti-download"></i> Get
+                                            </a>
+                                        </div>
+                                    @empty
+                                        <div style="font-size:10px; color:var(--gray); text-align:center; padding:10px; background:#f8fafc; border-radius:8px; border:1px dashed #e2e8f0;">
+                                            No materials matching your disability profile are available yet.
+                                        </div>
+                                    @endforelse
+                                </div>
                             @else
                                 <button class="btn-teal" disabled style="width:100%; font-size:12px; padding:10px; background:var(--gray-b); color:var(--gray); cursor:not-allowed; border:none; box-shadow:none;">
                                     <i class="ti ti-lock"></i> Materials Locked
@@ -465,6 +499,17 @@
             } else {
                 div.style.display = 'none';
                 if (icon) icon.className = 'ti ti-chevron-down';
+            }
+        }
+    }
+
+    function toggleMaterials(courseId) {
+        const div = document.getElementById('materials-' + courseId);
+        if (div) {
+            if (div.style.display === 'none') {
+                div.style.display = 'flex';
+            } else {
+                div.style.display = 'none';
             }
         }
     }

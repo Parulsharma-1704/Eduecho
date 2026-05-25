@@ -67,31 +67,51 @@
                             </div>
                         </td>
                         <td style="padding:16px;">
-                            <div style="display:flex; gap:6px; align-items:center;">
-                                @if($material->has_captions)
-                                    <span title="Captions Supported (Caption-Supported Video)" style="color:var(--teal); font-size:16px;"><i class="ti ti-closed-captioning"></i></span>
+                            <div style="display:flex; flex-direction:column; gap:4px;">
+                                @if($material->disability_category)
+                                    <div>
+                                        <span class="pill" style="background:var(--violet-ll); color:var(--violet); font-size:9px; font-weight:800; border:none; text-transform:uppercase;">
+                                            {{ $material->disability_category }}
+                                        </span>
+                                    </div>
                                 @endif
-                                @if($material->has_transcript)
-                                    <span title="Transcript Available" style="color:var(--blue); font-size:16px;"><i class="ti ti-file-text"></i></span>
+                                @if($material->accessibility_support_type)
+                                    <div>
+                                        <span class="pill" style="background:var(--teal-ll); color:var(--teal); font-size:9px; font-weight:800; border:none; text-transform:uppercase;">
+                                            {{ $material->accessibility_support_type }}
+                                        </span>
+                                    </div>
                                 @endif
-                                @if($material->has_audio_description)
-                                    <span title="Audio Description (Audio Lesson)" style="color:var(--amber); font-size:16px;"><i class="ti ti-volume"></i></span>
-                                @endif
-                                @if($material->text_size_options)
-                                    <span title="Screen-Reader Friendly" style="color:var(--violet); font-size:16px;"><i class="ti ti-eye"></i></span>
-                                @endif
-                                @if($material->high_contrast_version)
-                                    <span title="Dyslexia-Friendly" style="color:var(--blue); font-size:16px;"><i class="ti ti-abc"></i></span>
-                                @endif
-                                @if(!$material->has_captions && !$material->has_transcript && !$material->has_audio_description && !$material->text_size_options && !$material->high_contrast_version)
-                                    <span style="font-size:11px; color:var(--gray);">Standard</span>
-                                @endif
+                                <div style="display:flex; gap:6px; align-items:center; margin-top:2px;">
+                                    @if($material->has_captions)
+                                        <span title="Captions Supported" style="color:var(--teal); font-size:14px;"><i class="ti ti-closed-captioning"></i></span>
+                                    @endif
+                                    @if($material->has_transcript)
+                                        <span title="Transcript Available" style="color:var(--blue); font-size:14px;"><i class="ti ti-file-text"></i></span>
+                                    @endif
+                                    @if($material->has_audio_description)
+                                        <span title="Audio Description" style="color:var(--amber); font-size:14px;"><i class="ti ti-volume"></i></span>
+                                    @endif
+                                    @if($material->text_size_options)
+                                        <span title="Screen-Reader Friendly" style="color:var(--violet); font-size:14px;"><i class="ti ti-eye"></i></span>
+                                    @endif
+                                    @if($material->high_contrast_version)
+                                        <span title="Dyslexia-Friendly" style="color:var(--blue); font-size:14px;"><i class="ti ti-abc"></i></span>
+                                    @endif
+                                </div>
                             </div>
                         </td>
                         <td style="padding:16px; text-align:right;">
-                            <div style="display:flex; gap:8px; justify-content:flex-end;">
-                                <button class="tb-icon-btn" style="width:32px; height:32px;"><i class="ti ti-edit"></i></button>
-                                <button class="tb-icon-btn" style="width:32px; height:32px; color:var(--rose);"><i class="ti ti-trash"></i></button>
+                            <div style="display:flex; gap:8px; justify-content:flex-end; align-items:center;">
+                                <a href="{{ route('course-resources.download', $material->id) }}" target="_blank" class="tb-icon-btn" style="width:32px; height:32px; display:inline-flex; align-items:center; justify-content:center; color:var(--teal); text-decoration:none;" title="Download Material">
+                                    <i class="ti ti-download"></i>
+                                </a>
+                                <form method="POST" action="{{ route('course-resources.destroy', $material->id) }}" onsubmit="return confirm('Are you sure you want to delete this resource?')" style="display:inline;">
+                                    @csrf @method('DELETE')
+                                    <button type="submit" class="tb-icon-btn" style="width:32px; height:32px; color:var(--rose); border:none; cursor:pointer; background:none;" title="Delete Material">
+                                        <i class="ti ti-trash"></i>
+                                    </button>
+                                </form>
                             </div>
                         </td>
                     </tr>

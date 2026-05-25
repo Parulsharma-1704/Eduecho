@@ -20,6 +20,8 @@ class CourseResource extends Model
         'has_audio_description',
         'text_size_options',
         'high_contrast_version',
+        'disability_category',
+        'accessibility_support_type',
     ];
 
     protected $casts = [

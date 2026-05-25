@@ -21,6 +21,7 @@ class DashboardController extends Controller
     public function index(Request $request)
     {
         $user = $request->user();
+        $activePanel = $request->query('panel', 'overview');
 
         // Fetch notifications for the logged in user, including broadcast announcements
         $notifications = \App\Models\Notification::where('user_id', $user->id)
@@ -148,6 +149,7 @@ class DashboardController extends Controller
 
             return view('dashboard', [
                 'user' => $user,
+                'activePanel' => $activePanel,
                 'stats' => $stats,
                 'recentStudents' => $recentStudents,
                 'allStudents' => $allStudents,
@@ -268,9 +270,27 @@ class DashboardController extends Controller
             $availableCourses = collect();
 
             if ($student) {
-                // Fetch enrollments with course details
+                // Fetch enrollments with course details and filtered personalized materials
+                $studentDisabilityType = $disabilityProfile ? strtolower($disabilityProfile->disability_type) : '';
                 $enrollments = \App\Models\CourseEnrollment::where('student_id', $student->id)
-                    ->with(['course.assignedEducator.specialEducator.disabilitySpecializations'])
+                    ->with([
+                        'course.assignedEducator.specialEducator.disabilitySpecializations',
+                        'course.resources' => function($q) use ($studentDisabilityType) {
+                            $q->where(function($sub) use ($studentDisabilityType) {
+                                if (str_contains($studentDisabilityType, 'visual')) {
+                                    $sub->where('disability_category', 'Visual Impairment');
+                                } elseif (str_contains($studentDisabilityType, 'hearing')) {
+                                    $sub->where('disability_category', 'Hearing Impairment');
+                                } elseif (str_contains($studentDisabilityType, 'dyslexia')) {
+                                    $sub->where('disability_category', 'Dyslexia');
+                                } elseif (str_contains($studentDisabilityType, 'autism') || str_contains($studentDisabilityType, 'adhd')) {
+                                    $sub->where('disability_category', 'Autism / ADHD');
+                                } else {
+                                    $sub->where('disability_category', 'like', '%' . $studentDisabilityType . '%');
+                                }
+                            });
+                        }
+                    ])
                     ->latest()
                     ->get();
 
@@ -313,6 +333,7 @@ class DashboardController extends Controller
 
             return view('dashboard', [
                 'user' => $user,
+                'activePanel' => $activePanel,
                 'stats' => $stats,
                 'enrolledCourses' => $enrolledCourses,
                 'enrollments' => $enrollments,
@@ -332,9 +353,17 @@ class DashboardController extends Controller
                 ->with(['disabilitySpecializations', 'user'])
                 ->first();
 
-            // Get all courses created by or assigned to this educator
-            $allCourses = Course::where('assigned_educator_id', $user->id)
-                ->orWhere('created_by_id', $user->id)
+            // Get specialization disability types for this educator
+            $educatorSpecTypes = $educator ? $educator->disabilitySpecializations->pluck('disability_type')->toArray() : [];
+
+            // Get all courses assigned to / created by educator OR matching their specialization
+            $allCourses = Course::where(function($q) use ($user, $educatorSpecTypes) {
+                    $q->where('assigned_educator_id', $user->id)
+                      ->orWhere('created_by_id', $user->id);
+                    foreach ($educatorSpecTypes as $spec) {
+                        $q->orWhere('target_disabilities', 'LIKE', '%' . $spec . '%');
+                    }
+                })
                 ->with([
                     'creator:id,name',
                     'assignedEducator:id,name',
@@ -405,6 +434,7 @@ class DashboardController extends Controller
 
             return view('dashboard', [
                 'user' => $user,
+                'activePanel' => $activePanel,
                 'stats' => $stats,
                 'educator' => $educator,
                 'allStudents' => $allStudents,

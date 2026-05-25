@@ -47,6 +47,8 @@ Route::middleware(['auth', 'approved'])->group(function () {
     // Courses
     Route::resource('courses', CourseController::class);
     Route::post('/course-resources', [CourseResourceController::class, 'store'])->name('course-resources.store');
+    Route::delete('/course-resources/{resource}', [CourseResourceController::class, 'destroy'])->name('course-resources.destroy');
+    Route::get('/course-resources/{resource}/download', [CourseResourceController::class, 'download'])->name('course-resources.download');
 
     // IEPs (Individualized Education Programs)
     Route::resource('ieps', IEPController::class);

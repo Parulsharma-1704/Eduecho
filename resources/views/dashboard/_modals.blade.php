@@ -230,7 +230,7 @@
 </div>
 
 <!-- Upload Learning Material Modal -->
-<div id="upload-material-modal" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:#fff; border-radius:16px; padding:32px; width:460px; max-width:95vw; z-index:9001; box-shadow:0 20px 60px rgba(0,0,0,0.2);">
+<div id="upload-material-modal" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:#fff; border-radius:16px; padding:32px; width:480px; max-width:95vw; z-index:9001; box-shadow:0 20px 60px rgba(0,0,0,0.2); max-height:90vh; overflow-y:auto;">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
         <div>
             <div style="font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:var(--teal); margin-bottom:4px;">Resource Management</div>
@@ -238,14 +238,39 @@
         </div>
         <button onclick="closeModal()" style="background:var(--teal-ll); border:none; border-radius:50%; width:36px; height:36px; cursor:pointer; font-size:18px; color:var(--teal); display:flex; align-items:center; justify-content:center;"><i class="ti ti-x"></i></button>
     </div>
+    
+    @php
+        $educatorSpecializations = [];
+        if (Auth::check() && Auth::user()->hasRole('special_educator')) {
+            $specialEducator = Auth::user()->specialEducator;
+            if ($specialEducator) {
+                $educatorSpecializations = $specialEducator->disabilitySpecializations->pluck('disability_type')->map(fn($item) => strtolower($item))->toArray();
+            }
+        }
+        $isAdmin = Auth::check() && Auth::user()->hasRole('admin');
+    @endphp
+
     <form method="POST" action="{{ route('course-resources.store') }}" enctype="multipart/form-data">
         @csrf
         <div style="display:flex; flex-direction:column; gap:16px;">
             <div>
                 <label style="font-size:12px; font-weight:700; color:var(--navy); display:block; margin-bottom:6px;">Select Course</label>
                 <select name="course_id" required style="width:100%; padding:12px; border:1px solid #e2e8f0; border-radius:8px; font-family:var(--font-body); font-size:14px; outline:none; background:#fff; box-sizing:border-box;">
+                    <option value="">-- Choose Aligned Course --</option>
                     @foreach($allCourses ?? [] as $course)
-                        <option value="{{ $course->id }}">{{ $course->title }}</option>
+                        @php
+                            $courseTarget = strtolower($course->target_disabilities ?? '');
+                            $isMatch = $isAdmin;
+                            if (!$isAdmin) {
+                                if (str_contains($courseTarget, 'visual') && in_array('visual', $educatorSpecializations)) { $isMatch = true; }
+                                elseif (str_contains($courseTarget, 'hearing') && in_array('hearing', $educatorSpecializations)) { $isMatch = true; }
+                                elseif (str_contains($courseTarget, 'dyslexia') && in_array('dyslexia', $educatorSpecializations)) { $isMatch = true; }
+                                elseif ((str_contains($courseTarget, 'autism') || str_contains($courseTarget, 'adhd')) && (in_array('autism', $educatorSpecializations) || in_array('adhd', $educatorSpecializations))) { $isMatch = true; }
+                            }
+                        @endphp
+                        @if($isMatch)
+                            <option value="{{ $course->id }}">{{ $course->title }} ({{ $course->target_disabilities }})</option>
+                        @endif
                     @endforeach
                 </select>
             </div>
@@ -254,18 +279,45 @@
                 <input type="text" name="title" required placeholder="e.g. Lesson 1: Introduction" style="width:100%; padding:12px; border:1px solid #e2e8f0; border-radius:8px; font-family:var(--font-body); font-size:14px; outline:none; box-sizing:border-box;">
             </div>
             <div>
-                <label style="font-size:12px; font-weight:700; color:var(--navy); display:block; margin-bottom:6px;">Resource Type</label>
+                <label style="font-size:12px; font-weight:700; color:var(--navy); display:block; margin-bottom:6px;">Description</label>
+                <textarea name="description" placeholder="Brief explanation or overview of the material..." rows="2" style="width:100%; padding:12px; border:1px solid #e2e8f0; border-radius:8px; font-family:var(--font-body); font-size:13px; outline:none; box-sizing:border-box; resize:vertical;"></textarea>
+            </div>
+            <div>
+                <label style="font-size:12px; font-weight:700; color:var(--navy); display:block; margin-bottom:6px;">Resource Format Type</label>
                 <select name="resource_type" required style="width:100%; padding:12px; border:1px solid #e2e8f0; border-radius:8px; font-family:var(--font-body); font-size:14px; outline:none; background:#fff; box-sizing:border-box;">
-                    <option value="video">Video Lesson (Caption-Supported Video)</option>
-                    <option value="audio">Audio Resource (Audio Lesson)</option>
-                    <option value="pdf">PDF Document</option>
+                    <option value="pdf">PDF Document Notes</option>
+                    <option value="audio">Audio Lesson</option>
+                    <option value="video">Caption-Supported Video</option>
                     <option value="reading">Simplified Reading</option>
                     <option value="interactive">Interactive Learning Resource</option>
                 </select>
             </div>
+            
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
+                <div>
+                    <label style="font-size:12px; font-weight:700; color:var(--navy); display:block; margin-bottom:6px;">Disability Support Category</label>
+                    <select name="disability_category" required style="width:100%; padding:12px; border:1px solid #e2e8f0; border-radius:8px; font-family:var(--font-body); font-size:13px; outline:none; background:#fff; box-sizing:border-box;">
+                        <option value="Visual Impairment">Visual Impairment</option>
+                        <option value="Hearing Impairment">Hearing Impairment</option>
+                        <option value="Dyslexia">Dyslexia</option>
+                        <option value="Autism / ADHD">Autism / ADHD</option>
+                    </select>
+                </div>
+                <div>
+                    <label style="font-size:12px; font-weight:700; color:var(--navy); display:block; margin-bottom:6px;">Accessibility Support Type</label>
+                    <select name="accessibility_support_type" required style="width:100%; padding:12px; border:1px solid #e2e8f0; border-radius:8px; font-family:var(--font-body); font-size:13px; outline:none; background:#fff; box-sizing:border-box;">
+                        <option value="Audio-Based">Audio-Based</option>
+                        <option value="Caption-Supported">Caption-Supported</option>
+                        <option value="Dyslexia-Friendly">Dyslexia-Friendly</option>
+                        <option value="Screen-Reader Friendly">Screen-Reader Friendly</option>
+                        <option value="Interactive Learning">Interactive Learning</option>
+                    </select>
+                </div>
+            </div>
+
             <div>
-                <label style="font-size:12px; font-weight:700; color:var(--navy); display:block; margin-bottom:6px;">Accessibility Features</label>
-                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; background:#f8fafc; padding:12px; border-radius:8px;">
+                <label style="font-size:12px; font-weight:700; color:var(--navy); display:block; margin-bottom:6px;">Accessibility Quick Features</label>
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; background:#f8fafc; padding:12px; border-radius:8px;">
                     <label style="display:flex; align-items:center; gap:8px; font-size:12px; color:var(--navy); cursor:pointer;">
                         <input type="checkbox" name="has_captions" value="1" style="accent-color:var(--teal);"> Captions
                     </label>
